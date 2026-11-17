@@ -4,9 +4,15 @@ import type { VisionProvider } from "./types";
 
 const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 
-/** Per attempt. Two attempts must finish inside Vercel's 60 s function limit. */
-const ATTEMPT_TIMEOUT_MS = 22_000;
-const ATTEMPTS = 2;
+/** Per attempt. The whole chain must finish inside Vercel's 60 s function limit. */
+const ATTEMPT_TIMEOUT_MS = 13_000;
+
+/**
+ * Tried in order. gemini-flash-latest is the obvious choice and the one that hangs
+ * when Google is busy — measured timing out at 15 s while 3.1-flash-lite answered the
+ * same photo in 4.2 s. So the lite model leads and flash is the backstop.
+ */
+const MODEL_CHAIN = ["gemini-3.1-flash-lite", "gemini-flash-latest"];
 
 /**
  * Google Gemini vision. Chosen as the default because its free tier needs no card,
@@ -14,9 +20,9 @@ const ATTEMPTS = 2;
  * only — it is never sent to the browser.
  */
 export function geminiVision(apiKey: string): VisionProvider {
-  // A stable alias on purpose: Google retires numbered models for new keys
-  // (gemini-2.5-flash already 404s for them), and this always resolves to the current flash.
-  const model = optionalEnv("GEMINI_MODEL") ?? "gemini-flash-latest";
+  // GEMINI_MODEL pins one model; otherwise we work down the chain.
+  const pinned = optionalEnv("GEMINI_MODEL");
+  const models = pinned ? [pinned, ...MODEL_CHAIN.filter((m) => m !== pinned)] : MODEL_CHAIN;
 
   return {
     name: "Gemini",
@@ -40,7 +46,7 @@ export function geminiVision(apiKey: string): VisionProvider {
       });
 
       let last = "";
-      for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+      for (const model of models) {
         try {
           const res = await withTimeout((signal) =>
             fetch(`${BASE}/${model}:generateContent`, {
@@ -63,13 +69,13 @@ export function geminiVision(apiKey: string): VisionProvider {
           }
 
           last = await explain(res);
-          // 429/5xx are worth one more go; anything else will fail the same way twice.
-          if (res.status !== 429 && res.status < 500) throw new Error(last);
+          // A rejected key or a blocked photo fails identically on every model; a 404,
+          // a rate limit or an outage is worth trying the next one for.
+          if (res.status === 400 && /api key/i.test(last)) throw new Error(last);
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
           if (msg.startsWith("the photo was blocked")) throw e;
           last = msg === "timeout" ? "Gemini did not answer in time — try again" : msg;
-          if (attempt === ATTEMPTS) break;
         }
       }
       throw new Error(last || "Gemini did not answer");

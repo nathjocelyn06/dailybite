@@ -62,11 +62,21 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
   async function analyse(storedPath: string) {
     setStep("analysing");
     try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ path: storedPath, mode })
-      });
+      // The server has its own budget; this is the last line of defence so the
+      // spinner can never run forever if the request is lost in transit.
+      const abort = new AbortController();
+      const timer = setTimeout(() => abort.abort(), 75_000);
+      let res: Response;
+      try {
+        res = await fetch("/api/scan", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ path: storedPath, mode }),
+          signal: abort.signal
+        });
+      } finally {
+        clearTimeout(timer);
+      }
       const d = (await res.json()) as ScanDraft & { error?: string };
       if (d.error) {
         setErr(d.error);
@@ -76,8 +86,9 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
       if (d.slot) setSlot(d.slot);
       setDraft({ ...d, rows: d.rows.length ? d.rows : [{ name: "" }] });
       setStep("review");
-    } catch {
-      setErr("Could not reach the server. Check your connection and try again.");
+    } catch (e) {
+      const aborted = e instanceof DOMException && e.name === "AbortError";
+      setErr(aborted ? "The scan took too long. Try again, or enter the meal by hand." : "Could not reach the server. Check your connection and try again.");
       setStep("choose");
     }
   }

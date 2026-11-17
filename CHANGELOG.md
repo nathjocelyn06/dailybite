@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11 · 2026-11-17 — Fix the scan that hung on "Analysing your meal…"
+Measured against the same pizza photo: `gemini-flash-latest` **timed out at 15 s** (Google is saturating it), while `gemini-3.1-flash-lite` answered in **4.2 s**. The spinner was simply waiting on a model that never replied.
+- **Model chain instead of one model**: `gemini-3.1-flash-lite` first, `gemini-flash-latest` as backstop, 13 s per attempt so the whole chain fits inside the serverless budget. A rejected key still fails immediately — only timeouts, 404s, rate limits and outages move to the next model.
+- `GEMINI_MODEL` now *leads* the chain rather than replacing it, so pinning a model never removes the fallback.
+- **The spinner can no longer hang**: the browser aborts the scan request after 75 s and says so, instead of spinning forever if the response is lost.
+
 ## v3.10.1 · 2026-11-17 — Food search uses the endpoint that works
 - Open Food Facts `/api/v2/search` was returning 503 HTML while the long-standing `cgi/search.pl` answered fine and ranked better ("nutella" → Nutella, not bottled water). Search now calls the legacy endpoint first and falls back to v2.
 - The relevance filter no longer empties the list: if scoring discards everything, the raw results are shown instead.
