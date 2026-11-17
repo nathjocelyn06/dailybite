@@ -172,16 +172,6 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
           <section className="card grow" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <span className="lbl">{draft.ai ? "AI suggestion · please check" : "Fill in the details"}</span>
             {draft.note && <p className="muted">{draft.note}</p>}
-            {!draft.ai && mode === "calorie" && (
-              <div className="claude-tip">
-                <strong>Let Claude read it instead</strong>
-                <p>
-                  Send this photo in the Claude app and say <em>&ldquo;log this meal in DailyBite&rdquo;</em>. Claude
-                  identifies the food, estimates the nutrition and saves it here as an estimate — it then shows up on
-                  Home under <em>Check these AI estimates</em> for you to correct and confirm.
-                </p>
-              </div>
-            )}
 
             {(mode === "calorie" || mode === "journal") && (
               <label className="field">{mode === "journal" ? "Caption" : "Meal name"}<input className="input" value={draft.title ?? ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /></label>

@@ -89,7 +89,7 @@ export async function POST(req: Request) {
   if (!provider) {
     return NextResponse.json({
       ...empty,
-      note: "No vision model is connected, so the photo was not analysed here. Fill it in below, or let Claude read the photo for you (see the tip)."
+      note: "No vision model is connected on the server, so this photo was not analysed. Fill it in below."
     });
   }
   if (!body.path) return NextResponse.json({ ...empty, note: "No photo was uploaded. Fill the meal in by hand." });

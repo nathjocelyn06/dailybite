@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.7 · 2026-11-17 — Automatic in-app food recognition
+- **Gemini vision provider** (`lib/vision/gemini.ts`), now the default pick because its free tier needs no card. `getVisionProvider()` chooses by whichever key is set — `GEMINI_API_KEY` first, then `ANTHROPIC_API_KEY` — or `VISION_PROVIDER` to force one. The key stays server-side; the browser never sees it.
+- **Removed the "Let Claude read it instead" panel.** Taking or uploading a photo analyses it automatically: upload → "Analysing your meal…" → the form arrives filled with meal name, slot, and one card per food with portion, grams, kcal, protein, carbs, fat and ingredients. Nothing is clicked to start it, and nothing is saved until **Save to my journal**.
+- Gemini failures read like instructions rather than status codes: rejected key, model not found, free-tier rate limit, blocked photo, service down.
+- `.env.example` documents the provider choice.
+
 ## v3.6 · 2026-11-17 — Correcting AI estimates, and the no-key route
 **Meals can finally be edited.** A meal could be confirmed or deleted but never corrected, which made an AI estimate all-or-nothing. New `app/(app)/journal/MealEditor.tsx`: meal name, slot, and per-item food / portion / grams / kcal / protein / carbs / fat, add and remove items, totals recomputing as you type, then **Save & mark eaten** or **Save changes**. Opens at `/journal?meal=<id>&edit=1`; Home's **Edit** on "Check these AI estimates" now goes straight there. Totals are recomputed server-side by `updateMeal`, so the saved numbers always match the items.
 - Meals estimated by AI now carry an **AI estimate** chip in the journal.

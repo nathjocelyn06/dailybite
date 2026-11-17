@@ -1,23 +1,29 @@
 import "server-only";
 import { optionalEnv } from "../env";
 import { anthropicVision } from "./anthropic";
+import { geminiVision } from "./gemini";
 import type { VisionProvider } from "./types";
 
 export type { VisionProvider, VisionImage, VisionRequest } from "./types";
 
 /**
- * The vision provider for photo scans, or null when none is configured — callers
+ * The vision provider for photo scans, or null when no key is configured — callers
  * then fall back to an empty, hand-fillable draft instead of failing.
  *
- * To add a provider: implement `VisionProvider`, add a case here, set VISION_PROVIDER.
- * Nothing above this module knows which provider answered.
+ * Selection: `VISION_PROVIDER` when set, otherwise whichever key exists (Gemini first,
+ * because its free tier needs no card). To add a provider: implement `VisionProvider`,
+ * add a case here, done — nothing above this module knows which one answered.
  */
 export function getVisionProvider(): VisionProvider | null {
-  const which = (optionalEnv("VISION_PROVIDER") ?? "anthropic").toLowerCase();
-  if (which === "anthropic") {
-    const key = optionalEnv("ANTHROPIC_API_KEY");
-    return key ? anthropicVision(key) : null;
-  }
+  const gemini = optionalEnv("GEMINI_API_KEY") ?? optionalEnv("GOOGLE_API_KEY");
+  const anthropic = optionalEnv("ANTHROPIC_API_KEY");
+  const forced = optionalEnv("VISION_PROVIDER")?.toLowerCase();
+
+  if (forced === "gemini") return gemini ? geminiVision(gemini) : null;
+  if (forced === "anthropic") return anthropic ? anthropicVision(anthropic) : null;
+
+  if (gemini) return geminiVision(gemini);
+  if (anthropic) return anthropicVision(anthropic);
   return null;
 }
 
