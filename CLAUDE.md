@@ -31,6 +31,7 @@ npm run inspect      # MCP Inspector → connect to http://localhost:3000/api/mc
 - **Shared records, no copies.** Calendar, Archive, Home and My progress read the same `meals` / `expenses` / `fridge_items` / `journal_*` rows. Archive results link to the original record.
 - Receipts and photo scans create **pending** fridge items. The user confirms them (`confirm_fridge_items`, or the "Confirm all" banner).
 - Zod input shapes live in `lib/schemas.ts` and are shared by MCP tools and server actions. Add fields there first.
+- **Which Supabase project we talk to**: `supabaseTarget()` in `lib/supabase/admin.ts` reads `DAILYBITE_SUPABASE_URL` / `DAILYBITE_SUPABASE_SERVICE_KEY` first and only then the standard names. Vercel's Supabase storage connection overwrites `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` at deploy time with a project it provisioned itself — empty, so every page 500s with "Could not find the table … in the schema cache". The `DAILYBITE_*` pair is set in Vercel and pins production to the migrated project. Don't "simplify" it away.
 - Secrets: `SUPABASE_SERVICE_ROLE_KEY`, `MCP_ACCESS_KEY`, `ANTHROPIC_API_KEY`, `YOUTUBE_API_KEY` are server-only. Never import `lib/supabase/admin.ts` or `lib/services/*` from a `"use client"` file (they import `server-only`, so the build fails if you do).
 - Body photos are private: never expose them through MCP, never show them on Dashboard.
 - Health text is general education. Show sources. Never present AI output as medical advice. No body-shaming language, no appearance scores.

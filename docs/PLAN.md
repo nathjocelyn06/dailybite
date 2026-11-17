@@ -94,16 +94,19 @@ Tokens in `app/globals.css`. Neutrals: paper `#EDEDEB`, ink `#231F1C`, grid gray
 - ✅ Live sync: `components/LiveSync.tsx` re-renders every 10 s while the tab is visible, on tab focus, and at local midnight. (Realtime push needs an authenticated browser client; v3.1 has none, so this polls instead.)
 - ✅ PWA manifest + icons: "Add to Home Screen" on iPhone/Android puts DailyBite on the phone like an app.
 
-## Phase 3 — Deploy (makes it live everywhere) 🧪 in progress
-1. ✅ Pushed to GitHub: **github.com/nathjocelyn06/dailybite** (private). 🔲 Import into **Vercel** and add the env vars.
-   - The deployed app only reads six: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OWNER_USER_ID`, `MCP_ACCESS_KEY`, `DEFAULT_TIMEZONE`, `APP_URL` (plus optional `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL`, `YOUTUBE_API_KEY`, `MEALDB_API_KEY`). `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `OWNER_EMAIL` are dead since v3.1 — don't bother setting them.
-   - `APP_URL` can only be filled in after the first deploy gives you a URL; set it, then redeploy so MCP deep links point at the live app instead of localhost.
-2. No Supabase Auth URL config needed. **But the deployed app is wide open** — no sign-in — so turn on Vercel password protection (or put it behind an allowlist) before you share the URL.
-3. Claude: claude.ai → Settings → Connectors → **Add custom connector** → URL `https://<app>.vercel.app/api/mcp?key=<MCP_ACCESS_KEY>`. It then works in Claude on web, desktop and the mobile app.
-   - Local alternative for Claude Desktop during development (`claude_desktop_config.json`):
-     `{"mcpServers":{"dailybite":{"command":"npx","args":["mcp-remote","http://localhost:3000/api/mcp?key=<KEY>"]}}}`
-4. On your phone, open the Vercel URL → Share → Add to Home Screen.
-5. 🧪 Acceptance: log a meal in Claude mobile → it appears on the laptop dashboard within a few seconds without reloading.
+## Phase 3 — Deploy (makes it live everywhere) ✅ 17 Nov 2026
+
+**Live: https://dailybite-ten.vercel.app** · repo: **github.com/nathjocelyn06/dailybite** (private)
+
+1. ✅ Pushed to GitHub, imported into Vercel (project `dailybite`, Next.js auto-detected, Node 26.x).
+2. ✅ Env vars in Vercel: `DAILYBITE_SUPABASE_URL`, `DAILYBITE_SUPABASE_SERVICE_KEY`, `OWNER_USER_ID`, `MCP_ACCESS_KEY`, `APP_URL`, `DEFAULT_TIMEZONE`, `MEALDB_API_KEY`. Optional AI/YouTube keys still unset.
+   - 🐛 **The trap that cost an hour:** a Supabase connection added through Vercel provisions its *own* Supabase project and injects `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` at deploy time, overwriting whatever you set in the dashboard. Every page 500s with "Could not find the table 'public.settings' in the schema cache" while `/api/mcp` still answers. Fix: `supabaseTarget()` reads `DAILYBITE_*` first (`lib/supabase/admin.ts`).
+   - Vercel Authentication is **on by default** for new projects and blocks the MCP connector as well as the browser. Turned off (`ssoProtection: null`).
+3. ✅ No Supabase Auth URL config needed (no sign-in since v3.1). **The deployed app is open** — anyone with the URL can read and edit. Re-enable Vercel Authentication if that stops being acceptable, knowing it also blocks Claude.
+4. 🔲 Phone: open the URL in Safari/Chrome → Share → Add to Home Screen.
+5. 🧪 Acceptance: 13 routes return 200; the live MCP server lists 53 tools and `today` / `get_daily_summary` / `get_kitchen_overview` all answer from the migrated project. Still to try: log a meal in Claude mobile and watch it appear on the laptop.
+
+Claude connectors now point at `https://dailybite-ten.vercel.app/api/mcp?key=…` — the laptop dev server is no longer needed for Claude to work.
 
 ## Phase 4 — Signature interactions 🔲
 - **Interactive fridge** (`/fridge`): port `design/wireframes/D06-Fridge.dc.html` (desktop) and `M05-Fridge.dc.html` (phone) into `components/fridge/Fridge.tsx`.

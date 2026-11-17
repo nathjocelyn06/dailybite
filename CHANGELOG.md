@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.3 · 2026-11-17 — Phase 3: live on Vercel
+**https://dailybite-ten.vercel.app** — the app and its 53-tool MCP server now run without anything on the laptop.
+- **Pinned the database with `DAILYBITE_SUPABASE_URL` / `DAILYBITE_SUPABASE_SERVICE_KEY`** (`supabaseTarget()` in `lib/supabase/admin.ts`). A Supabase connection added through Vercel provisions its own empty Supabase project and injects `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` at deploy time, overwriting the dashboard values — so every page 500d with "Could not find the table in the schema cache" while `/api/mcp` kept answering 401. The `DAILYBITE_*` pair wins when set.
+- Turned off Vercel Authentication, which is on by default for new projects and blocks the MCP connector as well as the browser. The app has no sign-in, so **the deployed URL is open to anyone who has it**.
+- `APP_URL` set, so MCP tool results deep-link to the live app instead of localhost.
+- Verified live: 13 routes return 200, `tools/list` → 53, and `today` / `get_daily_summary` / `get_kitchen_overview` answer from the migrated project.
+
 ## v3.2.1 · 2026-11-17 — Phase 3: source control
 - First commit and push: **github.com/nathjocelyn06/dailybite** (private). 120 files, no secrets — `.env.local` is covered by `.gitignore` and nothing tracked contains a key.
 - Recorded which environment variables the deployed app actually reads: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OWNER_USER_ID`, `MCP_ACCESS_KEY`, `DEFAULT_TIMEZONE`, `APP_URL`, plus the optional AI/YouTube/MealDB keys. `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `OWNER_EMAIL` have been dead since v3.1 and are now marked as such in `.env.example`.
