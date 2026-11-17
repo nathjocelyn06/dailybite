@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.8 · 2026-11-17 — Food recognition switched on (Gemini)
+- The food camera now really analyses photos: Gemini is the configured provider, on the free tier, with the key server-side only.
+- **Default model is the `gemini-flash-latest` alias, not a pinned version.** Google now returns 404 for `gemini-2.5-flash` to new keys ("no longer available to new users"), so a pinned number is a time bomb; the alias always resolves to the current flash model. `GEMINI_MODEL` still overrides.
+- Verified on a real meal photo: one plate of pasta came back as "Penne alla Vodka", dinner, 280 g, 520 kcal, 14 g protein, 66 g carbs, 22 g fat, with ingredients listed and a note explaining the portion assumption.
+
 ## v3.7 · 2026-11-17 — Automatic in-app food recognition
 - **Gemini vision provider** (`lib/vision/gemini.ts`), now the default pick because its free tier needs no card. `getVisionProvider()` chooses by whichever key is set — `GEMINI_API_KEY` first, then `ANTHROPIC_API_KEY` — or `VISION_PROVIDER` to force one. The key stays server-side; the browser never sees it.
 - **Removed the "Let Claude read it instead" panel.** Taking or uploading a photo analyses it automatically: upload → "Analysing your meal…" → the form arrives filled with meal name, slot, and one card per food with portion, grams, kcal, protein, carbs, fat and ingredients. Nothing is clicked to start it, and nothing is saved until **Save to my journal**.

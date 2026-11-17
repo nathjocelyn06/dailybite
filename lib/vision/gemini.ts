@@ -10,7 +10,9 @@ const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
  * only — it is never sent to the browser.
  */
 export function geminiVision(apiKey: string): VisionProvider {
-  const model = optionalEnv("GEMINI_MODEL") ?? "gemini-2.5-flash";
+  // A stable alias on purpose: Google retires numbered models for new keys
+  // (gemini-2.5-flash already 404s for them), and this always resolves to the current flash.
+  const model = optionalEnv("GEMINI_MODEL") ?? "gemini-flash-latest";
   return {
     name: "Gemini",
     async analyse({ image, system, prompt, maxTokens = 1500 }) {
