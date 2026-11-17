@@ -108,7 +108,7 @@ Tokens in `app/globals.css`. Neutrals: paper `#EDEDEB`, ink `#231F1C`, grid gray
 
 Claude connectors now point at `https://dailybite-ten.vercel.app/api/mcp?key=…` — the laptop dev server is no longer needed for Claude to work.
 
-## Phase 4 — Signature interactions 🚧 (fridge ✅ 17 Nov 2026, journal editor 🔲)
+## Phase 4 — Signature interactions 🚧 (fridge ✅ · scrapbook ✅ · photo flow and week plan 🔲, 17 Nov 2026)
 - ✅ **Interactive fridge** — `components/fridge/Fridge.tsx`, replacing the old Stock list. Built from `D06-Fridge` / `M05-Fridge`.
   - The door is closed in decorate mode: drag stickers, photos, post-its, badges and magnets, edit text/colour/tilt, add from the tray, pick the fridge colour.
   - The handles swing the freezer and fridge doors open (CSS 3D `rotateY`) to show shelves: freezer, dairy & eggs, proteins, crisper drawers. Pantry sits beside the fridge.
@@ -117,12 +117,14 @@ Claude connectors now point at `https://dailybite-ten.vercel.app/api/mcp?key=…
   - **Decor coordinates are percentages of the door, not pixels**, so a door arranged on a laptop still looks right on a phone. `DecorInput` keeps them as ints.
   - 🧪 Verified: doors swing on `rotateY(-112deg)` (104 on phones), shelves list stock by category with expiry/low flags, the status magnet counts use-soon and low items, tapping an item gives Use 1 / Restock / Remove / Recipes using this, and a post-it dragged on the door is in `fridge_decor` a second later.
   - 🔲 Still to do: photos on the door (needs the photo picker), and freezer/fridge doors opening independently on phones where they stack.
-- **Scrapbook journal editor** (`/journal`): port `D05-Journal.dc.html`. Elements live in `journal_elements` (x as % of width, y in px, w %, rot, z).
-  - Toolbar: Select, Photo, Sticker, Doodle (store SVG path in `data.path`), Tape, Text, Mood, Layout.
-  - Photo flow: camera/gallery → crop → link to a meal → place on the page.
-  - Drag/resize/rotate with pointer events, saved via `updateElementAction`.
-  - Mood and habit stickers count toward Progress habits.
-  - A week-plan page kind (`journal_pages.kind = 'week_plan'`).
+- ✅ **Scrapbook journal editor** — `app/(app)/journal/Scrapbook.tsx`, from `D05-Journal`. Elements live in `journal_elements` (x as % of width, y in px, w %, rot, z).
+  - ✅ Toolbar: Decorate page, Select, Text, Doodle, six stickers, Mood stamps, Tape, Photo.
+  - ✅ Drag to move, corner handle to resize, top handle to rotate, × to delete; each element saves 500 ms after you stop, debounced per element so moving one never rewrites the others.
+  - ✅ Doodles are drawn freehand on the page and stored as an SVG path in `data.path`.
+  - 🧪 Verified: two stickers placed in the browser arrived in `journal_elements` as `x=48.8% y=237px w=14% rot=-6 z=0`.
+  - 🔲 Photo flow: **Photo** currently opens the existing AI camera (`/snap?mode=journal`), which places the photo on the page. Cropping and linking a photo to a specific meal from inside the editor are still to do.
+  - 🔲 Mood and habit stickers do not yet count toward Progress habits.
+  - 🔲 A week-plan page kind (`journal_pages.kind = 'week_plan'`) is still unbuilt.
 
 ## Phase 5 — Later (cut from v3, keep out unless asked) 🔲
 - Body photo journal (tables + services still exist; UI removed; never exposed via MCP).

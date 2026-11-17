@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.1 · 2026-11-17 — Phase 4: the scrapbook journal page
+`app/(app)/journal/Scrapbook.tsx`, from `D05-Journal`. The day page is now something you make rather than fill in.
+- **Decorate page** turns the page into a canvas: six food stickers, mood stamps, washi tape, handwriting text and freehand doodles.
+- **Drag to move, corner handle to resize, top handle to rotate, × to delete.** Saves 500 ms after you stop, debounced *per element*, so moving one sticker never rewrites the rest of the page.
+- **Doodles are drawn freehand** on the page and stored as an SVG path in `data.path`, exactly as the plan specified.
+- Positions use the schema as designed — x and width as percentages of the page, y in pixels — so a page made on a laptop still reads on a phone.
+- **Photo** opens the AI camera at `/snap?mode=journal` rather than duplicating a picker; cropping and linking a photo to a meal from inside the editor are still to come, as are mood stickers feeding Progress habits and the week-plan page kind.
+- Verified end to end: two stickers placed in the browser arrived in `journal_elements` as `x=48.8% y=237px w=14% rot=-6 z=0`.
+
 ## v4.0 · 2026-11-17 — Phase 4: the digital fridge
 `/fridge` is no longer a list. `components/fridge/Fridge.tsx` ports `D06-Fridge` / `M05-Fridge`:
 - **Doors that open.** Handles swing the freezer and fridge on a CSS 3D `rotateY(-112deg)` (104° on phones, instant under `prefers-reduced-motion`), revealing shelves — freezer, dairy & eggs, proteins, crisper drawers, shelf — with the pantry cupboard beside the fridge.

@@ -9,6 +9,7 @@ import { ActionButton } from "@/components/ActionButton";
 import { confirmMealAction, deleteMealAction } from "../actions";
 import { ReviewForm } from "./ReviewForm";
 import { MealEditor } from "./MealEditor";
+import { Scrapbook } from "./Scrapbook";
 
 /**
  * Phase 1: day page with meals (photo, place, time, nutrition) + daily review.
@@ -45,6 +46,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
           }}
         >
           {j.page?.title && <p className="hand" style={{ fontSize: 28, color: "var(--ink)" }}>{j.page.title}</p>}
+          <Scrapbook date={date} initial={j.elements as never} photoUrls={urls} />
           {j.meals.length === 0 && <p className="hand">No meals yet. Snap one!</p>}
           {j.meals.map((m, i) => (
             <article

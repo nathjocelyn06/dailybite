@@ -415,3 +415,44 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 @media (prefers-reduced-motion: reduce) {
   .door { transition-duration: 1ms; }
 }
+
+/* ---------- Phase 4: the scrapbook journal page (D05-Journal) ---------- */
+.scrapbook { display: flex; flex-direction: column; gap: 8px; }
+.scrap-toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.scrap-sep { width: 1px; height: 24px; background: var(--line); }
+.scrap-select { width: auto; min-height: 36px; padding: 4px 8px; font-size: 13px; }
+.scrap-page {
+  position: relative; min-height: 420px; border-radius: 10px; touch-action: none;
+  border: 1px dashed transparent;
+}
+.scrap-page.is-editing { border-color: var(--grid); background: rgba(255, 255, 255, 0.35); }
+.scrap-empty { opacity: 0.6; padding: 16px; }
+.scrap-el {
+  position: absolute; transform-origin: center center; user-select: none; touch-action: none;
+  display: flex; align-items: center; justify-content: center; min-height: 28px;
+}
+.scrap-el.is-selected { outline: 2px solid var(--ink); outline-offset: 4px; }
+.scrap-sticker span { font-size: clamp(22px, 5vw, 40px); line-height: 1; }
+.scrap-text span, .scrap-text .scrap-input { font-family: var(--hand); font-size: 22px; color: var(--ink); }
+.scrap-mood span {
+  background: var(--accent-soft); border-radius: 999px; padding: 6px 12px; font-size: 13px; white-space: nowrap;
+}
+.scrap-tape { height: 26px; min-height: 26px; opacity: 0.8; border-radius: 2px; }
+.scrap-photo img { width: 100%; border: 6px solid #fff; box-shadow: 0 2px 6px rgba(35, 31, 28, 0.18); display: block; }
+.scrap-doodle { width: 100%; height: 120px; overflow: visible; }
+.scrap-live { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.scrap-input {
+  all: unset; box-sizing: border-box; width: 100%; text-align: center;
+  border-bottom: 1px dashed var(--grid); min-height: 28px;
+}
+.scrap-handle {
+  position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--ink);
+  background: #fff; cursor: pointer; padding: 0; font-size: 12px; line-height: 1;
+}
+.scrap-handle.resize { right: -11px; bottom: -11px; cursor: nwse-resize; }
+.scrap-handle.rotate { left: 50%; top: -28px; transform: translateX(-50%); cursor: grab; background: var(--accent); }
+.scrap-handle.del { right: -11px; top: -11px; }
+@media (max-width: 860px) {
+  .scrap-page { min-height: 360px; }
+  .scrap-handle { width: 28px; height: 28px; }
+}
