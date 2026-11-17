@@ -27,7 +27,13 @@ export async function GET(req: Request) {
 
   if (q) {
     const hits = await searchFoods(q);
-    return NextResponse.json({ hits, note: hits.length ? undefined : `Nothing found for "${q}".` });
+    if (hits === null) {
+      return NextResponse.json({
+        hits: [],
+        note: "The food database is busy right now — try again in a moment, or scan the barcode instead."
+      });
+    }
+    return NextResponse.json({ hits, note: hits.length ? undefined : `Nothing found for "${q}". Try fewer words, or scan the barcode.` });
   }
 
   return NextResponse.json({ hits: [], note: "Pass ?barcode= or ?q=" }, { status: 400 });

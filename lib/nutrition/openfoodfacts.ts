@@ -98,14 +98,20 @@ export async function lookupBarcode(code: string): Promise<FoodHit | null> {
   return toHit(data.product);
 }
 
-/** Free-text food search, best matches first. */
-export async function searchFoods(query: string, limit = 12): Promise<FoodHit[]> {
+/**
+ * Free-text food search, best matches first.
+ * Returns null when the database could not be reached — the caller can then say so
+ * instead of claiming the food does not exist. Their search endpoint 503s and rate
+ * limits often enough that the difference matters.
+ */
+export async function searchFoods(query: string, limit = 12): Promise<FoodHit[] | null> {
   const q = query.trim();
   if (q.length < 2) return [];
   const size = Math.min(limit * 2, 24);
   const legacy = `${SEARCH_LEGACY}?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=${size}&fields=${FIELDS}`;
   const v2 = `${SEARCH_V2}?search_terms=${encodeURIComponent(q)}&fields=${FIELDS}&page_size=${size}&sort_by=popularity_key`;
   const data = ((await get(legacy)) ?? (await get(v2))) as { products?: Product[] } | null;
+  if (!data) return null;
   const hits = (data?.products ?? []).map(toHit).filter((h): h is FoodHit => !!h);
 
   // Open Food Facts ranks by popularity, not relevance — a search for "greek yogurt"
