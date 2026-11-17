@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.2.1 · 2026-11-17 — Phase 3: source control
+- First commit and push: **github.com/nathjocelyn06/dailybite** (private). 120 files, no secrets — `.env.local` is covered by `.gitignore` and nothing tracked contains a key.
+- Recorded which environment variables the deployed app actually reads: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OWNER_USER_ID`, `MCP_ACCESS_KEY`, `DEFAULT_TIMEZONE`, `APP_URL`, plus the optional AI/YouTube/MealDB keys. `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `OWNER_EMAIL` have been dead since v3.1 and are now marked as such in `.env.example`.
+
 ## v3.2 · 2026-11-16 — Phase 2 polish
 **Calendar (Archive) grew week and day views** (`?view=month|week|day`, wireframe `D02-Calendar`). Week: seven columns, one box per meal slot — dashed while planned, meal-coloured once filled — with kcal and spend per day. Day: an hour timeline that places each meal by its `eaten_at` time, falling back to a sensible hour for its slot when it was never timed. Prev/next step by whichever view you are in. New `weekOverview` in `lib/services/calendar.ts`.
 
