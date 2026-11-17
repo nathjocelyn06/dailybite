@@ -89,7 +89,7 @@ export async function POST(req: Request) {
   if (!provider) {
     return NextResponse.json({
       ...empty,
-      note: "No AI vision key is set on the server, so nothing was analysed. Fill the meal in by hand."
+      note: "No vision model is connected, so the photo was not analysed here. Fill it in below, or let Claude read the photo for you (see the tip)."
     });
   }
   if (!body.path) return NextResponse.json({ ...empty, note: "No photo was uploaded. Fill the meal in by hand." });

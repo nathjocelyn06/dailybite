@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.6 · 2026-11-17 — Correcting AI estimates, and the no-key route
+**Meals can finally be edited.** A meal could be confirmed or deleted but never corrected, which made an AI estimate all-or-nothing. New `app/(app)/journal/MealEditor.tsx`: meal name, slot, and per-item food / portion / grams / kcal / protein / carbs / fat, add and remove items, totals recomputing as you type, then **Save & mark eaten** or **Save changes**. Opens at `/journal?meal=<id>&edit=1`; Home's **Edit** on "Check these AI estimates" now goes straight there. Totals are recomputed server-side by `updateMeal`, so the saved numbers always match the items.
+- Meals estimated by AI now carry an **AI estimate** chip in the journal.
+- **No vision key, no dead end.** With no provider configured, `/snap` now explains the route that needs no API key: send the photo in the Claude app and say "log this meal in DailyBite" — Claude reads it and writes it through the MCP connector as `pending_confirm`, and it appears on Home for you to correct and confirm. The vision provider layer stays in place, so dropping in a key later turns the in-app analysis on with no other changes.
+
 ## v3.5 · 2026-11-17 — Real AI food recognition on the camera
 - **Swappable vision provider** (`lib/vision/`): `VisionProvider` contract, an Anthropic implementation, and `getVisionProvider()` chosen by `VISION_PROVIDER` (default `anthropic`). `/api/scan` no longer knows who answers; changing provider is one new file. The key stays server-side, as before.
 - **Per-item recognition.** The calorie prompt now asks for every distinct food separately with portion text, **grams**, kcal, protein, carbs, fat, visible **ingredients**, an `unsure` flag, and which **meal slot** the photo looks like. Model output is validated field by field (`cleanRow`) — a model returning a string where a number belongs can no longer poison the form.

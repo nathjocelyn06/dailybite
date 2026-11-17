@@ -94,7 +94,7 @@ export default async function HomePage() {
           {s.pending_confirm.map((m) => (
             <div className="row" key={m.id}>
               <span style={{ flex: 1 }}>{m.slot}: <strong>{m.name}</strong> · {m.kcal ?? "?"} kcal</span>
-              <Link className="btn sm" href={`/journal?meal=${m.id}`}>Edit</Link>
+              <Link className="btn sm" href={`/journal?date=${m.date}&meal=${m.id}&edit=1`}>Edit</Link>
               <ActionButton action={confirmMealAction} args={[m.id]} className="btn sm pri">Confirm</ActionButton>
             </div>
           ))}

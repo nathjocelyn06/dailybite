@@ -28,11 +28,28 @@ export function anthropicVision(apiKey: string): VisionProvider {
         })
       });
       if (!res.ok) {
-        const detail = await res.text().catch(() => "");
-        throw new Error(`Anthropic API ${res.status}${detail ? `: ${detail.slice(0, 160)}` : ""}`);
+        throw new Error(await explain(res));
       }
       const data = (await res.json()) as { content?: { type: string; text?: string }[] };
       return data.content?.find((c) => c.type === "text")?.text ?? "";
     }
   };
+}
+
+/** Turn an API failure into something a person can act on, not a status code. */
+async function explain(res: Response): Promise<string> {
+  const body = await res.text().catch(() => "");
+  let message = "";
+  try {
+    message = (JSON.parse(body) as { error?: { message?: string } }).error?.message ?? "";
+  } catch {
+    message = body.slice(0, 160);
+  }
+  if (/credit balance is too low/i.test(message)) {
+    return "the Anthropic account is out of credits — add credits under Plans & Billing and try again";
+  }
+  if (res.status === 401 || /authentication/i.test(message)) return "the Anthropic API key was rejected";
+  if (res.status === 429) return "Anthropic is rate-limiting this key — wait a moment and try again";
+  if (res.status === 529 || res.status >= 500) return "Anthropic is unavailable right now — try again shortly";
+  return message || `Anthropic API ${res.status}`;
 }
