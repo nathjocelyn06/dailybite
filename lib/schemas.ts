@@ -16,6 +16,8 @@ export const ElementKind = z.enum(["photo", "sticker", "tape", "text", "doodle",
 export const MealItem = z.object({
   name: z.string().min(1),
   portion: z.string().optional().describe("e.g. '1 bowl', 'small', '150 g'"),
+  grams: z.number().nonnegative().optional().describe("Estimated weight of this item in grams"),
+  ingredients: z.array(z.string()).optional().describe("Visible ingredients, when identifiable"),
   kcal: z.number().nonnegative().optional(),
   protein_g: z.number().nonnegative().optional(),
   carbs_g: z.number().nonnegative().optional(),

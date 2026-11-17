@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.5 · 2026-11-17 — Real AI food recognition on the camera
+- **Swappable vision provider** (`lib/vision/`): `VisionProvider` contract, an Anthropic implementation, and `getVisionProvider()` chosen by `VISION_PROVIDER` (default `anthropic`). `/api/scan` no longer knows who answers; changing provider is one new file. The key stays server-side, as before.
+- **Per-item recognition.** The calorie prompt now asks for every distinct food separately with portion text, **grams**, kcal, protein, carbs, fat, visible **ingredients**, an `unsure` flag, and which **meal slot** the photo looks like. Model output is validated field by field (`cleanRow`) — a model returning a string where a number belongs can no longer poison the form.
+- **A real editing step.** Each item is now a card with its own kcal / protein / carbs / fat inputs plus portion and grams; ingredients are listed; items can be added or removed; **meal totals recompute on every keystroke** across all four macros, not just calories.
+- **Retry without re-uploading**: "Analyse the photo again" re-runs the scan on the photo already in storage.
+- Honest copy: figures are labelled estimates from the photo, the save button reads "Save to my journal", and nothing is written until it is pressed.
+- `MealItem` in `lib/schemas.ts` gained `grams` and `ingredients`, so what the AI estimated is kept on the saved meal and is visible to MCP tools too.
+
 ## v3.4 · 2026-11-17 — The AI camera opens a real camera
 - **`/snap` now opens the device camera** (laptop webcam, iPad, phone) instead of only a file picker: live preview, a shutter button, and a Flip control when the device has more than one camera. New `app/(app)/snap/CameraCapture.tsx`.
 - The still is drawn to a canvas at the camera's own resolution and uploaded as JPEG (quality 0.9) through the existing `uploadScanPhotoAction`, so nothing else in the scan flow changed.

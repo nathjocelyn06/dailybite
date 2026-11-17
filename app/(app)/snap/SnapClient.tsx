@@ -51,10 +51,31 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
       return;
     }
     setPath(stored);
-    const res = await fetch("/api/scan", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ path: stored, mode }) });
-    const d = (await res.json()) as ScanDraft;
-    setDraft({ ...d, rows: d.rows.length ? d.rows : [{ name: "" }] });
-    setStep("review");
+    await analyse(stored);
+  }
+
+  /** Runs the AI over an already-uploaded photo. Separate so "Analyse again" costs no second upload. */
+  async function analyse(storedPath: string) {
+    setStep("analysing");
+    try {
+      const res = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: storedPath, mode })
+      });
+      const d = (await res.json()) as ScanDraft & { error?: string };
+      if (d.error) {
+        setErr(d.error);
+        setStep("choose");
+        return;
+      }
+      if (d.slot) setSlot(d.slot);
+      setDraft({ ...d, rows: d.rows.length ? d.rows : [{ name: "" }] });
+      setStep("review");
+    } catch {
+      setErr("Could not reach the server. Check your connection and try again.");
+      setStep("choose");
+    }
   }
 
   function manual() {
@@ -83,7 +104,17 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
     });
   }
 
-  const totalKcal = draft?.rows.reduce((a, r) => a + (r.kcal ?? 0), 0) ?? 0;
+  // Recomputed on every keystroke, so editing a portion updates the meal total.
+  const round1 = (v: number) => Math.round(v * 10) / 10;
+  const totals = (draft?.rows ?? []).reduce(
+    (a, r) => ({
+      kcal: a.kcal + (r.kcal ?? 0),
+      protein_g: round1(a.protein_g + (r.protein_g ?? 0)),
+      carbs_g: round1(a.carbs_g + (r.carbs_g ?? 0)),
+      fat_g: round1(a.fat_g + (r.fat_g ?? 0))
+    }),
+    { kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0 }
+  );
 
   return (
     <>
@@ -127,7 +158,7 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
       {step === "analysing" && (
         <section className="card" style={{ display: "flex", gap: 16, alignItems: "center" }}>
           {preview && <img src={preview} alt="Your photo" style={{ width: 160, borderRadius: 12 }} />}
-          <p>Analysing your photo…</p>
+          <p>Analysing your meal…</p>
           {err && <p style={{ color: "#a32d2d", fontSize: 13 }}>{err}</p>}
         </section>
       )}
@@ -164,13 +195,9 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
               </div>
             )}
 
-            {mode !== "journal" && draft.rows.map((r, i) => (
+            {mode !== "journal" && mode !== "calorie" && draft.rows.map((r, i) => (
               <div key={i} className="row" style={{ flexWrap: "wrap" }}>
                 <input className="input" style={{ flex: "2 1 140px" }} placeholder="Item" value={r.name} onChange={(e) => setRow(i, { name: e.target.value })} aria-label="Item name" />
-                {mode === "calorie" && <>
-                  <input className="input" style={{ flex: "1 1 80px" }} placeholder="Portion" value={r.portion ?? ""} onChange={(e) => setRow(i, { portion: e.target.value })} aria-label="Portion" />
-                  <input className="input" style={{ width: 80 }} placeholder="kcal" inputMode="numeric" value={r.kcal ?? ""} onChange={(e) => setRow(i, { kcal: n(e.target.value) })} aria-label="Calories" />
-                </>}
                 {(mode === "receipt" || mode === "ingredient" || mode === "grocery") && <>
                   <input className="input" style={{ width: 64 }} placeholder="Qty" inputMode="decimal" value={r.qty ?? ""} onChange={(e) => setRow(i, { qty: n(e.target.value) })} aria-label="Quantity" />
                   <select className="input" value={r.fridge_category ?? ""} onChange={(e) => setRow(i, { fridge_category: (e.target.value || undefined) as ScanRow["fridge_category"] })} aria-label="Shelf">
@@ -184,11 +211,44 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
                 <button className="btn sm" onClick={() => setDraft({ ...draft, rows: draft.rows.filter((_, j) => j !== i) })} aria-label="Remove row">×</button>
               </div>
             ))}
+            {mode === "calorie" && draft.rows.map((r, i) => (
+              <div key={i} className="item-card">
+                <div className="item-head">
+                  <input className="input" style={{ flex: "2 1 160px" }} placeholder="Food" value={r.name} onChange={(e) => setRow(i, { name: e.target.value })} aria-label={`Food ${i + 1}`} />
+                  <input className="input" style={{ flex: "1 1 110px" }} placeholder="Portion" value={r.portion ?? ""} onChange={(e) => setRow(i, { portion: e.target.value })} aria-label={`Portion of ${r.name || "item " + (i + 1)}`} />
+                  <input className="input" style={{ width: 86 }} placeholder="grams" inputMode="numeric" value={r.grams ?? ""} onChange={(e) => setRow(i, { grams: n(e.target.value) })} aria-label={`Grams of ${r.name || "item " + (i + 1)}`} />
+                  {r.unsure && <span className="chip warn">unsure</span>}
+                  <button className="btn sm" onClick={() => setDraft({ ...draft, rows: draft.rows.filter((_, j) => j !== i) })} aria-label={`Remove ${r.name || "item " + (i + 1)}`}>×</button>
+                </div>
+                <div className="item-macros">
+                  <label className="field"><span className="lbl">kcal</span><input className="input" inputMode="numeric" value={r.kcal ?? ""} onChange={(e) => setRow(i, { kcal: n(e.target.value) })} /></label>
+                  <label className="field"><span className="lbl">protein g</span><input className="input" inputMode="decimal" value={r.protein_g ?? ""} onChange={(e) => setRow(i, { protein_g: n(e.target.value) })} /></label>
+                  <label className="field"><span className="lbl">carbs g</span><input className="input" inputMode="decimal" value={r.carbs_g ?? ""} onChange={(e) => setRow(i, { carbs_g: n(e.target.value) })} /></label>
+                  <label className="field"><span className="lbl">fat g</span><input className="input" inputMode="decimal" value={r.fat_g ?? ""} onChange={(e) => setRow(i, { fat_g: n(e.target.value) })} /></label>
+                </div>
+                {r.ingredients?.length ? <p className="muted" style={{ fontSize: 12 }}>Ingredients: {r.ingredients.join(", ")}</p> : null}
+              </div>
+            ))}
             {mode !== "journal" && <button className="btn sm" style={{ alignSelf: "flex-start" }} onClick={() => setDraft({ ...draft, rows: [...draft.rows, { name: "" }] })}>+ Add something it missed</button>}
-            {mode === "calorie" && <p style={{ fontWeight: 700 }}>Total ≈ {totalKcal} kcal</p>}
-            <p className="muted">Photo estimates can be off. Nothing is saved until you confirm.</p>
+            {mode === "calorie" && (
+              <div className="totals" aria-live="polite">
+                <strong>Total ≈ {totals.kcal} kcal</strong>
+                <span>protein {totals.protein_g} g</span>
+                <span>carbs {totals.carbs_g} g</span>
+                <span>fat {totals.fat_g} g</span>
+              </div>
+            )}
+            <p className="muted">
+              All nutrition figures are estimates from the photo, not measurements — correct anything that looks wrong.
+              Nothing is saved until you press Save.
+            </p>
+            {path && (
+              <button className="btn sm" style={{ alignSelf: "flex-start" }} onClick={() => void analyse(path)} disabled={pending}>
+                Analyse the photo again
+              </button>
+            )}
             {err && <p style={{ color: "#a32d2d", fontSize: 13 }}>{err}</p>}
-            <button className="btn pri" onClick={confirm} disabled={pending}>{pending ? "Saving…" : "Confirm & save"}</button>
+            <button className="btn pri" onClick={confirm} disabled={pending}>{pending ? "Saving…" : "Save to my journal"}</button>
           </section>
         </div>
       )}

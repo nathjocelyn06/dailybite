@@ -305,3 +305,22 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .shutter span { width: 46px; height: 46px; border-radius: 50%; background: var(--ink); display: block; }
 .shutter:disabled { opacity: 0.45; cursor: not-allowed; }
 .shutter:active:not(:disabled) span { transform: scale(0.9); }
+
+
+/* ---------- AI camera: per-item nutrition editor ---------- */
+.item-card {
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: #fff;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.item-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.item-macros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.item-macros .field { gap: 2px; }
+.item-macros .input { padding: 6px 8px; }
+.totals {
+  display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline;
+  background: var(--hero); border-radius: 12px; padding: 10px 12px; font-size: 13px;
+}
+.totals strong { font-size: 15px; }
+@media (max-width: 520px) {
+  .item-macros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -221,7 +221,8 @@ export async function confirmScanAction(input: {
   total?: number;
   category?: string;
   rows: {
-    name: string; portion?: string; qty?: number; unit?: string; kcal?: number; protein_g?: number; carbs_g?: number; fat_g?: number;
+    name: string; portion?: string; grams?: number; ingredients?: string[];
+    qty?: number; unit?: string; kcal?: number; protein_g?: number; carbs_g?: number; fat_g?: number;
     price?: number; fridge_category?: string; expires_in_days?: number;
   }[];
 }): Promise<{ redirect: string }> {
@@ -234,7 +235,16 @@ export async function confirmScanAction(input: {
         date: input.date || undefined,
         slot: input.slot ?? "lunch",
         name: input.title?.trim() || rows.map((r) => r.name).join(", ") || "Meal",
-        items: rows.map((r) => ({ name: r.name, portion: r.portion, kcal: num(r.kcal), protein_g: num(r.protein_g), carbs_g: num(r.carbs_g), fat_g: num(r.fat_g) })),
+        items: rows.map((r) => ({
+          name: r.name,
+          portion: r.portion,
+          grams: num(r.grams),
+          ingredients: r.ingredients?.length ? r.ingredients : undefined,
+          kcal: num(r.kcal),
+          protein_g: num(r.protein_g),
+          carbs_g: num(r.carbs_g),
+          fat_g: num(r.fat_g)
+        })),
         status: "eaten",
         photo_path: input.photo_path,
         estimate_source: "ai"

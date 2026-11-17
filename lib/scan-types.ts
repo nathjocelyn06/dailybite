@@ -3,6 +3,8 @@ export type ScanMode = "calorie" | "receipt" | "ingredient" | "recipe_finder" | 
 export type ScanRow = {
   name: string;
   portion?: string;
+  grams?: number;
+  ingredients?: string[];
   qty?: number;
   unit?: string;
   kcal?: number;
@@ -18,6 +20,8 @@ export type ScanRow = {
 export type ScanDraft = {
   mode: ScanMode;
   title?: string;
+  /** Which meal the photo looks like; the user can override it. */
+  slot?: "breakfast" | "lunch" | "dinner" | "snack";
   merchant?: string;
   date?: string;
   total?: number;
