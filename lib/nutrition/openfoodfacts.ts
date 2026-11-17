@@ -10,7 +10,10 @@ import "server-only";
  */
 const UA = "DailyBite/1.0 (personal food journal)";
 const PRODUCT = "https://world.openfoodfacts.org/api/v2/product";
-const SEARCH = "https://world.openfoodfacts.org/api/v2/search";
+// The long-standing search endpoint. v2 /api/v2/search exists but has been returning
+// 503s, and its popularity ordering is worse, so v2 is only a fallback.
+const SEARCH_LEGACY = "https://world.openfoodfacts.org/cgi/search.pl";
+const SEARCH_V2 = "https://world.openfoodfacts.org/api/v2/search";
 const FIELDS = "code,product_name,brands,quantity,serving_size,serving_quantity,nutriments,image_front_small_url";
 const TIMEOUT_MS = 10_000;
 
@@ -99,8 +102,10 @@ export async function lookupBarcode(code: string): Promise<FoodHit | null> {
 export async function searchFoods(query: string, limit = 12): Promise<FoodHit[]> {
   const q = query.trim();
   if (q.length < 2) return [];
-  const url = `${SEARCH}?search_terms=${encodeURIComponent(q)}&fields=${FIELDS}&page_size=${Math.min(limit * 2, 24)}&sort_by=popularity_key`;
-  const data = (await get(url)) as { products?: Product[] } | null;
+  const size = Math.min(limit * 2, 24);
+  const legacy = `${SEARCH_LEGACY}?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=${size}&fields=${FIELDS}`;
+  const v2 = `${SEARCH_V2}?search_terms=${encodeURIComponent(q)}&fields=${FIELDS}&page_size=${size}&sort_by=popularity_key`;
+  const data = ((await get(legacy)) ?? (await get(v2))) as { products?: Product[] } | null;
   const hits = (data?.products ?? []).map(toHit).filter((h): h is FoodHit => !!h);
 
   // Open Food Facts ranks by popularity, not relevance — a search for "greek yogurt"
@@ -113,12 +118,13 @@ export async function searchFoods(query: string, limit = 12): Promise<FoodHit[]>
     const hit = words.filter((w) => name.includes(w)).length;
     return hit === words.length ? 3 : hit > 0 ? 2 : 0;
   };
-  return hits
+  const ranked = hits
     .map((h) => ({ h, s: score(h) }))
     .filter((x) => x.s > 0)
     .sort((a, b) => b.s - a.s)
-    .map((x) => x.h)
-    .slice(0, limit);
+    .map((x) => x.h);
+  // If the ranking threw everything away, the raw list still beats an empty screen.
+  return (ranked.length ? ranked : hits).slice(0, limit);
 }
 
 /** Scale a hit to a weight in grams — what the serving picker shows. */

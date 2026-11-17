@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.10.1 · 2026-11-17 — Food search uses the endpoint that works
+- Open Food Facts `/api/v2/search` was returning 503 HTML while the long-standing `cgi/search.pl` answered fine and ranked better ("nutella" → Nutella, not bottled water). Search now calls the legacy endpoint first and falls back to v2.
+- The relevance filter no longer empties the list: if scoring discards everything, the raw results are shown instead.
+
 ## v3.10 · 2026-11-17 — Barcode scanning and food search (the MyFitnessPal part)
 Photo analysis only covers cooked meals. The everyday case — a packaged food with a barcode — now works like MyFitnessPal, and **needs no API key at all**.
 - **Open Food Facts** (`lib/nutrition/openfoodfacts.ts`, free and open, no account): barcode lookup and free-text search, with kJ→kcal conversion for entries that only carry kilojoules, and products with no calorie data dropped rather than shown as blanks.
