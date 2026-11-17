@@ -15,6 +15,8 @@ export type ScanRow = {
   fridge_category?: "veg_fruit" | "protein" | "dairy_eggs" | "frozen" | "pantry" | "other";
   expires_in_days?: number;
   unsure?: boolean;
+  /** Where the nutrition numbers came from: a food database, or the model estimating. */
+  source?: "db" | "ai";
 };
 
 export type ScanDraft = {

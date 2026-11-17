@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { webDb } from "@/lib/services/db";
 import { downloadPhoto } from "@/lib/services/photos";
 import { getVisionProvider, extractJson } from "@/lib/vision";
+import { lookupNutrition, nutritionixConfigured } from "@/lib/nutrition/nutritionix";
 import type { ScanDraft, ScanMode, ScanRow } from "@/lib/scan-types";
 
 export const runtime = "nodejs";
@@ -106,7 +107,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ ...empty, note: `${provider.name} replied in a format we couldn't read. Try again, or fill it in by hand.` });
     }
 
-    const rows = (Array.isArray(json.rows) ? json.rows : []).map(cleanRow).filter((r): r is ScanRow => !!r);
+    let rows = (Array.isArray(json.rows) ? json.rows : []).map(cleanRow).filter((r): r is ScanRow => !!r);
+
+    // The model names the food and judges the portion; a nutrition database knows the
+    // numbers. Where a lookup succeeds its values win; where it fails we keep the model
+    // estimate, so a database outage never costs us a scan.
+    if (mode === "calorie" && rows.length && nutritionixConfigured()) {
+      const found = await lookupNutrition(rows.map((x) => ({ name: x.name, portion: x.portion, grams: x.grams })));
+      rows = rows.map((row, i) => {
+        const hit = found.find((f) => f.index === i);
+        if (!hit || hit.kcal === undefined) return { ...row, source: "ai" as const };
+        return {
+          ...row,
+          grams: hit.grams ?? row.grams,
+          kcal: hit.kcal,
+          protein_g: hit.protein_g ?? row.protein_g,
+          carbs_g: hit.carbs_g ?? row.carbs_g,
+          fat_g: hit.fat_g ?? row.fat_g,
+          source: "db" as const
+        };
+      });
+    }
     const slot = SLOTS.includes(json.slot as never) ? (json.slot as ScanDraft["slot"]) : undefined;
 
     return NextResponse.json({

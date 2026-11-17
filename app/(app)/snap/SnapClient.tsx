@@ -217,6 +217,7 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
                   <input className="input" style={{ flex: "2 1 160px" }} placeholder="Food" value={r.name} onChange={(e) => setRow(i, { name: e.target.value })} aria-label={`Food ${i + 1}`} />
                   <input className="input" style={{ flex: "1 1 110px" }} placeholder="Portion" value={r.portion ?? ""} onChange={(e) => setRow(i, { portion: e.target.value })} aria-label={`Portion of ${r.name || "item " + (i + 1)}`} />
                   <input className="input" style={{ width: 86 }} placeholder="grams" inputMode="numeric" value={r.grams ?? ""} onChange={(e) => setRow(i, { grams: n(e.target.value) })} aria-label={`Grams of ${r.name || "item " + (i + 1)}`} />
+                  {r.source === "db" && <span className="chip">from food database</span>}
                   {r.unsure && <span className="chip warn">unsure</span>}
                   <button className="btn sm" onClick={() => setDraft({ ...draft, rows: draft.rows.filter((_, j) => j !== i) })} aria-label={`Remove ${r.name || "item " + (i + 1)}`}>×</button>
                 </div>

@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.9 · 2026-11-17 — Nutrition from a database, not the model memory
+Borrowed the one good idea from `sunilpowar5/LangGraph-MCP-Nutrition-Analyzer` (a Streamlit demo, no licence, nothing to port): split identification from nutrition.
+- New `lib/nutrition/nutritionix.ts`. The vision model names the food and judges the portion; **Nutritionix supplies the calories and macros**. Where a lookup succeeds its numbers win; where it fails the model estimate is kept, so a lookup outage never costs a scan. Returns `[]` and degrades silently when the keys are absent.
+- Rows now carry `source: "db" | "ai"`, and the review form marks looked-up items **from food database** so an estimate is never mistaken for a measurement.
+- 12 s timeout on the lookup, inside the existing serverless budget.
+- Needs `NUTRITIONIX_APP_ID` / `NUTRITIONIX_API_KEY` (free tier). Without them nothing changes.
+
 ## v3.8.1 · 2026-11-17 — Scans fail fast instead of timing out
 - A Gemini outage used to hang the request until Vercel killed the function at 60 s and returned an opaque 504. Each attempt now aborts after 22 s, with **one retry** on 429/5xx, so the worst case still fits inside the serverless limit and the user gets a sentence instead of a gateway error.
 - **Thinking disabled** (`thinkingBudget: 0`): reading a plate is perception, not reasoning, and thinking tokens only spent latency we do not have in a single serverless call.
