@@ -14,6 +14,7 @@ const SYSTEM =
   "Never comment on the person's body, weight or health.";
 
 const PROMPTS: Record<ScanMode, string> = {
+  barcode: "Not used: barcode lookups go to /api/food, not to a vision model.",
   calorie:
     'Identify every distinct food and drink in this meal photo and estimate the nutrition of each one separately. ' +
     'Judge portion size from the photo (plate, bowl, cutlery and hands are useful scale references). ' +

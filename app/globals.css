@@ -325,3 +325,16 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   .item-macros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+
+
+/* ---------- packaged-food lookup (barcode + search) ---------- */
+.food-hit {
+  all: unset; box-sizing: border-box; cursor: pointer; display: flex; gap: 10px; align-items: center;
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: #fff; min-height: 44px;
+}
+.food-hit:hover { border-color: var(--ink); }
+.seg-links button {
+  all: unset; box-sizing: border-box; cursor: pointer; min-height: 38px; padding: 0 16px; border-radius: 9px;
+  display: flex; align-items: center; font-size: 13px; font-weight: 600; color: var(--ink-2);
+}
+.seg-links button.on { background: #fff; color: var(--ink); }

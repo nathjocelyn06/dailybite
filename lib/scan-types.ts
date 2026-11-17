@@ -1,4 +1,4 @@
-export type ScanMode = "calorie" | "receipt" | "ingredient" | "recipe_finder" | "journal" | "grocery";
+export type ScanMode = "calorie" | "barcode" | "receipt" | "ingredient" | "recipe_finder" | "journal" | "grocery";
 
 export type ScanRow = {
   name: string;

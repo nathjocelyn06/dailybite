@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.10 · 2026-11-17 — Barcode scanning and food search (the MyFitnessPal part)
+Photo analysis only covers cooked meals. The everyday case — a packaged food with a barcode — now works like MyFitnessPal, and **needs no API key at all**.
+- **Open Food Facts** (`lib/nutrition/openfoodfacts.ts`, free and open, no account): barcode lookup and free-text search, with kJ→kcal conversion for entries that only carry kilojoules, and products with no calorie data dropped rather than shown as blanks.
+- **Relevance ranking of our own.** Their search sorts by popularity, so "greek yogurt" returns bottled water; results are now scored by how much of the query appears in the product name and unmatched entries are discarded.
+- **`/api/food`**: `?barcode=` or `?q=`. Read-only, sends nothing about the user beyond the search text, and identifies the app generically in the User-Agent.
+- **New "Barcode & search" mode in `/snap`**: live barcode scanning through `BarcodeDetector`, with typing the digits as the fallback everywhere it is missing (Safari has no support). Then a serving picker — the pack serving, 100 g, or grams you type, times a quantity — that recalculates kcal and macros live.
+- Picks collect into a basket, then **Review & save** drops them into the same editable meal form as a photo scan, marked **from food database**.
+- Every failure degrades to something usable: no barcode match, rate limiting, no camera.
+
 ## v3.9 · 2026-11-17 — Nutrition from a database, not the model memory
 Borrowed the one good idea from `sunilpowar5/LangGraph-MCP-Nutrition-Analyzer` (a Streamlit demo, no licence, nothing to port): split identification from nutrition.
 - New `lib/nutrition/nutritionix.ts`. The vision model names the food and judges the portion; **Nutritionix supplies the calories and macros**. Where a lookup succeeds its numbers win; where it fails the model estimate is kept, so a lookup outage never costs a scan. Returns `[]` and degrades silently when the keys are absent.

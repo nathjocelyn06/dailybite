@@ -5,9 +5,11 @@ import { useRef, useState, useTransition } from "react";
 import type { ScanDraft, ScanMode, ScanRow } from "@/lib/scan-types";
 import { confirmScanAction, uploadScanPhotoAction } from "../actions";
 import { CameraCapture } from "./CameraCapture";
+import { FoodLookup } from "./FoodLookup";
 
 const MODES: { k: ScanMode; label: string; desc: string }[] = [
   { k: "calorie", label: "Calorie scan", desc: "Identify food and estimate nutrition" },
+  { k: "barcode", label: "Barcode & search", desc: "Look up a packaged food and pick a serving" },
   { k: "receipt", label: "Receipt scan", desc: "Extract purchase details and expenses" },
   { k: "ingredient", label: "Ingredient scan", desc: "Identify groceries and update the fridge" },
   { k: "recipe_finder", label: "AI recipe finder", desc: "Recipes from the ingredients in the photo" },
@@ -25,6 +27,8 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
   const [slot, setSlot] = useState(initialSlot ?? guessSlot());
   const [step, setStep] = useState<"choose" | "analysing" | "review">("choose");
   const [camOpen, setCamOpen] = useState(false);
+  // Foods picked from the barcode/search panel, before they become a meal draft.
+  const [picked, setPicked] = useState<ScanRow[]>([]);
   const [err, setErr] = useState("");
   const [pending, start] = useTransition();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -94,7 +98,9 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
     start(async () => {
       try {
         const r = await confirmScanAction({
-          mode, photo_path: path, date, slot, title: draft.title, merchant: draft.merchant, total: draft.total, category: draft.category,
+          // Barcode picks are a meal like any other; the lookup is just how they were entered.
+          mode: mode === "barcode" ? "calorie" : mode,
+          photo_path: path, date, slot, title: draft.title, merchant: draft.merchant, total: draft.total, category: draft.category,
           rows: rows.map((x) => ({ ...x, fridge_category: x.fridge_category ?? undefined }))
         });
         router.push(r.redirect);
@@ -135,6 +141,33 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
               </button>
             ))}
           </section>
+          {mode === "barcode" ? (
+            <div className="side-col" style={{ gap: 10 }}>
+              <FoodLookup onAdd={(row) => setPicked((p) => [...p, row])} />
+              {picked.length > 0 && (
+                <section className="card" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <span className="lbl">{picked.length} added to this meal</span>
+                  {picked.map((p, i) => (
+                    <div className="row" key={i}>
+                      <span style={{ flex: 1 }}>{p.name} <span className="muted">· {p.portion}</span></span>
+                      <strong>{p.kcal} kcal</strong>
+                      <button className="btn sm" onClick={() => setPicked(picked.filter((_, j) => j !== i))} aria-label={`Remove ${p.name}`}>×</button>
+                    </div>
+                  ))}
+                  <button
+                    className="btn pri"
+                    onClick={() => {
+                      setDraft({ mode: "calorie", rows: picked, ai: false });
+                      setMode("calorie");
+                      setStep("review");
+                    }}
+                  >
+                    Review &amp; save
+                  </button>
+                </section>
+              )}
+            </div>
+          ) : (
           <section className="card side-col" style={{ gap: 10 }}>
             {camOpen ? (
               <CameraCapture
@@ -152,6 +185,7 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
             )}
             {err && <p style={{ color: "#a32d2d", fontSize: 13 }}>{err}</p>}
           </section>
+          )}
         </div>
       )}
 
