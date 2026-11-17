@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite recipes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Caveat:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ic{width:16px;height:16px;flex:none;border:1.5px solid currentColor;border-radius:5px;box-sizing:border-box}
+.nv{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;font-size:14px;color:#4A4542;text-decoration:none}
+.nv:hover{background:#E6E6E3;color:#231F1C}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.bdg{margin-left:auto;min-width:20px;height:20px;border-radius:10px;background:#231F1C;color:#FFFFFF;font-size:11px;display:flex;align-items:center;justify-content:center}
+.card{background:#FFFFFF;border:1px solid #D6D6D3;border-radius:16px;box-sizing:border-box}
+a.card{text-decoration:none;color:#231F1C}a.card:hover{border-color:#A6A39F}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;border:1px solid #C9C9C6;background:#FFFFFF;color:#231F1C;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.btn.pri{background:#F9D312;border-color:#E0BC00}
+.chip{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid #C9C9C6;font:inherit;font-size:12px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.hand{font-family:'Caveat',cursive;font-size:21px;color:#4A4542}
+.fab{pointer-events:auto;display:flex;align-items:center;gap:10px;min-height:56px;padding:0 20px 0 8px;border-radius:999px;background:#231F1C;color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.fab:hover{color:#FFFFFF;background:#000}
+.fab .dot{width:40px;height:40px;border-radius:50%;background:#F9D312;display:flex;align-items:center;justify-content:center}
+.fab .dot span{width:16px;height:16px;border:2px solid #231F1C;border-radius:50%;box-sizing:border-box}
+.sel{min-height:40px;border:1px solid #C9C9C6;border-radius:10px;padding:0 10px;font:inherit;font-size:13px;background:#FFFFFF;color:#231F1C}
+.flab{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:600;color:#66615D}
+.nv{position:relative}
+.nv .ni{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;color:#66615D}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.nv.on .ni{color:#0F5C85}
+.nv.sm{min-height:40px;font-size:13px}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:#66615D}
+.crumb a{color:#4A4542;text-underline-offset:3px;min-height:28px;display:inline-flex;align-items:center}
+@media (min-width:761px) and (max-width:1100px){
+nav.side{flex:0 0 96px !important;max-width:96px !important;padding:20px 8px !important}
+nav.side .bt,nav.side .acct .lbl,nav.side .pf .nt{display:none}
+nav.side .brand{justify-content:center;padding:0 !important}
+nav.side .pf{justify-content:center;padding:8px 0 !important}
+nav.side .nv{flex-direction:column;gap:4px;font-size:11px;text-align:center;padding:8px 4px;min-height:62px;justify-content:center}
+nav.side .nv .bdg{position:absolute;top:6px;right:14px;margin:0}
+}
+@media (max-width:760px){
+nav.side{position:fixed !important;left:0;right:0;bottom:0;z-index:30;flex:none !important;max-width:none !important;width:100%;flex-direction:row !important;padding:6px 8px calc(8px + env(safe-area-inset-bottom)) !important;border-right:0 !important;border-top:1px solid #D6D6D3;gap:0 !important}
+nav.side .brand,nav.side .acct{display:none !important}
+nav.side .nvg{flex:1;display:grid !important;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px !important}
+nav.side .nv{flex-direction:column;gap:3px;font-size:11px;min-height:56px;padding:4px;justify-content:center;text-align:center}
+main{padding-bottom:110px !important}
+main > div[style*="sticky"]{bottom:92px !important}
+}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #231F1C; background: #EDEDEB; min-height: 1100px; display: flex; flex-wrap: wrap; align-items: stretch">
+
+<nav aria-label="Main" class="side" style="flex: 1 0 232px; max-width: 248px; box-sizing: border-box; background: #F6F6F4; border-right: 1px solid #D6D6D3; padding: 24px 14px; display: flex; flex-direction: column; gap: 18px">
+<a href="D01-Dashboard.dc.html" class="brand" aria-label="DailyBite home" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; text-decoration: none; color: #231F1C"><span style="width: 32px; height: 32px; border-radius: 9px; background: #F9D312; display: flex; align-items: center; justify-content: center; flex: none"><span style="width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #231F1C; box-sizing: border-box"></span></span><span class="bt" style="font-size: 18px; font-weight: 700">DailyBite</span></a>
+<div class="nvg" style="display: flex; flex-direction: column; gap: 4px">
+<a href="D01-Dashboard.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span><span class="nt">Home</span></a>
+<a href="D00-Kitchen.dc.html" class="nv on" aria-current="page"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M2 11h20"></path><path d="M9 7.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5"></path></svg></span><span class="nt">My Kitchen</span></a>
+<a href="D05-Journal.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span class="nt">Journal</span></a>
+<a href="D09-Archive.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span><span class="nt">Archive</span></a>
+</div>
+<div class="acct" style="margin-top: auto; border-top: 1px solid #D6D6D3; padding-top: 14px; display: flex; flex-direction: column; gap: 2px">
+<a href="D11-Notifications.dc.html" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span><span class="nt">Notifications</span><span class="bdg">4</span></a>
+<a href="#" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"></path></svg></span><span class="nt">Settings</span></a>
+<div class="pf" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px"><span class="ph" style="width: 32px; height: 32px; border-radius: 50%; flex: none"></span><span class="nt" style="font-size: 13px; font-weight: 600">[Name]</span></div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px 32px 28px; display: flex; flex-direction: column; gap: 18px">
+<nav aria-label="Breadcrumb" class="crumb"><a href="D00-Kitchen.dc.html">My Kitchen</a><span aria-hidden="true">/</span><span aria-current="page" style="color: #231F1C; font-weight: 600">Recipes</span></nav>
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+<div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 4px"><span class="lbl">Recipes</span><h1 style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">What should I cook?</h1></div>
+</header>
+<div role="tablist" aria-label="Recipe areas" style="display: flex; gap: 4px; border-bottom: 1px solid #D6D6D3">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="all: unset; cursor: pointer; min-height: 46px; padding: 0 16px; font-size: 14px; font-weight: {{t.w}}; color: {{t.fg}}; border-bottom: {{t.line}}">{{t.label}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{discover}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div class="card" style="padding: 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+<label style="flex: 2 1 280px; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid #C9C9C6; border-radius: 12px; color: #66615D"><span class="ic" style="border-radius: 50%"></span><span class="sr">Search recipes</span><input type="search" placeholder="Search recipes or ingredients" style="border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; flex: 1; min-width: 0; color: #231F1C"></label>
+<label class="flab">Meal type<select class="sel"><option>Any</option><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></label>
+<label class="flab">Cooking time<select class="sel"><option>Any</option><option>Under 15 min</option><option>Under 30 min</option><option>Under 1 hr</option></select></label>
+<label class="flab">Difficulty<select class="sel"><option>Any</option><option>Easy</option><option>Medium</option><option>Hard</option></select></label>
+<label class="flab">Diet<select class="sel"><option>Any</option><option>Vegetarian</option><option>Vegan</option><option>High protein</option><option>Dairy-free</option></select></label>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; color: #66615D">00 recipes</span><span style="font-size: 13px; color: #66615D">Sort: Best match ▾</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+<sc-for list="{{recipes}}" as="r" hint-placeholder-count="8">
+<a href="D04-Recipe-Detail.dc.html" class="card" style="overflow: hidden; display: flex; flex-direction: column">
+<div class="ph" style="height: 140px"></div>
+<div style="padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 600">[Recipe name]</span>
+<span style="font-size: 12px; color: #66615D">{{r.meta}}</span>
+<div style="display: flex; gap: 6px"><span class="chip" style="min-height: 24px; font-size: 11px">{{r.type}}</span><span class="chip" style="min-height: 24px; font-size: 11px">{{r.diff}}</span></div>
+</div>
+</a>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{collection}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="font-size: 18px; font-weight: 700">Folders</h2><button type="button" class="btn">+ New folder</button></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px">
+<sc-for list="{{folders}}" as="f" hint-placeholder-count="5">
+<button type="button" style="all: unset; cursor: pointer; display: flex; flex-direction: column">
+<span style="width: 70px; height: 16px; background: #D6D6D3; border-radius: 8px 8px 0 0"></span>
+<span style="height: 110px; background: #E2E2DF; border-radius: 0 12px 12px 12px; padding: 14px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between"><span style="font-size: 14px; font-weight: 600">{{f.name}}</span><span style="font-size: 12px; color: #4A4542">00 recipes</span></span>
+</button>
+</sc-for>
+</div>
+<h2 style="font-size: 18px; font-weight: 700">Recently saved</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+<a href="D04-Recipe-Detail.dc.html" class="card" style="display: flex; gap: 12px; padding: 10px; align-items: center"><span class="ph" style="width: 64px; height: 64px; border-radius: 10px"></span><span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">in [Folder] · cooked 2×</span></span></a>
+<a href="D04-Recipe-Detail.dc.html" class="card" style="display: flex; gap: 12px; padding: 10px; align-items: center"><span class="ph" style="width: 64px; height: 64px; border-radius: 10px"></span><span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">in [Folder] · my own recipe</span></span></a>
+<a href="D04-Recipe-Detail.dc.html" class="card" style="display: flex; gap: 12px; padding: 10px; align-items: center"><span class="ph" style="width: 64px; height: 64px; border-radius: 10px"></span><span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">in [Folder] · from scanner</span></span></a>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{scanner}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+<section class="card" aria-label="Ingredient photo" style="flex: 1 1 340px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="font-size: 18px; font-weight: 700">1 · Show me your ingredients</h2>
+<div class="ph" style="height: 240px; border-radius: 12px"></div>
+<div style="display: flex; gap: 8px"><a href="D12-Camera.dc.html" class="btn pri" style="flex: 1">Take photo</a><button type="button" class="btn" style="flex: 1">Upload image</button></div>
+<span class="lbl">2 · We found (tap to fix)</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><span class="chip">[Ingredient] ×</span><span class="chip">[Ingredient] ×</span><span class="chip">[Ingredient] ×</span><span class="chip">[Ingredient] ×</span><span class="chip" style="border-style: dashed">+ add</span></div>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 13px; min-height: 40px"><input type="checkbox" checked="checked" style="width: 18px; height: 18px">Also use what's already in my fridge</label>
+</section>
+<section style="flex: 2 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px">
+<h2 style="font-size: 18px; font-weight: 700">3 · Suggested recipes</h2>
+<div style="display: flex; gap: 6px" role="group" aria-label="Rank by"><span class="chip" style="background: #231F1C; color: #FFFFFF; border-color: #231F1C">Uses expiring first</span><span class="chip">Fewest to buy</span><span class="chip">Within budget</span></div>
+</div>
+<sc-for list="{{picks}}" as="p" hint-placeholder-count="3">
+<a href="D04-Recipe-Detail.dc.html" class="card" style="display: flex; gap: 14px; padding: 12px; align-items: center">
+<span class="ph" style="width: 110px; height: 84px; border-radius: 10px; flex: none"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 5px"><span style="font-size: 15px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #4A4542">{{p.uses}}</span><span style="font-size: 12px; color: #66615D">{{p.meta}}</span></span>
+<span class="chip">{{p.tag}}</span>
+</a>
+</sc-for>
+<span style="font-size: 12px; color: #66615D">Suggestions are estimates. Check ingredients and allergens before cooking.</span>
+</section>
+</div>
+</sc-if>
+
+<div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; pointer-events: none; margin-top: auto"><a href="D12-Camera.dc.html" class="fab" aria-label="Open AI camera"><span class="dot"><span></span></span>AI camera</a></div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); const h = (typeof window !== 'undefined' && window.location.hash) || ''; this.state = { tab: /saved/.test(h) ? 'My recipe collection' : (/fridge/.test(h) ? 'AI ingredient scanner' : 'Discover recipes') }; }
+  renderVals() {
+    const tab = this.state.tab;
+    const tabs = ['Discover recipes', 'My recipe collection', 'AI ingredient scanner'].map((t) => ({
+      label: ({ 'Discover recipes': 'Find', 'My recipe collection': 'Saved', 'AI ingredient scanner': 'Cook from my fridge' })[t], on: String(t === tab), w: t === tab ? '600' : '400', fg: t === tab ? '#231F1C' : '#66615D',
+      line: t === tab ? '2px solid #231F1C' : '2px solid transparent', pick: () => this.setState({ tab: t })
+    }));
+    const types = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+    const diffs = ['Easy', 'Medium', 'Easy', 'Hard'];
+    const recipes = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({ type: types[i % 4], diff: diffs[i % 4], meta: '000 kcal · ' + (10 + i * 5) + ' min' }));
+    const folders = ['Quick breakfasts', 'Meal prep', 'Comfort food', 'Under 500 kcal', 'Want to try'].map((n) => ({ name: n }));
+    const picks = [
+      { uses: 'Uses 5 of yours · 2 expire this week', meta: '000 kcal · 20 min · nothing to buy', tag: 'best match' },
+      { uses: 'Uses 4 of yours · 1 expires tomorrow', meta: '000 kcal · 15 min · buy 1 (≈ ₩0,000)', tag: 'cheap' },
+      { uses: 'Uses 3 of yours', meta: '000 kcal · 35 min · buy 2 (≈ ₩0,000)', tag: 'high protein' }
+    ];
+    return { tabs, recipes, folders, picks, discover: tab === 'Discover recipes', collection: tab === 'My recipe collection', scanner: tab === 'AI ingredient scanner' };
+  }
+}
+</script>
+</body>
+</html>

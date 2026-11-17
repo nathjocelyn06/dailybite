@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mobile calendar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ic{width:20px;height:20px;flex:none;border:1.5px solid currentColor;border-radius:6px;box-sizing:border-box}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.chip{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:999px;border:1px solid #C9C9C6;font-size:11px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #E4E4E1;font-size:13px}
+.tb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:#66615D;text-decoration:none;min-height:56px}
+.tb .ti{width:56px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center}
+.tb.on{color:#0F5C85;font-weight:700}
+.tb.on .ti{background:#D9E9F5}
+.mcrumb{display:inline-flex;align-items:center;gap:4px;min-height:32px;font-size:13px;color:#4A4542;text-decoration:none;align-self:flex-start}
+.vt{display:inline-flex;gap:4px;padding:4px;background:#E2E2DF;border-radius:12px;align-self:flex-start}
+.vt a{min-height:38px;padding:0 16px;border-radius:9px;display:flex;align-items:center;font-size:13px;font-weight:600;color:#4A4542;text-decoration:none}
+.vt a[aria-current="page"]{background:#FFFFFF;color:#231F1C}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EDEDEB; font-family: Inter, system-ui, sans-serif; color: #231F1C; display: flex; flex-direction: column">
+<div style="flex: 1; overflow-y: auto; padding: 18px 16px 88px; display: flex; flex-direction: column; gap: 12px">
+<nav aria-label="Archive views" class="vt"><a href="M08-Archive.dc.html">List</a><a href="M06-Calendar.dc.html" aria-current="page">Calendar</a></nav>
+<div style="display: flex; align-items: center; gap: 6px">
+<button type="button" onClick="{{prev}}" aria-label="Previous month" style="all: unset; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 20px">‹</button>
+<h1 style="flex: 1; text-align: center; font-size: 18px; font-weight: 700">{{month}}</h1>
+<button type="button" onClick="{{next}}" aria-label="Next month" style="all: unset; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 20px">›</button>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #D6D6D3; border-radius: 16px; padding: 10px">
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); text-align: center; padding-bottom: 4px"><span class="lbl">M</span><span class="lbl">T</span><span class="lbl">W</span><span class="lbl">T</span><span class="lbl">F</span><span class="lbl">S</span><span class="lbl">S</span></div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px">
+<sc-for list="{{cells}}" as="c" hint-placeholder-count="35">
+<button type="button" onClick="{{c.pick}}" aria-label="{{c.aria}}" style="all: unset; cursor: pointer; box-sizing: border-box; height: 46px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: {{c.bg}}; border: {{c.bd}}; opacity: {{c.op}}">
+<span style="font-size: 13px; font-weight: 600">{{c.n}}</span>
+<span style="width: 6px; height: 6px; border-radius: 50%; background: {{c.dot}}; border: {{c.ring}}; box-sizing: border-box"></span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; gap: 12px; font-size: 10px; color: #66615D; padding: 6px 4px 0"><span>● logged</span><span>○ planned</span></div>
+</div>
+<section style="background: #FFFFFF; border: 1px solid #D6D6D3; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 6px">
+<span class="lbl">{{kind}}</span>
+<h2 style="font-size: 17px; font-weight: 700">{{selLabel}}</h2>
+<div style="display: flex; gap: 8px"><span class="chip">{{kcal}}</span><span class="chip">{{spend}}</span><span class="chip">{{plan}}</span></div>
+<div class="row"><span class="ph" style="width: 34px; height: 34px; border-radius: 8px"></span><span style="flex: 1">{{m1}}</span></div>
+<div class="row" style="border: 0"><span class="ph" style="width: 34px; height: 34px; border-radius: 8px"></span><span style="flex: 1">{{m2}}</span></div>
+<a href="M04-Journal.dc.html" style="min-height: 44px; border-radius: 12px; background: #F9D312; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; text-decoration: none">Open day page</a>
+</section>
+</div>
+<a href="M02-Camera.dc.html" aria-label="Open AI camera" style="position: absolute; right: 16px; bottom: 92px; width: 60px; height: 60px; border-radius: 50%; background: #231F1C; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,.2)"><span style="width: 40px; height: 40px; border-radius: 50%; background: #F9D312; display: flex; align-items: center; justify-content: center"><span style="width: 16px; height: 16px; border: 2px solid #231F1C; border-radius: 50%; box-sizing: border-box"></span></span></a>
+<nav aria-label="Main tabs" style="flex: none; border-top: 1px solid #D6D6D3; background: #F6F6F4; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 6px 8px calc(12px + env(safe-area-inset-bottom)); box-sizing: border-box">
+<a class="tb" href="M01-Home.dc.html"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span>Home</a>
+<a class="tb" href="M07-Kitchen.dc.html"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M2 11h20"></path><path d="M9 7.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5"></path></svg></span>My Kitchen</a>
+<a class="tb" href="M04-Journal.dc.html"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span>Journal</a>
+<a class="tb on" href="M08-Archive.dc.html" aria-current="page"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span>Archive</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); const t = new Date(); this.state = { sel: new Date(t.getFullYear(), t.getMonth(), t.getDate()) }; }
+  renderVals() {
+    const sel = this.state.sel; const t = new Date(); const today = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    const mn = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const dw = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const y = sel.getFullYear(), m = sel.getMonth();
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7; const dim = new Date(y, m + 1, 0).getDate();
+    const total = Math.ceil((lead + dim) / 7) * 7; const cells = [];
+    for (let i = 0; i < total; i++) {
+      const d = new Date(y, m, i - lead + 1); const diff = Math.round((d - today) / 86400000);
+      const on = d.getTime() === sel.getTime(); const n = d.getDate();
+      cells.push({ n, aria: d.toDateString(), op: d.getMonth() === m ? '1' : '0.4',
+        bg: on ? '#D9E9F5' : 'transparent', bd: diff === 0 ? '1.5px solid #231F1C' : '1px solid transparent',
+        dot: diff <= 0 && n % 4 !== 0 ? '#0A73B8' : 'transparent', ring: diff > 0 && n % 2 === 0 ? '1.5px solid #8A8682' : '0',
+        pick: () => this.setState({ sel: d }) });
+    }
+    const diff = Math.round((sel - today) / 86400000); const n = sel.getDate();
+    const past = diff < 0, fut = diff > 0;
+    return { cells, month: mn[m] + ' ' + y, selLabel: dw[sel.getDay()] + ', ' + n + ' ' + mn[m],
+      kind: diff === 0 ? 'Today' : (fut ? 'Upcoming' : 'Past day'),
+      kcal: fut ? '— kcal' : (past ? (1400 + (n * 137) % 600) : 900) + ' kcal',
+      spend: fut ? '₩—' : '₩' + (past ? (3000 + (n * 3700) % 18000) : 0).toLocaleString('en-US'),
+      plan: fut ? (n % 2 === 0 ? 'dinner planned' : 'no plan') : (diff === 0 ? 'dinner planned' : 'all eaten'),
+      m1: fut ? 'Lunch · [planned recipe] · planned' : 'Breakfast · [Meal] · eaten',
+      m2: fut ? 'Dinner · not planned yet' : (diff === 0 ? 'Dinner · [Recipe] · planned' : 'Dinner · [Meal] · eaten'),
+      prev: () => this.setState({ sel: new Date(y, m - 1, 1) }), next: () => this.setState({ sel: new Date(y, m + 1, 1) }) };
+  }
+}
+</script>
+</body>
+</html>

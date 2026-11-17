@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Global AI camera</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#8E8C86}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ic{width:20px;height:20px;flex:none;border:1.5px solid currentColor;border-radius:6px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;border:1px solid #C9C9C6;background:#FFFFFF;color:#231F1C;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.btn.pri{background:#F9D312;border-color:#E0BC00}
+.chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;border:1px solid #C9C9C6;font:inherit;font-size:12px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.act{all:unset;cursor:pointer;box-sizing:border-box;border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;min-height:76px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #E4E4E1;font-size:13px}
+.row input{flex:1;min-height:36px;border:1px solid #C9C9C6;border-radius:8px;padding:0 10px;font:inherit;font-size:13px}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #231F1C; background: #8E8C86; min-height: 1100px; box-sizing: border-box; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 18px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: #FFFFFF; font-size: 13px">
+<span>Prototype: opened from</span>
+<sc-for list="{{ctxs}}" as="c" hint-placeholder-count="5"><button type="button" class="chip" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="cursor: pointer; min-height: 34px; background: {{c.bg}}; color: {{c.fg}}; border-color: transparent">{{c.label}}</button></sc-for>
+</div>
+
+<section role="dialog" aria-modal="true" aria-label="AI camera" style="width: min(1080px, 100%); background: #FFFFFF; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,.18); overflow: hidden; display: flex; flex-wrap: wrap">
+<div style="flex: 1 1 420px; background: #2E2E2B; padding: 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; min-height: 620px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="color: #FFFFFF; font-size: 14px; font-weight: 600">{{actTitle}}</span><a href="{{back}}" class="btn" aria-label="Close camera" style="width: 44px; padding: 0; background: transparent; color: #FFFFFF; border-color: #66615D">×</a></div>
+<div style="flex: 1; position: relative; border-radius: 14px; background: #3D3D39; min-height: 380px">
+<span style="position: absolute; left: 18px; top: 18px; width: 34px; height: 34px; border-left: 3px solid #FFFFFF; border-top: 3px solid #FFFFFF"></span>
+<span style="position: absolute; right: 18px; top: 18px; width: 34px; height: 34px; border-right: 3px solid #FFFFFF; border-top: 3px solid #FFFFFF"></span>
+<span style="position: absolute; left: 18px; bottom: 18px; width: 34px; height: 34px; border-left: 3px solid #FFFFFF; border-bottom: 3px solid #FFFFFF"></span>
+<span style="position: absolute; right: 18px; bottom: 18px; width: 34px; height: 34px; border-right: 3px solid #FFFFFF; border-bottom: 3px solid #FFFFFF"></span>
+<sc-if value="{{hasShot}}" hint-placeholder-val="{{ false }}"><span class="ph" style="position: absolute; inset: 60px; border-radius: 8px; opacity: .9"></span></sc-if>
+<span style="position: absolute; left: 0; right: 0; bottom: 64px; text-align: center; color: #DCDCD9; font-size: 13px">{{hint}}</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<button type="button" class="btn" onClick="{{shoot}}" style="background: transparent; color: #FFFFFF; border-color: #66615D">Upload image</button>
+<button type="button" onClick="{{shoot}}" aria-label="Take photo" style="all: unset; cursor: pointer; width: 72px; height: 72px; border-radius: 50%; border: 4px solid #FFFFFF; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><span style="width: 54px; height: 54px; border-radius: 50%; background: #F9D312"></span></button>
+<span style="width: 120px; color: #C9C9C6; font-size: 12px; text-align: right">{{stepLabel}}</span>
+</div>
+</div>
+
+<div style="flex: 1 1 420px; padding: 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{isChoose}}" hint-placeholder-val="{{ true }}">
+<span class="lbl">What are you scanning?</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{acts}}" as="a" hint-placeholder-count="6">
+<button type="button" class="act" onClick="{{a.pick}}" aria-pressed="{{a.on}}" style="border: {{a.border}}; background: {{a.bg}}">
+<span class="ic" style="margin-top: 2px; border-radius: 50%"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 600">{{a.label}} <sc-if value="{{a.top}}" hint-placeholder-val="{{ false }}"><span class="chip" style="min-height: 20px; font-size: 10px; margin-left: 6px">suggested here</span></sc-if></span><span style="font-size: 12px; color: #4A4542">{{a.desc}}</span></span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{isReview}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="lbl">AI suggestion · please check</span><button type="button" class="chip" onClick="{{restart}}" style="cursor: pointer">Retake</button></div>
+<h2 style="font-size: 20px; font-weight: 700">{{actTitle}}</h2>
+<sc-for list="{{fields}}" as="f" hint-placeholder-count="4">
+<label class="row"><span style="width: 120px; color: #4A4542">{{f.label}}</span><input type="text" value="{{f.value}}"><sc-if value="{{f.unsure}}" hint-placeholder-val="{{ false }}"><span class="chip">unsure</span></sc-if></label>
+</sc-for>
+<button type="button" class="chip" style="cursor: pointer; align-self: flex-start; border-style: dashed; min-height: 34px">+ Add something it missed</button>
+<div style="background: #EDEDEB; border-radius: 12px; padding: 12px; font-size: 12px; color: #4A4542; display: flex; flex-direction: column; gap: 4px"><strong style="color: #231F1C">When you confirm, this updates:</strong>{{updates}}</div>
+<span style="font-size: 11px; color: #66615D">Estimates from a photo can be off. Nothing is saved until you confirm.</span>
+<div style="display: flex; gap: 8px; margin-top: auto"><button type="button" class="btn pri" onClick="{{confirm}}" style="flex: 1">Confirm &amp; save</button><button type="button" class="btn" onClick="{{restart}}">Cancel</button></div>
+</sc-if>
+
+<sc-if value="{{isSaved}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 12px">
+<span style="width: 56px; height: 56px; border-radius: 50%; background: #D9E9F5; display: flex; align-items: center; justify-content: center; font-size: 24px">✓</span>
+<h2 style="font-size: 22px; font-weight: 700">Saved</h2>
+<span style="font-size: 14px; color: #4A4542">{{updates}}</span>
+<span style="font-size: 12px; color: #66615D">One record (ref {{rid}}) shared by every section, so nothing is duplicated.</span>
+<div style="display: flex; gap: 8px"><a href="{{dest}}" class="btn pri">View it</a><button type="button" class="btn" onClick="{{restart}}">Scan another</button></div>
+</div>
+</sc-if>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { ctx: 'Dashboard', act: null, step: 'choose' }; }
+  renderVals() {
+    const s = this.state;
+    const A = {
+      cal: { label: 'Calorie scan', desc: 'Identify food and estimate nutrition', dest: 'D05-Journal.dc.html',
+        fields: [['Food 1', '[Dish] · 1 bowl · 000 kcal'], ['Food 2', '[Side] · small · 000 kcal', 1], ['Meal', 'Dinner · 19:05'], ['Status', 'Eaten (not planned)']],
+        updates: 'Today\'s calories on Dashboard · Food journal page · Calendar · Progress' },
+      rec: { label: 'Receipt scan', desc: 'Extract purchase details and expenses', dest: 'D07-Budget.dc.html',
+        fields: [['Merchant', '[Store]'], ['Date', '[today]'], ['Category', 'Groceries'], ['Amount', '₩00,000'], ['Items', '6 lines (1 unsure)', 1]],
+        updates: 'Budget spend · Calendar spend for today · 6 items sent to Fridge for confirmation' },
+      ing: { label: 'Ingredient scan', desc: 'Identify groceries and suggest fridge updates', dest: 'D06-Fridge.dc.html',
+        fields: [['Item 1', '[Vegetable] · 3 pcs · Vegetables'], ['Item 2', '[Protein] · 400 g · Proteins'], ['Item 3', '[Item] · ?', 1], ['Expiry', 'suggested per item']],
+        updates: 'Digital fridge stock · expiry reminders in Notifications' },
+      rf: { label: 'AI recipe finder', desc: 'Recommend recipes from an ingredient photo', dest: 'D03-Recipes.dc.html',
+        fields: [['Found', '[Ingredient], [Ingredient], [Ingredient]'], ['Also use', 'Items expiring in fridge'], ['Budget', 'Up to ₩0,000 extra']],
+        updates: 'Shows suggested recipes in Recipes · AI ingredient scanner (nothing is saved)' },
+      jr: { label: 'Food journal', desc: 'Add a meal photo to a journal page', dest: 'D05-Journal.dc.html',
+        fields: [['Page', 'Today'], ['Link to meal', 'Lunch · [Meal name]'], ['Caption', '[caption]']],
+        updates: 'Today\'s journal page · the linked meal\'s photo' },
+      gr: { label: 'Grocery scan', desc: 'Identify purchased items and tick off your list', dest: 'D06-Fridge.dc.html',
+        fields: [['Matched', '4 of 5 list items'], ['New', '[Item] (not on list)', 1], ['Quantities', 'check each']],
+        updates: 'Shopping list (purchased) · Digital fridge after you confirm' }
+    };
+    const order = { Dashboard: ['cal', 'jr', 'rec', 'ing', 'rf', 'gr'], 'Digital fridge': ['ing', 'gr', 'rec', 'rf', 'cal', 'jr'],
+      Budgeting: ['rec', 'gr', 'cal', 'ing', 'rf', 'jr'], 'Food journal': ['jr', 'cal', 'rf', 'ing', 'rec', 'gr'], Recipes: ['rf', 'ing', 'cal', 'jr', 'gr', 'rec'] };
+    const backs = { Dashboard: 'D01-Dashboard.dc.html', 'Digital fridge': 'D06-Fridge.dc.html', Budgeting: 'D07-Budget.dc.html', 'Food journal': 'D05-Journal.dc.html', Recipes: 'D03-Recipes.dc.html' };
+    const ord = order[s.ctx];
+    const cur = s.act || ord[0];
+    const acts = ord.map((k, i) => ({ label: A[k].label, desc: A[k].desc, top: i === 0, on: String(cur === k),
+      border: cur === k ? '2px solid #231F1C' : '1px solid #D6D6D3', bg: cur === k ? '#EAF2FA' : '#FFFFFF', pick: () => this.setState({ act: k }) }));
+    const ctxs = Object.keys(order).map((c) => ({ label: c, on: String(s.ctx === c), bg: s.ctx === c ? '#FFFFFF' : 'rgba(255,255,255,.18)', fg: s.ctx === c ? '#231F1C' : '#FFFFFF',
+      pick: () => this.setState({ ctx: c, act: null, step: 'choose' }) }));
+    const a = A[cur];
+    return {
+      ctxs, acts, actTitle: a.label, back: backs[s.ctx], dest: a.dest, updates: a.updates,
+      fields: a.fields.map((f) => ({ label: f[0], value: f[1], unsure: !!f[2] })),
+      isChoose: s.step === 'choose', isReview: s.step === 'review', isSaved: s.step === 'saved',
+      hasShot: s.step !== 'choose', hint: s.step === 'choose' ? 'Point at your ' + (cur === 'rec' ? 'receipt' : 'food') : 'Analysed',
+      stepLabel: s.step === 'choose' ? 'Step 1 of 3' : (s.step === 'review' ? 'Step 2 of 3' : 'Step 3 of 3'),
+      rid: cur + '_' + String(Date.now()).slice(-4),
+      shoot: () => this.setState({ act: cur, step: 'review' }), confirm: () => this.setState({ step: 'saved' }), restart: () => this.setState({ step: 'choose' })
+    };
+  }
+}
+</script>
+</body>
+</html>

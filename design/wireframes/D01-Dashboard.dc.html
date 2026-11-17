@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Caveat:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ln{height:10px;border-radius:5px;background:#DCDCD9}
+.ic{width:16px;height:16px;flex:none;border:1.5px solid currentColor;border-radius:5px;box-sizing:border-box}
+.nv{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;font-size:14px;color:#4A4542;text-decoration:none}
+.nv:hover{background:#E6E6E3;color:#231F1C}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.bdg{margin-left:auto;min-width:20px;height:20px;border-radius:10px;background:#231F1C;color:#FFFFFF;font-size:11px;display:flex;align-items:center;justify-content:center}
+.card{background:#FFFFFF;border:1px solid #D6D6D3;border-radius:16px;box-sizing:border-box}
+a.card{text-decoration:none;color:#231F1C}
+a.card:hover{border-color:#A6A39F}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;border:1px solid #C9C9C6;background:#FFFFFF;color:#231F1C;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.btn.pri{background:#F9D312;border-color:#E0BC00}
+.chip{display:inline-flex;align-items:center;min-height:30px;padding:0 12px;border-radius:999px;border:1px solid #C9C9C6;font:inherit;font-size:12px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.hand{font-family:'Caveat',cursive;font-size:21px;color:#4A4542}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #E4E4E1;font-size:14px}
+.fab{pointer-events:auto;display:flex;align-items:center;gap:10px;min-height:56px;padding:0 20px 0 8px;border-radius:999px;background:#231F1C;color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.fab:hover{color:#FFFFFF;background:#000}
+.fab .dot{width:40px;height:40px;border-radius:50%;background:#F9D312;display:flex;align-items:center;justify-content:center}
+.fab .dot span{width:16px;height:16px;border:2px solid #231F1C;border-radius:50%;box-sizing:border-box}
+.ql{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:84px;border-radius:14px;border:1px solid #D6D6D3;background:#FFFFFF;font-size:13px;font-weight:600;text-decoration:none;color:#231F1C}
+.ql:hover{border-color:#A6A39F}
+.nv{position:relative}
+.nv .ni{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;color:#66615D}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.nv.on .ni{color:#0F5C85}
+.nv.sm{min-height:40px;font-size:13px}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:#66615D}
+.crumb a{color:#4A4542;text-underline-offset:3px;min-height:28px;display:inline-flex;align-items:center}
+@media (min-width:761px) and (max-width:1100px){
+nav.side{flex:0 0 96px !important;max-width:96px !important;padding:20px 8px !important}
+nav.side .bt,nav.side .acct .lbl,nav.side .pf .nt{display:none}
+nav.side .brand{justify-content:center;padding:0 !important}
+nav.side .pf{justify-content:center;padding:8px 0 !important}
+nav.side .nv{flex-direction:column;gap:4px;font-size:11px;text-align:center;padding:8px 4px;min-height:62px;justify-content:center}
+nav.side .nv .bdg{position:absolute;top:6px;right:14px;margin:0}
+}
+@media (max-width:760px){
+nav.side{position:fixed !important;left:0;right:0;bottom:0;z-index:30;flex:none !important;max-width:none !important;width:100%;flex-direction:row !important;padding:6px 8px calc(8px + env(safe-area-inset-bottom)) !important;border-right:0 !important;border-top:1px solid #D6D6D3;gap:0 !important}
+nav.side .brand,nav.side .acct{display:none !important}
+nav.side .nvg{flex:1;display:grid !important;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px !important}
+nav.side .nv{flex-direction:column;gap:3px;font-size:11px;min-height:56px;padding:4px;justify-content:center;text-align:center}
+main{padding-bottom:110px !important}
+main > div[style*="sticky"]{bottom:92px !important}
+}
+.svc{all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;text-decoration:none;color:#231F1C;font-size:12px;font-weight:600;line-height:1.25;padding:6px 2px;border-radius:14px;min-height:84px}
+.svc:hover{background:#EDEDEB}
+.sb{width:54px;height:54px;border-radius:16px;background:#D9E9F5;color:#0F5C85;display:flex;align-items:center;justify-content:center;flex:none}
+.sb.alt{background:#E4E4E1;color:#4A4542}
+.sb.sm{width:44px;height:44px;border-radius:13px}
+.og{display:flex;flex-direction:column;gap:2px}
+.og .lbl{padding:8px 0 4px}
+.orow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #E4E4E1;text-decoration:none;color:#231F1C}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;font-size:12px;font-weight:600;min-width:64px}
+.act .ac{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.disc{flex:none;width:220px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:#231F1C}
+.hs{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.hs > *{scroll-snap-align:start}
+.svc{all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;text-decoration:none;color:#231F1C;font-size:12px;font-weight:600;line-height:1.25;padding:6px 2px;border-radius:14px;min-height:84px}
+.svc:hover{background:#EDEDEB}
+.sb{width:54px;height:54px;border-radius:16px;background:#D9E9F5;color:#0F5C85;display:flex;align-items:center;justify-content:center;flex:none}
+.sb.alt{background:#E4E4E1;color:#4A4542}
+.sb.sm{width:44px;height:44px;border-radius:13px}
+.og{display:flex;flex-direction:column;gap:2px}
+.og .lbl{padding:8px 0 4px}
+.orow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #E4E4E1;text-decoration:none;color:#231F1C}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;font-size:12px;font-weight:600;min-width:64px}
+.act .ac{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.disc{flex:none;width:220px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:#231F1C}
+.hs{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.hs > *{scroll-snap-align:start}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #231F1C; background: #EDEDEB; min-height: 1100px; display: flex; flex-wrap: wrap; align-items: stretch">
+
+<nav aria-label="Main" class="side" style="flex: 1 0 232px; max-width: 248px; box-sizing: border-box; background: #F6F6F4; border-right: 1px solid #D6D6D3; padding: 24px 14px; display: flex; flex-direction: column; gap: 18px">
+<a href="D01-Dashboard.dc.html" class="brand" aria-label="DailyBite home" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; text-decoration: none; color: #231F1C"><span style="width: 32px; height: 32px; border-radius: 9px; background: #F9D312; display: flex; align-items: center; justify-content: center; flex: none"><span style="width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #231F1C; box-sizing: border-box"></span></span><span class="bt" style="font-size: 18px; font-weight: 700">DailyBite</span></a>
+<div class="nvg" style="display: flex; flex-direction: column; gap: 4px">
+<a href="D01-Dashboard.dc.html" class="nv on" aria-current="page"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span><span class="nt">Home</span></a>
+<a href="D00-Kitchen.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M2 11h20"></path><path d="M9 7.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5"></path></svg></span><span class="nt">My Kitchen</span></a>
+<a href="D05-Journal.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span class="nt">Journal</span></a>
+<a href="D09-Archive.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span><span class="nt">Archive</span></a>
+</div>
+<div class="acct" style="margin-top: auto; border-top: 1px solid #D6D6D3; padding-top: 14px; display: flex; flex-direction: column; gap: 2px">
+<a href="D11-Notifications.dc.html" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span><span class="nt">Notifications</span><span class="bdg">4</span></a>
+<a href="#" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"></path></svg></span><span class="nt">Settings</span></a>
+<div class="pf" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px"><span class="ph" style="width: 32px; height: 32px; border-radius: 50%; flex: none"></span><span class="nt" style="font-size: 13px; font-weight: 600">[Name]</span></div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 20px">
+
+<section aria-label="Today" style="background: #FDF1B8; border-radius: 22px; padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 18px">
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 2px">
+<a href="D02-Calendar.dc.html" style="font-size: 12px; font-weight: 600; color: #231F1C; text-underline-offset: 3px; align-self: flex-start">{{dateLabel}}</a>
+<h1 style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">{{greeting}}, [Name]</h1>
+</div>
+<label style="flex: 0 1 360px; display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 16px; border-radius: 999px; background: #FFFFFF; color: #4A4542"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.5-4.5"></path></svg><span class="sr">Search</span><input type="search" placeholder="Search meals, recipes, groceries" style="border: 0; outline: 0; background: transparent; font: inherit; font-size: 14px; flex: 1; min-width: 0; color: #231F1C"></label>
+<a href="D11-Notifications.dc.html" aria-label="Notifications, 4 new" style="width: 46px; height: 46px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; position: relative; flex: none; color: #231F1C"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg><span style="position: absolute; top: -2px; right: -2px; min-width: 18px; height: 18px; border-radius: 9px; background: #231F1C; color: #FFFFFF; font-size: 11px; display: flex; align-items: center; justify-content: center; border: 2px solid #FDF1B8">4</span></a>
+<a href="#" aria-label="Account and settings" style="width: 46px; height: 46px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; position: relative; flex: none"><span class="ph" style="width: 38px; height: 38px; border-radius: 50%"></span></a>
+</header>
+
+<div style="background: #FFFFFF; border-radius: 18px; padding: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 22px">
+<a href="D08-Progress.dc.html" aria-label="Today's calories and nutrition, open Progress" style="flex: 2 1 380px; display: flex; align-items: center; gap: 18px; text-decoration: none; color: #231F1C">
+<span style="width: 108px; height: 108px; border-radius: 50%; border: 11px solid #DCDCD9; border-top-color: #F29A0F; border-right-color: #E8401C; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none"><span style="font-size: 22px; font-weight: 700">000</span><span style="font-size: 11px; color: #66615D">kcal left</span></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<span style="font-size: 13px; color: #4A4542">Eaten 000 / 000 kcal · <span style="text-decoration: underline; text-underline-offset: 3px">tap for Progress</span></span>
+<span style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 4px; font-size: 12px">Protein · 00 g<span class="ln" style="height: 8px; background: linear-gradient(90deg, #E8401C 60%, #DCDCD9 60%)"></span></span>
+<span style="display: flex; flex-direction: column; gap: 4px; font-size: 12px">Carbs · 00 g<span class="ln" style="height: 8px; background: linear-gradient(90deg, #F29A0F 45%, #DCDCD9 45%)"></span></span>
+<span style="display: flex; flex-direction: column; gap: 4px; font-size: 12px">Fat · 00 g<span class="ln" style="height: 8px; background: linear-gradient(90deg, #9A80BD 30%, #DCDCD9 30%)"></span></span>
+</span>
+</span>
+</a>
+<a href="D07-Budget.dc.html" aria-label="Food budget, open Budgeting" style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 4px; padding: 0 20px; border-left: 1px solid #E4E4E1; border-right: 1px solid #E4E4E1; text-decoration: none; color: #231F1C"><span class="lbl">Food budget</span><span style="font-size: 20px; font-weight: 700">₩00,000 left</span><span style="font-size: 12px; color: #66615D">Today ₩0 · this month</span></a>
+<div style="flex: 1 1 280px; display: flex; justify-content: space-around; gap: 8px">
+<a class="act" href="D12-Camera.dc.html" style="color: #231F1C"><span class="ac" style="background: #231F1C; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></span>Log meal</a><a class="act" href="D12-Camera.dc.html" style="color: #231F1C"><span class="ac" style="background: #231F1C; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21z"></path><path d="M10 8h4"></path><path d="M10 12h4"></path></svg></span>Scan receipt</a><a class="act" href="D03-Recipes.dc.html#fridge" style="color: #231F1C"><span class="ac" style="background: #231F1C; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16a8 8 0 0 1-16 0z"></path><path d="M9 4c-1 1.5 1 2.5 0 4"></path><path d="M13 4c-1 1.5 1 2.5 0 4"></path></svg></span>Cook</a><a class="act" href="D08-Progress.dc.html" style="color: #231F1C"><span class="ac" style="background: #231F1C; color: #FFFFFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"></path><path d="M5 15l4-4 3 3 6-6"></path><path d="M15 8h3v3"></path></svg></span>My progress</a>
+</div>
+</div>
+</section>
+
+<nav aria-label="Services" class="card" style="padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px">
+<a class="svc" href="D06-Fridge.dc.html"><span class="sb" style="background: #D6EDE1; color: #038248"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"></rect><path d="M6 10h12"></path><path d="M9 6v2"></path><path d="M9 13v3"></path></svg></span><span class="sl">Fridge</span></a><a class="svc" href="D06-Fridge.dc.html#list"><span class="sb" style="background: #FDEBCC; color: #A65F00"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2 11h11l2-8H6.5"></path><circle cx="9" cy="19" r="1.3"></circle><circle cx="17" cy="19" r="1.3"></circle></svg></span><span class="sl">To buy</span></a><a class="svc" href="D03-Recipes.dc.html"><span class="sb" style="background: #FBDCD3; color: #B8300F"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16a8 8 0 0 1-16 0z"></path><path d="M9 4c-1 1.5 1 2.5 0 4"></path><path d="M13 4c-1 1.5 1 2.5 0 4"></path></svg></span><span class="sl">Recipes</span></a><a class="svc" href="D05-Journal.dc.html"><span class="sb" style="background: #FCE4EF; color: #A83A62"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span class="sl">Journal</span></a><a class="svc" href="D07-Budget.dc.html"><span class="sb" style="background: #E1E7F4; color: #4F6FB5"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M3 10h18"></path><circle cx="16" cy="14.5" r="1.2"></circle></svg></span><span class="sl">Budget</span></a><a class="svc" href="D08-Progress.dc.html"><span class="sb" style="background: #ECE6F4; color: #6A5296"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"></path><path d="M5 15l4-4 3 3 6-6"></path><path d="M15 8h3v3"></path></svg></span><span class="sl">My progress</span></a><a class="svc" href="D02-Calendar.dc.html"><span class="sb" style="background: #D9E9F5; color: #0A73B8"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16"></path><path d="M9 3v4"></path><path d="M15 3v4"></path></svg></span><span class="sl">Calendar</span></a><button type="button" class="svc" onClick="{{openAll}}" aria-haspopup="dialog"><span class="sb alt" style="background: #E2E2DF; color: #4A4542"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"></circle><circle cx="16" cy="8" r="2"></circle><circle cx="8" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle></svg></span><span class="sl">More</span></button>
+</nav>
+
+<sc-if value="{{showAll}}" hint-placeholder-val="{{ false }}">
+<section role="dialog" aria-label="All services" class="card" style="padding: 20px 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between"><h2 style="font-size: 18px; font-weight: 700">Top services</h2><button type="button" class="btn" onClick="{{closeAll}}" aria-label="Close all services" style="width: 44px; padding: 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></button></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px"><a class="svc" href="D06-Fridge.dc.html"><span class="sb" style="background: #D6EDE1; color: #038248"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"></rect><path d="M6 10h12"></path><path d="M9 6v2"></path><path d="M9 13v3"></path></svg></span><span class="sl">Fridge</span></a><a class="svc" href="D06-Fridge.dc.html#list"><span class="sb" style="background: #FDEBCC; color: #A65F00"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2 11h11l2-8H6.5"></path><circle cx="9" cy="19" r="1.3"></circle><circle cx="17" cy="19" r="1.3"></circle></svg></span><span class="sl">To buy</span></a><a class="svc" href="D03-Recipes.dc.html"><span class="sb" style="background: #FBDCD3; color: #B8300F"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16a8 8 0 0 1-16 0z"></path><path d="M9 4c-1 1.5 1 2.5 0 4"></path><path d="M13 4c-1 1.5 1 2.5 0 4"></path></svg></span><span class="sl">Recipes</span></a><a class="svc" href="D05-Journal.dc.html"><span class="sb" style="background: #FCE4EF; color: #A83A62"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span class="sl">Journal</span></a><a class="svc" href="D07-Budget.dc.html"><span class="sb" style="background: #E1E7F4; color: #4F6FB5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M3 10h18"></path><circle cx="16" cy="14.5" r="1.2"></circle></svg></span><span class="sl">Budget</span></a><a class="svc" href="D08-Progress.dc.html"><span class="sb" style="background: #ECE6F4; color: #6A5296"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"></path><path d="M5 15l4-4 3 3 6-6"></path><path d="M15 8h3v3"></path></svg></span><span class="sl">My progress</span></a><a class="svc" href="D02-Calendar.dc.html"><span class="sb" style="background: #D9E9F5; color: #0A73B8"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16"></path><path d="M9 3v4"></path><path d="M15 3v4"></path></svg></span><span class="sl">Calendar</span></a></div>
+<h2 style="font-size: 18px; font-weight: 700; padding-top: 6px">Other services</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4px 28px"><div class="og"><span class="lbl">Your day · Home</span><a class="orow" href="D08-Progress.dc.html"><span class="sb sm" style="background: #ECE6F4; color: #6A5296"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"></path><path d="M5 15l4-4 3 3 6-6"></path><path d="M15 8h3v3"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">My progress</span><span style="font-size: 12px; color: #66615D">AI overview, trends, habits, goals</span></span></a><a class="orow" href="D07-Budget.dc.html"><span class="sb sm" style="background: #E1E7F4; color: #4F6FB5"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M3 10h18"></path><circle cx="16" cy="14.5" r="1.2"></circle></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Budget</span><span style="font-size: 12px; color: #66615D">Food spending this month</span></span></a></div><div class="og"><span class="lbl">Food at home · My Kitchen</span><a class="orow" href="D06-Fridge.dc.html"><span class="sb sm" style="background: #D6EDE1; color: #038248"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"></rect><path d="M6 10h12"></path><path d="M9 6v2"></path><path d="M9 13v3"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Fridge</span><span style="font-size: 12px; color: #66615D">What you have and what expires soon</span></span></a><a class="orow" href="D06-Fridge.dc.html#list"><span class="sb sm" style="background: #FDEBCC; color: #A65F00"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2 11h11l2-8H6.5"></path><circle cx="9" cy="19" r="1.3"></circle><circle cx="17" cy="19" r="1.3"></circle></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">To buy</span><span style="font-size: 12px; color: #66615D">Your grocery list, inside Fridge</span></span></a><a class="orow" href="D03-Recipes.dc.html"><span class="sb sm" style="background: #FBDCD3; color: #B8300F"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16a8 8 0 0 1-16 0z"></path><path d="M9 4c-1 1.5 1 2.5 0 4"></path><path d="M13 4c-1 1.5 1 2.5 0 4"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Recipes</span><span style="font-size: 12px; color: #66615D">Find, save and cook from your fridge</span></span></a></div><div class="og"><span class="lbl">Records · Journal & Archive</span><a class="orow" href="D05-Journal.dc.html"><span class="sb sm" style="background: #FCE4EF; color: #A83A62"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Food journal</span><span style="font-size: 12px; color: #66615D">Today’s page: photos, meals, notes</span></span></a><a class="orow" href="D02-Calendar.dc.html"><span class="sb sm" style="background: #D9E9F5; color: #0A73B8"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16"></path><path d="M9 3v4"></path><path d="M15 3v4"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Calendar</span><span style="font-size: 12px; color: #66615D">Past days and planned meals</span></span></a><a class="orow" href="D09-Archive.dc.html"><span class="sb sm" style="background: #D8E6EE; color: #0F5C85"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Search past days</span><span style="font-size: 12px; color: #66615D">Meals, journal pages, receipts</span></span></a></div><div class="og"><span class="lbl">Account</span><a class="orow" href="D11-Notifications.dc.html"><span class="sb sm" style="background: #FCE0E4; color: #B3304A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Notifications</span><span style="font-size: 12px; color: #66615D">Expiry, low stock, meal plan, budget</span></span></a><a class="orow" href="#"><span class="sb sm" style="background: #E2E2DF; color: #4A4542"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"></path></svg></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Settings</span><span style="font-size: 12px; color: #66615D">Goals, budget, privacy</span></span></a></div></div>
+</section>
+</sc-if>
+
+<a href="D04-Recipe-Detail.dc.html" aria-label="Today's tip: cook spinach tonight" style="display: flex; align-items: stretch; border-radius: 20px; overflow: hidden; background: #F2D04A; color: #231F1C; text-decoration: none; min-height: 150px">
+<span style="flex: 1 1 auto; padding: 22px 26px; display: flex; flex-direction: column; gap: 8px; justify-content: center">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #5C4A00">Today's tip</span>
+<span style="font-size: 22px; font-weight: 700; letter-spacing: -0.01em">Spinach expires tomorrow</span>
+<span style="font-size: 14px; color: #3D3500">Cook [Recipe] tonight: 20 min, 3 ingredients already in your fridge.</span>
+<span style="align-self: flex-start; margin-top: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: #231F1C; color: #FFFFFF; font-size: 13px; font-weight: 700; display: flex; align-items: center">Cook this</span>
+</span>
+<span class="ph" style="background-color: #E3BC2E; flex: 0 0 300px"></span>
+</a>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+<section class="card" aria-label="What have I eaten today" style="flex: 2 1 480px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="font-size: 18px; font-weight: 700">What have I eaten today?</h2><a href="D05-Journal.dc.html" style="font-size: 13px">Open today's journal</a></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px">
+<a href="D05-Journal.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none"><div class="ph" style="height: 110px; border-radius: 12px"></div><span class="lbl">Breakfast · 08:10</span><span style="font-size: 14px; font-weight: 600">[Meal name]</span><span style="font-size: 13px; color: #66615D">000 kcal</span></a>
+<a href="D05-Journal.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none"><div class="ph" style="height: 110px; border-radius: 12px"></div><span class="lbl">Lunch · 12:40</span><span style="font-size: 14px; font-weight: 600">[Meal name]</span><span style="font-size: 13px; color: #66615D">000 kcal</span></a>
+<a href="D12-Camera.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none"><div style="height: 110px; border-radius: 12px; border: 1.5px dashed #B5B3AF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #4A4542">+ Log dinner</div><span class="lbl">Dinner</span><span style="font-size: 13px; color: #66615D">Planned, not eaten yet</span></a>
+<a href="D12-Camera.dc.html" style="display: flex; flex-direction: column; gap: 6px; text-decoration: none"><div style="height: 110px; border-radius: 12px; border: 1.5px dashed #B5B3AF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #4A4542">+ Add snack</div><span class="lbl">Snack</span><span style="font-size: 13px; color: #66615D">Nothing yet</span></a>
+</div>
+</section>
+<div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 20px">
+<section class="card" aria-label="Upcoming meal plan" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="font-size: 16px; font-weight: 700">Up next</h2><a href="D02-Calendar.dc.html" style="font-size: 12px">Meal plan</a></div>
+<div class="row" style="padding: 6px 0"><span class="ph" style="width: 36px; height: 36px; border-radius: 8px"></span><span style="flex: 1">Dinner · [Recipe]</span><span class="chip">19:00</span></div>
+<div class="row" style="padding: 6px 0; border: 0"><span class="ph" style="width: 36px; height: 36px; border-radius: 8px"></span><span style="flex: 1">Tomorrow · [Recipe]</span><span class="chip">planned</span></div>
+</section>
+</div>
+</div>
+
+<section aria-label="Discover recipes" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="font-size: 18px; font-weight: 700">Discover good eats for you</h2><a href="D03-Recipes.dc.html" style="font-size: 13px">See all recipes</a></div>
+<div class="hs"><a class="disc" href="D04-Recipe-Detail.dc.html"><span class="ph" style="height: 130px; border-radius: 14px"></span><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">High protein · 25 min · video</span></a><a class="disc" href="D04-Recipe-Detail.dc.html"><span class="ph" style="height: 130px; border-radius: 14px"></span><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">Uses spinach · 20 min</span></a><a class="disc" href="D04-Recipe-Detail.dc.html"><span class="ph" style="height: 130px; border-radius: 14px"></span><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">Under ₩5,000 · 15 min</span></a><a class="disc" href="D04-Recipe-Detail.dc.html"><span class="ph" style="height: 130px; border-radius: 14px"></span><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">Light dinner · 30 min · video</span></a><a class="disc" href="D04-Recipe-Detail.dc.html"><span class="ph" style="height: 130px; border-radius: 14px"></span><span style="font-size: 14px; font-weight: 600">[Recipe name]</span><span style="font-size: 12px; color: #66615D">Meal prep · 40 min</span></a></div>
+</section>
+
+<div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; pointer-events: none; margin-top: auto"><a href="D12-Camera.dc.html" class="fab" aria-label="Open AI camera"><span class="dot"><span></span></span>AI camera</a></div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { showAll: false }; }
+  renderVals() {
+    const now = new Date();
+    const h = now.getHours();
+    const greeting = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
+    let dateLabel = '';
+    try {
+      dateLabel = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    } catch (e) { dateLabel = now.toDateString(); }
+    return { greeting, dateLabel, showAll: this.state.showAll,
+      openAll: () => this.setState({ showAll: !this.state.showAll }), closeAll: () => this.setState({ showAll: false }) };
+  }
+}
+</script>
+</body>
+</html>

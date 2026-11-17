@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Confirm scanned meal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.pt{all:unset;cursor:pointer;min-width:34px;min-height:32px;border-radius:8px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.chip{all:unset;cursor:pointer;box-sizing:border-box;min-height:34px;padding:0 12px;border-radius:999px;font-size:12px;display:flex;align-items:center}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EDEDEB; font-family: Inter, system-ui, sans-serif; color: #231F1C; display: flex; flex-direction: column">
+<div class="ph" style="height: 230px; flex: none; position: relative">
+<a href="M02-Camera.dc.html" style="position: absolute; left: 16px; top: 16px; min-height: 40px; padding: 0 14px; border-radius: 20px; background: #FFFFFF; display: flex; align-items: center; font-size: 13px; font-weight: 600; text-decoration: none">‹ Retake</a>
+</div>
+<div style="flex: 1; margin-top: -20px; background: #FFFFFF; border-radius: 22px 22px 0 0; padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden">
+<span class="lbl">AI suggestion · check before saving</span>
+<h1 style="font-size: 20px; font-weight: 700">We found 3 items</h1>
+<sc-for list="{{items}}" as="it" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #E4E4E1">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{it.name}}</span><span style="font-size: 12px; color: #66615D">{{it.kcal}} kcal {{it.note}}</span></div>
+<div role="group" aria-label="Portion" style="display: flex; gap: 2px; padding: 3px; background: #E2E2DF; border-radius: 10px">
+<sc-for list="{{it.sizes}}" as="z" hint-placeholder-count="3"><button type="button" class="pt" onClick="{{z.pick}}" aria-pressed="{{z.on}}" style="background: {{z.bg}}">{{z.l}}</button></sc-for>
+</div>
+</div>
+</sc-for>
+<button type="button" style="all: unset; cursor: pointer; min-height: 40px; font-size: 13px; font-weight: 600; text-decoration: underline">+ Add something it missed</button>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{meals}}" as="m" hint-placeholder-count="4"><button type="button" class="chip" onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="background: {{m.bg}}; color: {{m.fg}}; border: 1px solid {{m.bd}}">{{m.l}}</button></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 4px"><span style="font-size: 13px; color: #4A4542">Total</span><span style="font-size: 22px; font-weight: 700">{{total}} kcal</span></div>
+<span style="font-size: 11px; color: #66615D">Updates today's calories, journal page and calendar. Photo estimates can be off.</span>
+<a href="M04-Journal.dc.html" style="margin-top: auto; min-height: 52px; border-radius: 14px; background: #F9D312; border: 1px solid #E0BC00; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; text-decoration: none">Confirm &amp; save</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { size: { a: 'M', b: 'M', c: 'S' }, meal: 'Dinner' }; }
+  renderVals() {
+    const s = this.state;
+    const base = [['a', '[Main dish]', 420, ''], ['b', '[Rice]', 300, ''], ['c', '[Side]', 90, '· not sure']];
+    const mult = { S: 0.7, M: 1, L: 1.4 };
+    let total = 0;
+    const items = base.map((b) => {
+      const k = Math.round(b[2] * mult[s.size[b[0]]]); total += k;
+      return { name: b[1], kcal: k, note: b[3], sizes: ['S', 'M', 'L'].map((z) => ({ l: z, on: String(s.size[b[0]] === z), bg: s.size[b[0]] === z ? '#FFFFFF' : 'transparent',
+        pick: () => { const n = Object.assign({}, s.size); n[b[0]] = z; this.setState({ size: n }); } })) };
+    });
+    const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snack'].map((m) => ({ l: m, on: String(s.meal === m), bg: s.meal === m ? '#231F1C' : '#FFFFFF', fg: s.meal === m ? '#FFFFFF' : '#4A4542', bd: s.meal === m ? '#231F1C' : '#C9C9C6', pick: () => this.setState({ meal: m }) }));
+    return { items, meals, total };
+  }
+}
+</script>
+</body>
+</html>

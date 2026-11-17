@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Budgeting</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Caveat:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ln{height:12px;border-radius:6px;background:#DCDCD9}
+.ic{width:16px;height:16px;flex:none;border:1.5px solid currentColor;border-radius:5px;box-sizing:border-box}
+.nv{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;font-size:14px;color:#4A4542;text-decoration:none}
+.nv:hover{background:#E6E6E3;color:#231F1C}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.bdg{margin-left:auto;min-width:20px;height:20px;border-radius:10px;background:#231F1C;color:#FFFFFF;font-size:11px;display:flex;align-items:center;justify-content:center}
+.card{background:#FFFFFF;border:1px solid #D6D6D3;border-radius:16px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;border:1px solid #C9C9C6;background:#FFFFFF;color:#231F1C;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.btn.pri{background:#F9D312;border-color:#E0BC00}
+.chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;border:1px solid #C9C9C6;font:inherit;font-size:12px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #E4E4E1;font-size:13px}
+.seg{all:unset;cursor:pointer;min-height:36px;padding:0 14px;border-radius:9px;font-size:13px;font-weight:600;display:flex;align-items:center}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#4A4542}
+.fld input,.fld select{min-height:38px;border:1px solid #C9C9C6;border-radius:8px;padding:0 10px;font:inherit;font-size:13px;font-weight:400;color:#231F1C;background:#FFFFFF}
+.cat{background:#EDEDEB;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;font-size:12px;color:#4A4542}
+.cat strong{font-size:16px;color:#231F1C}
+.fab{pointer-events:auto;display:flex;align-items:center;gap:10px;min-height:56px;padding:0 20px 0 8px;border-radius:999px;background:#231F1C;color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.fab:hover{color:#FFFFFF;background:#000}
+.fab .dot{width:40px;height:40px;border-radius:50%;background:#F9D312;display:flex;align-items:center;justify-content:center}
+.fab .dot span{width:16px;height:16px;border:2px solid #231F1C;border-radius:50%;box-sizing:border-box}
+.nv{position:relative}
+.nv .ni{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;color:#66615D}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.nv.on .ni{color:#0F5C85}
+.nv.sm{min-height:40px;font-size:13px}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:#66615D}
+.crumb a{color:#4A4542;text-underline-offset:3px;min-height:28px;display:inline-flex;align-items:center}
+@media (min-width:761px) and (max-width:1100px){
+nav.side{flex:0 0 96px !important;max-width:96px !important;padding:20px 8px !important}
+nav.side .bt,nav.side .acct .lbl,nav.side .pf .nt{display:none}
+nav.side .brand{justify-content:center;padding:0 !important}
+nav.side .pf{justify-content:center;padding:8px 0 !important}
+nav.side .nv{flex-direction:column;gap:4px;font-size:11px;text-align:center;padding:8px 4px;min-height:62px;justify-content:center}
+nav.side .nv .bdg{position:absolute;top:6px;right:14px;margin:0}
+}
+@media (max-width:760px){
+nav.side{position:fixed !important;left:0;right:0;bottom:0;z-index:30;flex:none !important;max-width:none !important;width:100%;flex-direction:row !important;padding:6px 8px calc(8px + env(safe-area-inset-bottom)) !important;border-right:0 !important;border-top:1px solid #D6D6D3;gap:0 !important}
+nav.side .brand,nav.side .acct{display:none !important}
+nav.side .nvg{flex:1;display:grid !important;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px !important}
+nav.side .nv{flex-direction:column;gap:3px;font-size:11px;min-height:56px;padding:4px;justify-content:center;text-align:center}
+main{padding-bottom:110px !important}
+main > div[style*="sticky"]{bottom:92px !important}
+}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #231F1C; background: #EDEDEB; min-height: 1100px; display: flex; flex-wrap: wrap; align-items: stretch">
+
+<nav aria-label="Main" class="side" style="flex: 1 0 232px; max-width: 248px; box-sizing: border-box; background: #F6F6F4; border-right: 1px solid #D6D6D3; padding: 24px 14px; display: flex; flex-direction: column; gap: 18px">
+<a href="D01-Dashboard.dc.html" class="brand" aria-label="DailyBite home" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; text-decoration: none; color: #231F1C"><span style="width: 32px; height: 32px; border-radius: 9px; background: #F9D312; display: flex; align-items: center; justify-content: center; flex: none"><span style="width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #231F1C; box-sizing: border-box"></span></span><span class="bt" style="font-size: 18px; font-weight: 700">DailyBite</span></a>
+<div class="nvg" style="display: flex; flex-direction: column; gap: 4px">
+<a href="D01-Dashboard.dc.html" class="nv on" aria-current="page"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span><span class="nt">Home</span></a>
+<a href="D00-Kitchen.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M2 11h20"></path><path d="M9 7.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5"></path></svg></span><span class="nt">My Kitchen</span></a>
+<a href="D05-Journal.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span class="nt">Journal</span></a>
+<a href="D09-Archive.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span><span class="nt">Archive</span></a>
+</div>
+<div class="acct" style="margin-top: auto; border-top: 1px solid #D6D6D3; padding-top: 14px; display: flex; flex-direction: column; gap: 2px">
+<a href="D11-Notifications.dc.html" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span><span class="nt">Notifications</span><span class="bdg">4</span></a>
+<a href="#" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"></path></svg></span><span class="nt">Settings</span></a>
+<div class="pf" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px"><span class="ph" style="width: 32px; height: 32px; border-radius: 50%; flex: none"></span><span class="nt" style="font-size: 13px; font-weight: 600">[Name]</span></div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 26px 30px 28px; display: flex; flex-direction: column; gap: 18px">
+<nav aria-label="Breadcrumb" class="crumb"><a href="D01-Dashboard.dc.html">Home</a><span aria-hidden="true">/</span><span aria-current="page" style="color: #231F1C; font-weight: 600">Budget</span></nav>
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 4px"><span class="lbl">Budgeting</span><h1 style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Food spending · this month</h1></div>
+<button type="button" class="btn" onClick="{{openManual}}">+ Manual entry</button>
+<a href="D12-Camera.dc.html" class="btn pri">Scan receipt</a>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 18px">
+<section class="card" aria-label="Monthly overview" style="flex: 2 1 480px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: baseline">
+<div style="display: flex; flex-direction: column; gap: 2px"><span class="lbl">Spent</span><span style="font-size: 30px; font-weight: 700">₩000,000</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span class="lbl">Remaining</span><span style="font-size: 30px; font-weight: 700">₩00,000</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span class="lbl">Budget</span><span style="font-size: 18px; color: #4A4542">₩000,000 <button type="button" style="all: unset; cursor: pointer; font-size: 12px; text-decoration: underline">edit</button></span></div>
+</div>
+<div class="ln" style="background: linear-gradient(90deg, #0A73B8 72%, #DCDCD9 72%)"></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<div class="cat">Daily food<strong>₩00,000</strong><div class="ln" style="height: 6px; background: linear-gradient(90deg, #8A8682 40%, #DCDCD9 40%)"></div></div>
+<div class="cat">Groceries<strong>₩00,000</strong><div class="ln" style="height: 6px; background: linear-gradient(90deg, #8A8682 70%, #DCDCD9 70%)"></div></div>
+<div class="cat">Snacks &amp; drinks<strong>₩00,000</strong><div class="ln" style="height: 6px; background: linear-gradient(90deg, #8A8682 85%, #DCDCD9 85%)"></div></div>
+<div class="cat">Other<strong>₩0,000</strong><div class="ln" style="height: 6px; background: linear-gradient(90deg, #8A8682 15%, #DCDCD9 15%)"></div></div>
+</div>
+</section>
+<section class="card" aria-label="Alerts and insights" style="flex: 1 1 280px; padding: 20px; display: flex; flex-direction: column; gap: 6px; background: #F6F6F4">
+<span class="lbl">Alerts &amp; insights</span>
+<div class="row"><span class="chip" style="background: #FBDCD3; border-color: #F2A38F">alert</span><span style="flex: 1">Snacks &amp; drinks is at 85% of its share</span></div>
+<div class="row"><span class="chip">insight</span><span style="flex: 1">Cooking at home on weekdays kept daily food spend under plan</span></div>
+<div class="row" style="border: 0"><span class="chip">insight</span><span style="flex: 1">[Store] was your cheapest grocery run this month</span></div>
+</section>
+</div>
+
+<sc-if value="{{manual}}" hint-placeholder-val="{{ false }}">
+<section class="card" aria-label="Expense entry" style="padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="font-size: 17px; font-weight: 700">{{entryTitle}}</h2><button type="button" class="btn" onClick="{{closeManual}}" aria-label="Close" style="width: 44px; padding: 0">×</button></div>
+<div style="display: flex; flex-wrap: wrap; gap: 18px">
+<div class="ph" style="flex: 0 0 160px; height: 220px; border-radius: 8px" role="img" aria-label="Receipt photo"></div>
+<div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<label class="fld">Merchant<input type="text" value="[Store]"></label>
+<label class="fld">Date<input type="text" value="[date]"></label>
+<label class="fld">Category<select><option>Groceries</option><option>Daily food</option><option>Snacks &amp; drinks</option><option>Other</option></select></label>
+<label class="fld">Amount<input type="text" value="₩00,000"></label>
+</div>
+<span class="lbl">Items (edit any line)</span>
+<div class="row"><span style="flex: 2">[Item]</span><span style="flex: 1">1 pack</span><span style="flex: 1">₩0,000</span><span class="chip">→ fridge</span></div>
+<div class="row"><span style="flex: 2">[Item]</span><span style="flex: 1">6 pcs</span><span style="flex: 1">₩0,000</span><span class="chip">→ fridge</span></div>
+<div class="row"><span style="flex: 2">[Item] <span class="chip">AI unsure</span></span><span style="flex: 1">?</span><span style="flex: 1">₩0,000</span><span class="chip">skip</span></div>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 13px; min-height: 40px"><input type="checkbox" checked="checked" style="width: 18px; height: 18px">Send grocery items to Digital fridge (you'll confirm them there)</label>
+<div style="display: flex; gap: 8px"><button type="button" class="btn pri" onClick="{{closeManual}}">Save expense</button><button type="button" class="btn" onClick="{{closeManual}}">Cancel</button></div>
+</div>
+</div>
+</section>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+<section class="card" aria-label="Expense chart" style="flex: 2 1 480px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px"><h2 style="font-size: 17px; font-weight: 700">Spending history</h2>
+<div role="tablist" aria-label="Range" style="display: flex; gap: 4px; padding: 4px; background: #E2E2DF; border-radius: 12px">
+<sc-for list="{{ranges}}" as="r" hint-placeholder-count="3"><button type="button" role="tab" class="seg" aria-selected="{{r.on}}" onClick="{{r.pick}}" style="background: {{r.bg}}">{{r.label}}</button></sc-for>
+</div></div>
+<div style="display: flex; align-items: flex-end; gap: 6px; height: 190px; border-bottom: 1px solid #D6D6D3">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="7"><div style="flex: 1; height: {{b.h}}; background: {{b.c}}; border-radius: 5px 5px 0 0"></div></sc-for>
+</div>
+<div style="display: flex; gap: 6px; font-size: 11px; color: #66615D"><sc-for list="{{bars}}" as="b" hint-placeholder-count="7"><span style="flex: 1; text-align: center">{{b.l}}</span></sc-for></div>
+</section>
+<section class="card" aria-label="Recent expenses" style="flex: 1 1 320px; padding: 20px; display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 4px"><h2 style="font-size: 17px; font-weight: 700">Recent</h2><a href="D09-Archive.dc.html" style="font-size: 12px">All history</a></div>
+<div class="row"><span class="ph" style="width: 32px; height: 40px; border-radius: 4px"></span><span style="flex: 1">[Store] · Groceries<br><span style="color: #66615D">Today · 6 items → fridge</span></span><span>₩00,000</span></div>
+<div class="row"><span class="ic" style="width: 32px; height: 32px"></span><span style="flex: 1">[Restaurant] · Daily food<br><span style="color: #66615D">Today · linked to lunch</span></span><span>₩0,000</span></div>
+<div class="row"><span class="ic" style="width: 32px; height: 32px"></span><span style="flex: 1">[Café] · Snacks &amp; drinks<br><span style="color: #66615D">Yesterday</span></span><span>₩0,000</span></div>
+<div class="row" style="border: 0"><span class="ph" style="width: 32px; height: 40px; border-radius: 4px"></span><span style="flex: 1">[Store] · Groceries<br><span style="color: #66615D">[date]</span></span><span>₩00,000</span></div>
+</section>
+</div>
+
+<div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; pointer-events: none; margin-top: auto"><a href="D12-Camera.dc.html" class="fab" aria-label="Open AI camera, receipt scan first"><span class="dot"><span></span></span>AI camera</a></div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { range: 'Daily', manual: true }; }
+  renderVals() {
+    const s = this.state;
+    const ranges = ['Daily', 'Weekly', 'Monthly'].map((r) => ({ label: r, on: String(s.range === r), bg: s.range === r ? '#FFFFFF' : 'transparent', pick: () => this.setState({ range: r }) }));
+    const sets = {
+      Daily: { l: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], h: [30, 55, 20, 80, 45, 90, 35] },
+      Weekly: { l: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4', 'Wk 5'], h: [60, 85, 45, 70, 25] },
+      Monthly: { l: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'], h: [70, 65, 90, 60, 75, 72] }
+    };
+    const set = sets[s.range];
+    const bars = set.l.map((l, i) => ({ l, h: set.h[i] + '%', c: i === set.l.length - 1 ? '#0A73B8' : '#C9C9C6' }));
+    return { ranges, bars, manual: s.manual, entryTitle: 'Receipt scan · check before saving',
+      openManual: () => this.setState({ manual: true }), closeManual: () => this.setState({ manual: false }) };
+  }
+}
+</script>
+</body>
+</html>

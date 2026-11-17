@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Daily date change and sync</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.card{background:#FFFFFF;border:1px solid #D6D6D3;border-radius:16px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;border:1px solid #C9C9C6;background:#FFFFFF;color:#231F1C;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.btn.pri{background:#F9D312;border-color:#E0BC00}
+.btn.dk{background:#231F1C;color:#FFFFFF;border-color:#231F1C}
+.chip{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;border:1px solid #C9C9C6;font:inherit;font-size:12px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.stat{background:#EDEDEB;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:2px;font-size:12px;color:#4A4542}
+.stat strong{font-size:24px;color:#231F1C}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+.tr{display:grid;grid-template-columns:120px 110px 70px 80px 90px 1fr 100px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #E4E4E1;font-size:13px}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #231F1C; background: #EDEDEB; min-height: 1100px; box-sizing: border-box; padding: 32px 40px; display: flex; flex-direction: column; gap: 18px">
+<header style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="lbl">Prototype · requirement 6</span>
+<h1 style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Daily date change &amp; data sync</h1>
+<span style="font-size: 13px; color: #4A4542">Real today from your device: <strong>{{realToday}}</strong> · time zone <span class="mono">{{tz}}</span></span>
+</div>
+<div class="card" style="padding: 10px 14px; background: #F6F6F4; font-size: 12px; color: #4A4542; max-width: 460px">
+<strong style="color: #231F1C">Simulated:</strong> no backend. Sample records are stored in this browser ({{storage}}) and the clock can be pushed forward with "Simulate midnight". The real app saves the same records to the server.
+</div>
+</header>
+
+<section class="card" aria-label="Date controls" style="padding: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<button type="button" class="btn" aria-label="Previous day" onClick="{{prev}}" style="width: 44px; padding: 0">‹</button>
+<div style="display: flex; flex-direction: column; min-width: 220px"><span class="lbl">{{viewKind}}</span><span style="font-size: 20px; font-weight: 700">{{viewLabel}}</span></div>
+<button type="button" class="btn" aria-label="Next day" onClick="{{next}}" style="width: 44px; padding: 0">›</button>
+<button type="button" class="btn" onClick="{{goToday}}">Go to today</button>
+<span style="flex: 1"></span>
+<button type="button" class="btn dk" onClick="{{midnight}}">Simulate midnight →</button>
+<button type="button" class="btn" onClick="{{reset}}">Reset demo</button>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+<section class="card" aria-label="Dashboard for viewed date" style="flex: 1 1 420px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="font-size: 16px; font-weight: 700">Dashboard totals</h2><span class="chip">computed from records</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<div class="stat">Calories eaten<strong>{{kcal}}</strong>of 1,800 goal</div>
+<div class="stat">Food spend<strong>{{spend}}</strong>this day</div>
+<div class="stat">Meals<strong>{{meals}}</strong>{{plannedNote}}</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" class="btn pri" onClick="{{logMeal}}" disabled="{{isFuture}}">+ Log eaten meal</button>
+<button type="button" class="btn" onClick="{{planMeal}}">+ Plan a meal</button>
+<button type="button" class="btn" onClick="{{addExpense}}" disabled="{{isFuture}}">+ Add expense</button>
+</div>
+<span style="font-size: 12px; color: #66615D">Planned meals never count toward calories until marked eaten. Future days can only hold plans.</span>
+</section>
+
+<section class="card" aria-label="Calendar indicators" style="flex: 1 1 420px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="font-size: 16px; font-weight: 700">Calendar indicators (same records)</h2>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{strip}}" as="d" hint-placeholder-count="7">
+<button type="button" onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="all: unset; cursor: pointer; box-sizing: border-box; border-radius: 10px; padding: 8px 6px; min-height: 108px; display: flex; flex-direction: column; gap: 4px; background: {{d.bg}}; border: {{d.border}}">
+<span class="lbl" style="font-size: 10px">{{d.dow}}</span>
+<span style="font-size: 16px; font-weight: 700">{{d.n}}</span>
+<span style="font-size: 11px; color: #4A4542">{{d.kcal}}</span>
+<span style="font-size: 11px; color: #4A4542">{{d.spend}}</span>
+<span style="font-size: 10px; color: #66615D">{{d.plan}}</span>
+</button>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #66615D">Bold border = real/simulated today. Click a day to view it.</span>
+</section>
+</div>
+
+<section class="card" aria-label="Records" style="padding: 18px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px"><h2 style="font-size: 16px; font-weight: 700">Records on {{viewLabel}}</h2><span style="font-size: 12px; color: #66615D">{{total}} records stored in all</span></div>
+<div class="tr lbl" style="font-size: 10px"><span>ID</span><span>Date</span><span>Time</span><span>Type</span><span>Status</span><span>Detail</span><span></span></div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+<div class="tr">
+<span class="mono">{{r.id}}</span><span class="mono">{{r.date}}</span><span class="mono">{{r.time}}</span><span>{{r.type}}</span>
+<span><span class="chip" style="background: {{r.sbg}}">{{r.status}}</span></span>
+<span>{{r.detail}}</span>
+<span style="display: flex; gap: 4px; justify-content: flex-end">
+<sc-if value="{{r.canEat}}" hint-placeholder-val="{{ false }}"><button type="button" class="chip" onClick="{{r.eat}}" style="cursor: pointer">Mark eaten</button></sc-if>
+<button type="button" class="chip" onClick="{{r.del}}" aria-label="Delete record" style="cursor: pointer">Delete</button>
+</span>
+</div>
+</sc-for>
+<sc-if value="{{none}}" hint-placeholder-val="{{ false }}"><p style="padding: 18px 0; font-size: 14px; color: #4A4542">No records yet for this day. A new day always starts empty: 0 kcal, ₩0.</p></sc-if>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const recs = this.load();
+    this.state = { offset: 0, view: this.key(new Date()), recs: recs || this.seed(), saved: !!recs, real: this.key(new Date()) };
+  }
+  key(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  shift(k, n) { const p = k.split('-'); const d = new Date(+p[0], +p[1] - 1, +p[2]); d.setDate(d.getDate() + n); return this.key(d); }
+  uid(t) { return t + '_' + Date.now().toString(36).slice(-5) + Math.floor(Math.random() * 90 + 10); }
+  seed() {
+    const t = this.key(new Date());
+    const y = this.shift(t, -1), tm = this.shift(t, 1);
+    return [
+      { id: 'ml_a1', date: y, time: '08:05', type: 'Meal', status: 'eaten', kcal: 420, detail: 'Breakfast · [sample]' },
+      { id: 'ml_a2', date: y, time: '12:30', type: 'Meal', status: 'eaten', kcal: 610, detail: 'Lunch · [sample]' },
+      { id: 'ex_a3', date: y, time: '17:10', type: 'Expense', status: 'saved', amount: 18400, detail: 'Groceries · [sample store]' },
+      { id: 'ml_a4', date: y, time: '19:20', type: 'Meal', status: 'eaten', kcal: 690, detail: 'Dinner · [sample]' },
+      { id: 'ml_b1', date: t, time: '08:15', type: 'Meal', status: 'eaten', kcal: 380, detail: 'Breakfast · [sample]' },
+      { id: 'ml_b2', date: t, time: '19:00', type: 'Meal', status: 'planned', kcal: 650, detail: 'Dinner · [planned recipe]' },
+      { id: 'ml_c1', date: tm, time: '12:30', type: 'Meal', status: 'planned', kcal: 540, detail: 'Lunch · [planned recipe]' }
+    ];
+  }
+  load() { try { const v = window.localStorage.getItem('nutrigo-demo-records'); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  persist(recs) { let ok = false; try { window.localStorage.setItem('nutrigo-demo-records', JSON.stringify(recs)); ok = true; } catch (e) { ok = false; } this.setState({ recs, saved: ok }); }
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const k = this.key(new Date());
+      if (k !== this.state.real) {
+        const wasToday = this.state.view === this.shift(this.state.real, this.state.offset);
+        this.setState({ real: k, view: wasToday ? this.shift(k, this.state.offset) : this.state.view });
+      }
+    }, 60000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const s = this.state;
+    const today = this.shift(s.real, s.offset);
+    const dows = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const mons = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const pretty = (k) => { const p = k.split('-'); const d = new Date(+p[0], +p[1] - 1, +p[2]); return dows[d.getDay()] + ', ' + d.getDate() + ' ' + mons[d.getMonth()] + ' ' + d.getFullYear(); };
+    const sum = (k) => {
+      const r = s.recs.filter((x) => x.date === k);
+      return { kcal: r.filter((x) => x.type === 'Meal' && x.status === 'eaten').reduce((a, b) => a + (b.kcal || 0), 0),
+        spend: r.filter((x) => x.type === 'Expense').reduce((a, b) => a + (b.amount || 0), 0),
+        meals: r.filter((x) => x.type === 'Meal' && x.status === 'eaten').length,
+        planned: r.filter((x) => x.type === 'Meal' && x.status === 'planned').length };
+    };
+    const v = s.view; const t = sum(v);
+    const isFuture = v > today; const isToday = v === today;
+    const nowT = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+    const add = (rec) => this.persist(s.recs.concat([rec]));
+    const rows = s.recs.filter((x) => x.date === v).sort((a, b) => a.time < b.time ? -1 : 1).map((x) => ({
+      id: x.id, date: x.date, time: x.time, type: x.type, status: x.status,
+      sbg: x.status === 'planned' ? '#FFFFFF' : '#D9E9F5',
+      detail: x.detail + (x.kcal ? ' · ' + x.kcal + ' kcal' : '') + (x.amount ? ' · ₩' + x.amount.toLocaleString('en-US') : ''),
+      canEat: x.status === 'planned' && !isFuture,
+      eat: () => this.persist(s.recs.map((y) => y.id === x.id ? Object.assign({}, y, { status: 'eaten' }) : y)),
+      del: () => this.persist(s.recs.filter((y) => y.id !== x.id))
+    }));
+    const strip = [-3, -2, -1, 0, 1, 2, 3].map((n) => {
+      const k = this.shift(v, n); const m = sum(k); const p = k.split('-'); const d = new Date(+p[0], +p[1] - 1, +p[2]);
+      return { dow: dows[d.getDay()], n: d.getDate(), kcal: m.kcal ? m.kcal + ' kcal' : '0 kcal', spend: m.spend ? '₩' + m.spend.toLocaleString('en-US') : '₩0',
+        plan: m.planned ? m.planned + ' planned' : '', on: String(k === v),
+        bg: k === v ? '#D9E9F5' : (k > today ? '#FFFFFF' : '#F6F6F4'), border: k === today ? '2px solid #231F1C' : '1px solid #E4E4E1',
+        pick: () => this.setState({ view: k }) };
+    });
+    return {
+      realToday: pretty(s.real), tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || 'local'),
+      storage: s.saved ? 'saved to localStorage, survives refresh' : 'kept in memory until your first change; stored in this browser if allowed',
+      viewLabel: pretty(v), viewKind: isToday ? (s.offset ? 'Simulated today (+' + s.offset + ' day)' : 'Today') : (isFuture ? 'Future · plans only' : 'Past day · editable'),
+      kcal: t.kcal.toLocaleString('en-US'), spend: '₩' + t.spend.toLocaleString('en-US'), meals: String(t.meals), plannedNote: t.planned ? '+' + t.planned + ' planned' : 'none planned',
+      isFuture, rows, none: rows.length === 0, strip, total: s.recs.length,
+      prev: () => this.setState({ view: this.shift(v, -1) }), next: () => this.setState({ view: this.shift(v, 1) }),
+      goToday: () => this.setState({ view: today }),
+      midnight: () => { const o = s.offset + 1; this.setState({ offset: o, view: this.shift(s.real, o) }); },
+      reset: () => { try { window.localStorage.removeItem('nutrigo-demo-records'); } catch (e) {} this.setState({ offset: 0, view: s.real, recs: this.seed(), saved: false }); },
+      logMeal: () => add({ id: this.uid('ml'), date: v, time: isToday ? nowT() : '13:00', type: 'Meal', status: 'eaten', kcal: 450, detail: 'Meal · [sample, logged in demo]' }),
+      planMeal: () => add({ id: this.uid('ml'), date: v, time: '19:00', type: 'Meal', status: 'planned', kcal: 600, detail: 'Dinner · [planned in demo]' }),
+      addExpense: () => add({ id: this.uid('ex'), date: v, time: isToday ? nowT() : '17:00', type: 'Expense', status: 'saved', amount: 6500, detail: 'Snacks & drinks · [sample]' })
+    };
+  }
+}
+</script>
+</body>
+</html>

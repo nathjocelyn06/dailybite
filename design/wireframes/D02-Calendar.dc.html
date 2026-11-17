@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite calendar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Caveat:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ic{width:16px;height:16px;flex:none;border:1.5px solid currentColor;border-radius:5px;box-sizing:border-box}
+.nv{display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;font-size:14px;color:#4A4542;text-decoration:none}
+.nv:hover{background:#E6E6E3;color:#231F1C}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.bdg{margin-left:auto;min-width:20px;height:20px;border-radius:10px;background:#231F1C;color:#FFFFFF;font-size:11px;display:flex;align-items:center;justify-content:center}
+.card{background:#FFFFFF;border:1px solid #D6D6D3;border-radius:16px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;border:1px solid #C9C9C6;background:#FFFFFF;color:#231F1C;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.btn.pri{background:#F9D312;border-color:#E0BC00}
+.chip{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;border:1px solid #C9C9C6;font:inherit;font-size:11px;color:#4A4542;background:#FFFFFF;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.hand{font-family:'Caveat',cursive;font-size:21px;color:#4A4542}
+.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #E4E4E1;font-size:13px}
+.fab{pointer-events:auto;display:flex;align-items:center;gap:10px;min-height:56px;padding:0 20px 0 8px;border-radius:999px;background:#231F1C;color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.fab:hover{color:#FFFFFF;background:#000}
+.fab .dot{width:40px;height:40px;border-radius:50%;background:#F9D312;display:flex;align-items:center;justify-content:center}
+.fab .dot span{width:16px;height:16px;border:2px solid #231F1C;border-radius:50%;box-sizing:border-box}
+.seg{all:unset;cursor:pointer;min-height:36px;padding:0 14px;border-radius:9px;font-size:13px;font-weight:600;display:flex;align-items:center}
+.nv{position:relative}
+.nv .ni{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;color:#66615D}
+.nv.on{background:#D9E9F5;color:#231F1C;font-weight:600}
+.nv.on .ni{color:#0F5C85}
+.nv.sm{min-height:40px;font-size:13px}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:#66615D}
+.crumb a{color:#4A4542;text-underline-offset:3px;min-height:28px;display:inline-flex;align-items:center}
+@media (min-width:761px) and (max-width:1100px){
+nav.side{flex:0 0 96px !important;max-width:96px !important;padding:20px 8px !important}
+nav.side .bt,nav.side .acct .lbl,nav.side .pf .nt{display:none}
+nav.side .brand{justify-content:center;padding:0 !important}
+nav.side .pf{justify-content:center;padding:8px 0 !important}
+nav.side .nv{flex-direction:column;gap:4px;font-size:11px;text-align:center;padding:8px 4px;min-height:62px;justify-content:center}
+nav.side .nv .bdg{position:absolute;top:6px;right:14px;margin:0}
+}
+@media (max-width:760px){
+nav.side{position:fixed !important;left:0;right:0;bottom:0;z-index:30;flex:none !important;max-width:none !important;width:100%;flex-direction:row !important;padding:6px 8px calc(8px + env(safe-area-inset-bottom)) !important;border-right:0 !important;border-top:1px solid #D6D6D3;gap:0 !important}
+nav.side .brand,nav.side .acct{display:none !important}
+nav.side .nvg{flex:1;display:grid !important;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px !important}
+nav.side .nv{flex-direction:column;gap:3px;font-size:11px;min-height:56px;padding:4px;justify-content:center;text-align:center}
+main{padding-bottom:110px !important}
+main > div[style*="sticky"]{bottom:92px !important}
+}
+.vt{display:inline-flex;gap:4px;padding:4px;background:#E2E2DF;border-radius:12px;align-self:flex-start}
+.vt a{min-height:38px;padding:0 16px;border-radius:9px;display:flex;align-items:center;font-size:13px;font-weight:600;color:#4A4542;text-decoration:none}
+.vt a[aria-current="page"]{background:#FFFFFF;color:#231F1C}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #231F1C; background: #EDEDEB; min-height: 1100px; display: flex; flex-wrap: wrap; align-items: stretch">
+
+<nav aria-label="Main" class="side" style="flex: 1 0 232px; max-width: 248px; box-sizing: border-box; background: #F6F6F4; border-right: 1px solid #D6D6D3; padding: 24px 14px; display: flex; flex-direction: column; gap: 18px">
+<a href="D01-Dashboard.dc.html" class="brand" aria-label="DailyBite home" style="display: flex; align-items: center; gap: 10px; padding: 0 10px; text-decoration: none; color: #231F1C"><span style="width: 32px; height: 32px; border-radius: 9px; background: #F9D312; display: flex; align-items: center; justify-content: center; flex: none"><span style="width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #231F1C; box-sizing: border-box"></span></span><span class="bt" style="font-size: 18px; font-weight: 700">DailyBite</span></a>
+<div class="nvg" style="display: flex; flex-direction: column; gap: 4px">
+<a href="D01-Dashboard.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span><span class="nt">Home</span></a>
+<a href="D00-Kitchen.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M2 11h20"></path><path d="M9 7.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5"></path></svg></span><span class="nt">My Kitchen</span></a>
+<a href="D05-Journal.dc.html" class="nv"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span><span class="nt">Journal</span></a>
+<a href="D09-Archive.dc.html" class="nv on" aria-current="page"><span class="ni"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span><span class="nt">Archive</span></a>
+</div>
+<div class="acct" style="margin-top: auto; border-top: 1px solid #D6D6D3; padding-top: 14px; display: flex; flex-direction: column; gap: 2px">
+<a href="D11-Notifications.dc.html" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span><span class="nt">Notifications</span><span class="bdg">4</span></a>
+<a href="#" class="nv sm"><span class="ni"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"></path></svg></span><span class="nt">Settings</span></a>
+<div class="pf" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px"><span class="ph" style="width: 32px; height: 32px; border-radius: 50%; flex: none"></span><span class="nt" style="font-size: 13px; font-weight: 600">[Name]</span></div>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px 32px 28px; display: flex; flex-direction: column; gap: 16px">
+<nav aria-label="Breadcrumb" class="crumb"><a href="D09-Archive.dc.html">Archive</a><span aria-hidden="true">/</span><span aria-current="page" style="color: #231F1C; font-weight: 600">Calendar</span></nav>
+<nav aria-label="Archive views" class="vt"><a href="D09-Archive.dc.html">List</a><a href="D02-Calendar.dc.html" aria-current="page">Calendar</a></nav>
+<header style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 4px">
+<span class="lbl">Archive · Calendar <span class="chip" style="margin-left: 6px; text-transform: none; letter-spacing: 0">sample data</span></span>
+<div style="display: flex; align-items: center; gap: 8px">
+<button type="button" class="btn" aria-label="Previous" onClick="{{prev}}" style="width: 44px; padding: 0">‹</button>
+<h1 style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em; min-width: 220px">{{heading}}</h1>
+<button type="button" class="btn" aria-label="Next" onClick="{{next}}" style="width: 44px; padding: 0">›</button>
+<button type="button" class="btn" onClick="{{goToday}}" style="min-height: 36px; font-size: 13px">Today</button>
+</div>
+</div>
+<div role="tablist" aria-label="View" style="display: flex; gap: 4px; padding: 4px; background: #E2E2DF; border-radius: 12px">
+<sc-for list="{{views}}" as="v" hint-placeholder-count="3">
+<button type="button" role="tab" class="seg" aria-selected="{{v.on}}" onClick="{{v.pick}}" style="background: {{v.bg}}">{{v.label}}</button>
+</sc-for>
+</div>
+</header>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A4542">
+<span>▢ photo of the day</span><span>000 kcal logged</span><span>₩ food spend</span><span><span class="chip">planned</span> meal plan status</span>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+<section class="card" aria-label="Calendar grid" style="flex: 999 1 560px; min-width: 0; padding: 14px">
+<sc-if value="{{isMonth}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding-bottom: 6px">
+<span class="lbl" style="text-align: center">Mon</span><span class="lbl" style="text-align: center">Tue</span><span class="lbl" style="text-align: center">Wed</span><span class="lbl" style="text-align: center">Thu</span><span class="lbl" style="text-align: center">Fri</span><span class="lbl" style="text-align: center">Sat</span><span class="lbl" style="text-align: center">Sun</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{cells}}" as="c" hint-placeholder-count="35">
+<button type="button" onClick="{{c.pick}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" style="all: unset; box-sizing: border-box; cursor: pointer; height: 112px; border-radius: 10px; padding: 7px; display: flex; flex-direction: column; gap: 4px; background: {{c.bg}}; border: {{c.border}}; opacity: {{c.op}}">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; font-weight: 600">{{c.label}}</span><sc-if value="{{c.photo}}" hint-placeholder-val="{{ false }}"><span class="ph" style="width: 28px; height: 22px; border-radius: 4px"></span></sc-if></span>
+<span style="font-size: 11px; color: #4A4542">{{c.kcal}}</span>
+<span style="font-size: 11px; color: #4A4542">{{c.spend}}</span>
+<sc-if value="{{c.plan}}" hint-placeholder-val="{{ false }}"><span class="chip" style="align-self: flex-start; min-height: 20px; font-size: 10px; padding: 0 7px">{{c.plan}}</span></sc-if>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{isWeek}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{week}}" as="w" hint-placeholder-count="7">
+<button type="button" onClick="{{w.pick}}" style="all: unset; box-sizing: border-box; cursor: pointer; border-radius: 12px; padding: 10px; min-height: 560px; display: flex; flex-direction: column; gap: 8px; background: {{w.bg}}; border: {{w.border}}">
+<span class="lbl">{{w.dow}}</span><span style="font-size: 20px; font-weight: 700">{{w.n}}</span>
+<span style="font-size: 11px; color: #4A4542">{{w.kcal}}</span>
+<span style="height: 80px; border-radius: 8px; border: {{w.slot}}; font-size: 11px; display: flex; align-items: flex-end; padding: 6px; box-sizing: border-box; color: #4A4542">Breakfast</span>
+<span style="height: 80px; border-radius: 8px; border: {{w.slot}}; font-size: 11px; display: flex; align-items: flex-end; padding: 6px; box-sizing: border-box; color: #4A4542">Lunch</span>
+<span style="height: 80px; border-radius: 8px; border: 1.5px dashed #B5B3AF; font-size: 11px; display: flex; align-items: flex-end; padding: 6px; box-sizing: border-box; color: #4A4542">Dinner · {{w.plan}}</span>
+<span style="font-size: 11px; color: #4A4542; margin-top: auto">{{w.spend}}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{isDay}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 0; padding: 6px 10px">
+<sc-for list="{{hours}}" as="h" hint-placeholder-count="6">
+<div style="display: flex; gap: 16px; min-height: 76px; border-top: 1px solid #E4E4E1; padding-top: 8px">
+<span style="width: 48px; font-size: 12px; color: #66615D">{{h.t}}</span>
+<sc-if value="{{h.has}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; gap: 12px; align-items: center; border: {{h.border}}; border-radius: 12px; padding: 8px">
+<span class="ph" style="width: 56px; height: 56px; border-radius: 8px"></span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 14px; font-weight: 600">{{h.title}}</span><span style="font-size: 12px; color: #66615D">{{h.meta}}</span></div>
+<span class="chip">{{h.tag}}</span>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</section>
+
+<aside class="card" aria-label="Day summary" style="flex: 1 1 300px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">{{selKind}}</span>
+<h2 style="font-size: 20px; font-weight: 700">{{selLabel}}</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="background: #EDEDEB; border-radius: 10px; padding: 10px; font-size: 12px; color: #4A4542">Calories<br><strong style="font-size: 16px; color: #231F1C">{{selKcal}}</strong></div>
+<div style="background: #EDEDEB; border-radius: 10px; padding: 10px; font-size: 12px; color: #4A4542">Food spend<br><strong style="font-size: 16px; color: #231F1C">{{selSpend}}</strong></div>
+</div>
+<span class="lbl" style="padding-top: 4px">Meals</span>
+<sc-for list="{{selMeals}}" as="m" hint-placeholder-count="3">
+<div class="row"><span class="ph" style="width: 36px; height: 36px; border-radius: 8px"></span><span style="flex: 1">{{m.name}}</span><span class="chip">{{m.status}}</span></div>
+</sc-for>
+<span class="lbl" style="padding-top: 4px">Expenses</span>
+<div class="row"><span style="flex: 1">{{selExp}}</span></div>
+<span class="lbl" style="padding-top: 4px">Journal</span>
+<span class="hand">{{selNote}}</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<a href="D05-Journal.dc.html" class="btn pri">Open day page</a>
+<a href="D03-Recipes.dc.html" class="btn">Plan a meal</a>
+</div>
+</aside>
+</div>
+
+<div style="position: sticky; bottom: 24px; display: flex; justify-content: flex-end; pointer-events: none; margin-top: auto"><a href="D12-Camera.dc.html" class="fab" aria-label="Open AI camera"><span class="dot"><span></span></span>AI camera</a></div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const t = new Date();
+    this.state = { view: 'Month', sel: new Date(t.getFullYear(), t.getMonth(), t.getDate()) };
+  }
+  info(d) {
+    const t = new Date(); const today = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    const n = d.getDate(); const diff = Math.round((d - today) / 86400000);
+    const past = diff < 0, isToday = diff === 0, future = diff > 0;
+    const kcal = past ? (1400 + (n * 137) % 600) : (isToday ? 900 : 0);
+    const spend = past ? (n % 4 === 0 ? 0 : 3000 + (n * 3700) % 18000) : 0;
+    return { past, isToday, future, kcal, spend,
+      photo: (past || isToday) && n % 3 !== 0,
+      plan: future ? (n % 2 === 0 ? 'planned' : '') : (isToday ? 'dinner planned' : '') };
+  }
+  fmt(v) { return '₩' + v.toLocaleString('en-US'); }
+  renderVals() {
+    const s = this.state; const sel = s.sel;
+    const mNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const same = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    const pickD = (d) => () => this.setState({ sel: d });
+    const y = sel.getFullYear(), m = sel.getMonth();
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;
+    const dim = new Date(y, m + 1, 0).getDate();
+    const total = Math.ceil((lead + dim) / 7) * 7;
+    const cells = [];
+    for (let i = 0; i < total; i++) {
+      const d = new Date(y, m, i - lead + 1);
+      const inM = d.getMonth() === m; const f = this.info(d); const on = same(d, sel);
+      cells.push({ label: String(d.getDate()), on: String(on), aria: d.toDateString(),
+        photo: f.photo, kcal: f.kcal ? f.kcal + ' kcal' : '', spend: f.spend ? this.fmt(f.spend) : '',
+        plan: f.plan, op: inM ? '1' : '0.45',
+        bg: on ? '#D9E9F5' : (f.future ? '#FFFFFF' : '#F6F6F4'),
+        border: f.isToday ? '1.5px solid #231F1C' : '1px solid #E4E4E1', pick: pickD(d) });
+    }
+    const mon = new Date(sel); mon.setDate(sel.getDate() - ((sel.getDay() + 6) % 7));
+    const week = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(mon); d.setDate(mon.getDate() + i); const f = this.info(d); const on = same(d, sel);
+      week.push({ dow: dows[d.getDay()], n: d.getDate(), kcal: f.kcal ? f.kcal + ' kcal' : '—',
+        spend: f.spend ? this.fmt(f.spend) : '₩0', plan: f.plan || (f.future ? 'empty' : 'eaten'),
+        slot: f.future ? '1.5px dashed #B5B3AF' : '1px solid #C9C9C6',
+        bg: on ? '#D9E9F5' : '#F6F6F4', border: f.isToday ? '1.5px solid #231F1C' : '1px solid #E4E4E1', pick: pickD(d) });
+    }
+    const f = this.info(sel);
+    const hours = f.future
+      ? [{ t: '08:00' }, { t: '12:30' }, { t: '19:00', has: true, title: '[Recipe] · dinner', meta: 'Planned · 000 kcal', tag: 'planned', border: '1.5px dashed #B5B3AF' }, { t: '21:00' }]
+      : [{ t: '08:10', has: true, title: '[Meal name]', meta: 'Breakfast · 000 kcal · [Place]', tag: 'eaten', border: '1px solid #D6D6D3' },
+         { t: '12:40', has: true, title: '[Meal name]', meta: 'Lunch · 000 kcal · ₩0,000', tag: 'eaten', border: '1px solid #D6D6D3' },
+         { t: '16:20', has: true, title: '[Store] receipt', meta: 'Groceries · ₩00,000 · 6 items to fridge', tag: 'expense', border: '1px solid #D6D6D3' },
+         { t: '19:00', has: true, title: '[Recipe] · dinner', meta: f.isToday ? 'Planned · tap to confirm eaten' : 'Dinner · 000 kcal', tag: f.isToday ? 'planned' : 'eaten', border: f.isToday ? '1.5px dashed #B5B3AF' : '1px solid #D6D6D3' }];
+    const views = ['Month', 'Week', 'Day'].map((v) => ({ label: v, on: String(s.view === v), bg: s.view === v ? '#FFFFFF' : 'transparent', pick: () => this.setState({ view: v }) }));
+    const step = (dir) => () => {
+      const d = new Date(sel);
+      if (s.view === 'Month') d.setMonth(d.getMonth() + dir, 1);
+      else if (s.view === 'Week') d.setDate(d.getDate() + 7 * dir);
+      else d.setDate(d.getDate() + dir);
+      this.setState({ sel: d });
+    };
+    const t = new Date();
+    const heading = s.view === 'Month' ? mNames[m] + ' ' + y : (s.view === 'Week' ? 'Week of ' + mon.getDate() + ' ' + mNames[mon.getMonth()].slice(0, 3) : dows[sel.getDay()] + ', ' + sel.getDate() + ' ' + mNames[m].slice(0, 3));
+    return {
+      views, cells, week, hours, heading,
+      isMonth: s.view === 'Month', isWeek: s.view === 'Week', isDay: s.view === 'Day',
+      prev: step(-1), next: step(1), goToday: () => this.setState({ sel: new Date(t.getFullYear(), t.getMonth(), t.getDate()) }),
+      selKind: f.isToday ? 'Today' : (f.future ? 'Upcoming day' : 'Past day'),
+      selLabel: dows[sel.getDay()] + ', ' + sel.getDate() + ' ' + mNames[m],
+      selKcal: f.future ? '— (not eaten yet)' : f.kcal + ' kcal',
+      selSpend: f.future ? '—' : this.fmt(f.spend),
+      selMeals: f.future ? [{ name: 'Dinner · [Recipe]', status: 'planned' }] : [{ name: 'Breakfast · [Meal]', status: 'eaten' }, { name: 'Lunch · [Meal]', status: 'eaten' }, { name: 'Dinner · [Recipe]', status: f.isToday ? 'planned' : 'eaten' }],
+      selExp: f.future ? 'No expenses yet' : (f.spend ? '[Store] · ' + this.fmt(f.spend) : 'No food spend'),
+      selNote: f.future ? 'nothing written yet' : '"[first line of that day\'s review]"'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mobile journal page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Caveat:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}
+h1,h2,h3,p{margin:0}
+.ph{background-color:#E2E2DF;background-image:linear-gradient(to top right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px)),linear-gradient(to bottom right,transparent calc(50% - 0.7px),#C9C9C6 50%,transparent calc(50% + 0.7px))}
+.ic{width:20px;height:20px;flex:none;border:1.5px solid currentColor;border-radius:6px;box-sizing:border-box}
+.hand{font-family:'Caveat',cursive;font-size:19px;color:#4A4542}
+.polar{background:#FFFFFF;border:1px solid #D6D6D3;padding:6px 6px 8px;box-shadow:0 1px 3px rgba(0,0,0,.07);display:flex;flex-direction:column;gap:4px;position:absolute;box-sizing:border-box}
+.stk{position:absolute;border-radius:50%;border:1.5px dashed #97938F;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4A4542;background:#FFFFFF}
+.tool{all:unset;cursor:pointer;min-width:52px;min-height:48px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:600}
+.day{all:unset;cursor:pointer;width:44px;min-height:54px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px}
+.tb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:#66615D;text-decoration:none;min-height:56px}
+.tb .ti{width:56px;height:30px;border-radius:15px;display:flex;align-items:center;justify-content:center}
+.tb.on{color:#0F5C85;font-weight:700}
+.tb.on .ti{background:#D9E9F5}
+.mcrumb{display:inline-flex;align-items:center;gap:4px;min-height:32px;font-size:13px;color:#4A4542;text-decoration:none;align-self:flex-start}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #EDEDEB; font-family: Inter, system-ui, sans-serif; color: #231F1C; display: flex; flex-direction: column">
+<div style="padding: 18px 16px 8px; display: flex; flex-direction: column; gap: 10px; flex: none">
+<div style="display: flex; justify-content: space-between; align-items: center"><h1 style="font-size: 20px; font-weight: 700">Food journal</h1><span style="font-size: 11px; color: #66615D">000 kcal · 2 meals</span></div>
+<div style="display: flex; justify-content: space-between">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7"><button type="button" class="day" onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="background: {{d.bg}}; border: {{d.bd}}"><span style="color: #66615D">{{d.w}}</span><strong style="font-size: 15px">{{d.n}}</strong></button></sc-for>
+</div>
+</div>
+<div style="flex: 1; margin: 0 12px; position: relative; background: #F6F6F4; border: 1px solid #D6D6D3; border-radius: 6px; overflow: hidden; background-image: repeating-linear-gradient(0deg, transparent 0 27px, #E6E6E3 27px 28px)">
+<span class="hand" style="position: absolute; left: 16px; top: 10px; font-size: 24px; color: #231F1C">{{pageTitle}}</span>
+<div class="polar" style="left: 14px; top: 56px; width: 170px; transform: rotate(-3deg)"><span class="ph" style="height: 130px"></span><span class="hand" style="text-align: center; font-size: 16px">[breakfast]</span></div>
+<span style="position: absolute; left: 60px; top: 46px; width: 64px; height: 18px; background: #F9D312; opacity: .8; transform: rotate(-6deg)"></span>
+<div style="position: absolute; left: 196px; top: 70px; width: 160px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; font-weight: 700">[Meal name]</span><span style="font-size: 11px; color: #4A4542">08:10 · 1 bowl · 000 kcal</span><span class="hand" style="font-size: 17px">[short reflection]</span></div>
+<span class="stk" style="left: 290px; top: 170px; width: 52px; height: 52px">mood</span>
+<div class="polar" style="left: 160px; top: 240px; width: 190px; transform: rotate(2.5deg)"><span style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px"><span class="ph" style="height: 96px"></span><span class="ph" style="height: 96px"></span></span><span class="hand" style="text-align: center; font-size: 16px">[lunch]</span></div>
+<div style="position: absolute; left: 16px; top: 270px; width: 130px; min-height: 100px; background: #FDF3C0; padding: 10px; box-sizing: border-box; transform: rotate(-2deg)"><span class="hand" style="font-size: 17px">[note to self…]</span></div>
+<span class="stk" style="left: 40px; top: 400px; width: 44px; height: 44px">habit</span>
+<a href="M02-Camera.dc.html" style="position: absolute; left: 110px; top: 420px; width: 150px; height: 90px; border: 1.5px dashed #B5B3AF; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; text-decoration: none; background: #FFFFFF">+ Dinner photo</a>
+</div>
+<div role="toolbar" aria-label="Edit tools" style="flex: none; margin: 8px 12px 0; background: #FFFFFF; border: 1px solid #D6D6D3; border-radius: 14px; display: flex; justify-content: space-between; padding: 4px">
+<sc-for list="{{tools}}" as="t" hint-placeholder-count="6"><button type="button" class="tool" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="background: {{t.bg}}"><span class="ic" style="width: 18px; height: 18px"></span>{{t.l}}</button></sc-for>
+</div>
+<a href="M02-Camera.dc.html" aria-label="Open AI camera" style="position: absolute; right: 16px; bottom: 150px; width: 60px; height: 60px; border-radius: 50%; background: #231F1C; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,.2)"><span style="width: 40px; height: 40px; border-radius: 50%; background: #F9D312; display: flex; align-items: center; justify-content: center"><span style="width: 16px; height: 16px; border: 2px solid #231F1C; border-radius: 50%; box-sizing: border-box"></span></span></a>
+<nav aria-label="Main tabs" style="flex: none; border-top: 1px solid #D6D6D3; background: #F6F6F4; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 6px 8px calc(12px + env(safe-area-inset-bottom)); box-sizing: border-box">
+<a class="tb" href="M01-Home.dc.html"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"></path><path d="M6 9.5V20h12V9.5"></path><path d="M10 20v-5h4v5"></path></svg></span>Home</a>
+<a class="tb" href="M07-Kitchen.dc.html"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"></path><path d="M2 11h20"></path><path d="M9 7.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5"></path></svg></span>My Kitchen</a>
+<a class="tb on" href="M04-Journal.dc.html" aria-current="page"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h11a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"></path><path d="M6 17a2 2 0 0 1 2-2h11"></path><path d="M10 8h5"></path></svg></span>Journal</a>
+<a class="tb" href="M08-Archive.dc.html"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg></span>Archive</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { off: 0, tool: 'Select' }; }
+  renderVals() {
+    const s = this.state; const w = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const t = new Date();
+    const days = [-5, -4, -3, -2, -1, 0, 1].map((o) => { const d = new Date(t); d.setDate(t.getDate() + o);
+      return { w: w[d.getDay()], n: d.getDate(), on: String(s.off === o), bg: s.off === o ? '#D9E9F5' : 'transparent', bd: o === 0 ? '1.5px solid #231F1C' : '1px solid transparent', pick: () => this.setState({ off: o }) }; });
+    const tools = ['Select', 'Photo', 'Sticker', 'Pen', 'Tape', 'Text'].map((l) => ({ l, on: String(s.tool === l), bg: s.tool === l ? '#D9E9F5' : 'transparent', pick: () => this.setState({ tool: l }) }));
+    return { days, tools, pageTitle: s.off === 0 ? 'today ~' : (s.off > 0 ? 'tomorrow · plan page' : 'past page') };
+  }
+}
+</script>
+</body>
+</html>

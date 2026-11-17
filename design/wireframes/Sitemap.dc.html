@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite sitemap</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Caveat:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EDEDEB}
+a{color:#231F1C}a:hover{color:#000}
+h1,h2,h3,p{margin:0}
+.card{background:#FFFFFF;border:1px solid #D6D6D3;border-radius:16px;box-sizing:border-box}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#66615D}
+.hand{font-family:'Caveat',cursive;font-size:22px;color:#4A4542}
+.sec{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 14px;border-radius:12px;background:#D9E9F5;font-size:14px;font-weight:600;color:#231F1C;text-decoration:none}
+.sec:hover{background:#F9D312}
+.sub{font-size:12px;color:#4A4542;padding:6px 2px;border-bottom:1px dashed #D6D6D3}
+.rec{border:1px solid #C9C9C6;border-radius:12px;padding:12px;background:#FFFFFF;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#4A4542}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 960px; box-sizing: border-box; padding: 44px 48px; background: #EDEDEB; font-family: Inter, system-ui, sans-serif; color: #231F1C; display: flex; flex-direction: column; gap: 24px">
+<header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="lbl">DailyBite · information architecture</span><h1 style="font-size: 30px; font-weight: 700; letter-spacing: -0.02em">4-tab sitemap &amp; shared records</h1></div>
+<span class="hand">each section title opens its wireframe</span>
+</header>
+
+<section aria-label="Main navigation: 4 tabs" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<div><a class="sec" href="D01-Dashboard.dc.html">1 · Home</a><div class="sub">Today card: kcal, macros, budget left</div><div class="sub">Quick actions: log meal, scan receipt, cook, progress</div><div class="sub">Service grid + More sheet</div><div class="sub">One tip · today's meals · up next</div><div class="sub">→ <a href="D08-Progress.dc.html">My progress</a> (AI overview, trends, habits, goals)</div><div class="sub">→ <a href="D07-Budget.dc.html">Budget</a></div></div>
+<div><a class="sec" href="D00-Kitchen.dc.html">2 · My Kitchen</a><div class="sub">What can I cook tonight?</div><div class="sub">→ <a href="D06-Fridge.dc.html">Fridge</a>: Stock · To buy · scan groceries</div><div class="sub">→ <a href="D03-Recipes.dc.html">Recipes</a>: Find · Saved · Cook from my fridge</div><div class="sub"><a href="D04-Recipe-Detail.dc.html">Recipe detail</a> → Cook this → logs to Journal</div><div class="sub">Use soon · To buy previews</div></div>
+<div><a class="sec" href="D05-Journal.dc.html">3 · Journal</a><div class="sub">Today's page: photos, meals, kcal</div><div class="sub">Stickers, notes, mood</div><div class="sub">Daily reflection</div><div class="sub">Daily nutrition summary</div><div class="sub">Previous pages ‹ ›</div></div>
+<div><a class="sec" href="D09-Archive.dc.html">4 · Archive</a><div class="sub">List: search + filter by date and type</div><div class="sub">→ <a href="D02-Calendar.dc.html">Calendar</a>: month · week · day</div><div class="sub">Past meals, nutrition, receipts</div><div class="sub">Planned meals ahead (calendar)</div></div>
+</section>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 13px; color: #4A4542"><span class="lbl">Account</span><a href="D11-Notifications.dc.html">Notifications (bell)</a><span>·</span><span>Settings (avatar)</span><span style="margin-left: auto" class="lbl">Global</span><a href="D12-Camera.dc.html">AI camera</a><span>·</span><a href="D13-Daily-Sync.dc.html">Daily date change &amp; sync</a><span style="margin-left: 16px" class="lbl">Cut for now</span><span>health articles &amp; workouts · water · body photo journal</span></div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px">
+<section class="card" aria-label="Shared records" style="flex: 3 1 700px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="font-size: 18px; font-weight: 700">Shared records (one source of truth)</h2><a href="D13-Daily-Sync.dc.html" style="font-size: 13px">See sync demo</a></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div class="rec"><strong style="font-size: 13px; color: #231F1C">Meal</strong>id · date · time<br>status: planned / eaten<br>photo · items · kcal · macros<br><span style="color: #66615D">shown in Dashboard, Journal, Calendar, Progress, Archive</span></div>
+<div class="rec"><strong style="font-size: 13px; color: #231F1C">Expense</strong>id · date · merchant<br>category · amount · items<br>receipt photo<br><span style="color: #66615D">shown in Budget, Calendar, Dashboard, Archive</span></div>
+<div class="rec"><strong style="font-size: 13px; color: #231F1C">Fridge item</strong>id · name · qty + unit<br>purchased · expires<br>source expense id<br><span style="color: #66615D">shown in Fridge, Recipes, Kitchen, Archive</span></div>
+<div class="rec"><strong style="font-size: 13px; color: #231F1C">Journal page</strong>id · date<br>layout of elements → meal ids<br>notes · stickers · mood<br><span style="color: #66615D">shown in Journal, Calendar, Archive</span></div>
+</div>
+</section>
+<section class="card" aria-label="Global camera" style="flex: 2 1 420px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="font-size: 18px; font-weight: 700">Global AI camera</h2><a href="D12-Camera.dc.html" style="font-size: 13px">Open wireframe</a></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; font-size: 13px; color: #4A4542">
+<span>Calorie scan → Meal</span><span>Receipt scan → Expense</span>
+<span>Ingredient scan → Fridge items</span><span>Recipe finder → Recipes</span>
+<span>Food journal → Journal page</span><span>Grocery scan → Fridge items</span>
+</div>
+<span style="font-size: 12px; color: #66615D">Every scan: suggest → user corrects → confirm → records update everywhere.</span>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

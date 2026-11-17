@@ -1,0 +1,20 @@
+{
+  "name": "DailyBite",
+  "short_name": "DailyBite",
+  "description": "Food journal, digital fridge and wellness companion",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F4F3EF",
+  "theme_color": "#F4F3EF",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "AI camera", "url": "/snap", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Today's journal", "url": "/journal" },
+    { "name": "My Kitchen", "url": "/kitchen" },
+    { "name": "To buy", "url": "/fridge?tab=list" }
+  ]
+}
