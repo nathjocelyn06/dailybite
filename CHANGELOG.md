@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.8.1 · 2026-11-17 — Scans fail fast instead of timing out
+- A Gemini outage used to hang the request until Vercel killed the function at 60 s and returned an opaque 504. Each attempt now aborts after 22 s, with **one retry** on 429/5xx, so the worst case still fits inside the serverless limit and the user gets a sentence instead of a gateway error.
+- **Thinking disabled** (`thinkingBudget: 0`): reading a plate is perception, not reasoning, and thinking tokens only spent latency we do not have in a single serverless call.
+- Added the 503 case to the error messages ("Gemini is overloaded right now — try again in a moment").
+
 ## v3.8 · 2026-11-17 — Food recognition switched on (Gemini)
 - The food camera now really analyses photos: Gemini is the configured provider, on the free tier, with the key server-side only.
 - **Default model is the `gemini-flash-latest` alias, not a pinned version.** Google now returns 404 for `gemini-2.5-flash` to new keys ("no longer available to new users"), so a pinned number is a time bomb; the alias always resolves to the current flash model. `GEMINI_MODEL` still overrides.
