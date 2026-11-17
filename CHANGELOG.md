@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.0 · 2026-11-17 — Phase 4: the digital fridge
+`/fridge` is no longer a list. `components/fridge/Fridge.tsx` ports `D06-Fridge` / `M05-Fridge`:
+- **Doors that open.** Handles swing the freezer and fridge on a CSS 3D `rotateY(-112deg)` (104° on phones, instant under `prefers-reduced-motion`), revealing shelves — freezer, dairy & eggs, proteins, crisper drawers, shelf — with the pantry cupboard beside the fridge.
+- **A door you decorate.** Post-its, notes, badges, magnets and tape, dragged with pointer events, tilted, retyped or removed, plus seven fridge colours. Saved through the existing `saveDecorAction` 600 ms after a drag ends.
+- **Positions are percentages of the door, not pixels**, so a door arranged on a laptop still looks right on a phone.
+- **A status magnet** on the door counts what needs attention: use-soon and low-stock items.
+- **Tap an item** for Use 1 / Restock / Remove / Recipes using this; items expiring or low are flagged on the shelf itself.
+- Verified end to end: a post-it dropped on the door appears in `fridge_decor` with its percent coordinates, rotation and colour a second later.
+
 ## v3.11 · 2026-11-17 — Fix the scan that hung on "Analysing your meal…"
 Measured against the same pizza photo: `gemini-flash-latest` **timed out at 15 s** (Google is saturating it), while `gemini-3.1-flash-lite` answered in **4.2 s**. The spinner was simply waiting on a model that never replied.
 - **Model chain instead of one model**: `gemini-3.1-flash-lite` first, `gemini-flash-latest` as backstop, 13 s per attempt so the whole chain fits inside the serverless budget. A rejected key still fails immediately — only timeouts, 404s, rate limits and outages move to the next model.

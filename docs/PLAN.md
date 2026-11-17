@@ -108,12 +108,15 @@ Tokens in `app/globals.css`. Neutrals: paper `#EDEDEB`, ink `#231F1C`, grid gray
 
 Claude connectors now point at `https://dailybite-ten.vercel.app/api/mcp?key=…` — the laptop dev server is no longer needed for Claude to work.
 
-## Phase 4 — Signature interactions 🔲
-- **Interactive fridge** (`/fridge`): port `design/wireframes/D06-Fridge.dc.html` (desktop) and `M05-Fridge.dc.html` (phone) into `components/fridge/Fridge.tsx`.
+## Phase 4 — Signature interactions 🚧 (fridge ✅ 17 Nov 2026, journal editor 🔲)
+- ✅ **Interactive fridge** — `components/fridge/Fridge.tsx`, replacing the old Stock list. Built from `D06-Fridge` / `M05-Fridge`.
   - The door is closed in decorate mode: drag stickers, photos, post-its, badges and magnets, edit text/colour/tilt, add from the tray, pick the fridge colour.
   - The handles swing the freezer and fridge doors open (CSS 3D `rotateY`) to show shelves: freezer, dairy & eggs, proteins, crisper drawers. Pantry sits beside the fridge.
   - Tap an item for use / restock / edit / remove. A status magnet on the door shows use-soon and low-stock counts.
-  - Persist with `saveDecorAction` (debounce 600 ms after drag end) and `settings.fridge_color`. The wireframe's pointer-drag code (`down/move/up` with `getBoundingClientRect` scaling) can be reused almost directly.
+  - Persisted with `saveDecorAction` (debounced 600 ms after drag end) and `settings.fridge_color`.
+  - **Decor coordinates are percentages of the door, not pixels**, so a door arranged on a laptop still looks right on a phone. `DecorInput` keeps them as ints.
+  - 🧪 Verified: doors swing on `rotateY(-112deg)` (104 on phones), shelves list stock by category with expiry/low flags, the status magnet counts use-soon and low items, tapping an item gives Use 1 / Restock / Remove / Recipes using this, and a post-it dragged on the door is in `fridge_decor` a second later.
+  - 🔲 Still to do: photos on the door (needs the photo picker), and freezer/fridge doors opening independently on phones where they stack.
 - **Scrapbook journal editor** (`/journal`): port `D05-Journal.dc.html`. Elements live in `journal_elements` (x as % of width, y in px, w %, rot, z).
   - Toolbar: Select, Photo, Sticker, Doodle (store SVG path in `data.path`), Tape, Text, Mood, Layout.
   - Photo flow: camera/gallery → crop → link to a meal → place on the page.

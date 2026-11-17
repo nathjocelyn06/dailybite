@@ -6,11 +6,11 @@ import { getSettings } from "@/lib/services/settings";
 import { ActionButton } from "@/components/ActionButton";
 import { confirmPendingAction, fridgeQtyAction, fridgeRemoveAction, boughtAction, deleteShoppingAction, moveBoughtAction } from "../actions";
 import { AddFridgeForm, AddShoppingForm } from "./forms";
+import { Fridge } from "@/components/fridge/Fridge";
 
 /**
- * Phase 1: list view of stock + shopping list (fully working).
- * Phase 4 (see docs/PLAN.md): replace the "Stock" section with the interactive decorated fridge
- * from design/wireframes/D06-Fridge.dc.html, using getDecor/saveDecorAction for the door.
+ * Stock as the interactive fridge (Phase 4, design/wireframes/D06-Fridge): a door you
+ * decorate, handles that swing it open, shelves you tap. Plus the To buy list.
  */
 export default async function FridgePage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab = "fridge" } = await searchParams;
@@ -61,35 +61,8 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
       {tab === "fridge" ? (
         <div className="split">
           <section className="grow" aria-label="Stock" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div className="card" style={{ background: settings.fridge_color, borderRadius: 28 }}>
-              <p className="muted" style={{ color: "var(--ink-2)" }}>
-                Fridge door: {decor.length} decorations saved. The interactive door (decorate + open) is built in Phase 4.
-              </p>
-            </div>
-            {groups.length === 0 && <p className="muted">Your fridge is empty. Add items, scan groceries or a receipt.</p>}
-            {groups.map((g) => (
-              <div key={g.c} className="card">
-                <h2 className="h2" style={{ marginBottom: 6 }}>{g.label}</h2>
-                {g.items.map((f) => (
-                  <div className="row" key={f.id}>
-                    <span style={{ flex: 2 }}>{f.name}</span>
-                    <span style={{ flex: 1 }}>{f.qty} {f.unit}</span>
-                    <span style={{ flex: 1 }}>
-                      {f.expiry === "use_soon" || f.expiry === "expired" ? (
-                        <span className="chip warn">{f.expiry === "expired" ? "expired" : `use in ${f.days_left}d`}</span>
-                      ) : f.low ? (
-                        <span className="chip warn">low</span>
-                      ) : (
-                        <span className="muted">{f.expires_on ? `exp ${f.expires_on}` : ""}</span>
-                      )}
-                    </span>
-                    <ActionButton action={fridgeQtyAction} args={[f.id, -1]}>Use 1</ActionButton>
-                    <ActionButton action={fridgeQtyAction} args={[f.id, 1]} label={`Restock ${f.name}`}>+1</ActionButton>
-                    <ActionButton action={fridgeRemoveAction} args={[f.id]} label={`Remove ${f.name}`} confirm={`Remove ${f.name}?`}>×</ActionButton>
-                  </div>
-                ))}
-              </div>
-            ))}
+            {stock.length === 0 && <p className="muted">Your fridge is empty. Add items, scan groceries or a receipt — then open the door.</p>}
+            <Fridge items={stock} initialDecor={decor} initialColor={settings.fridge_color} />
           </section>
           <aside className="side-col">
             <section className="card"><h2 className="h2" style={{ marginBottom: 10 }}>Add item</h2><AddFridgeForm /></section>
