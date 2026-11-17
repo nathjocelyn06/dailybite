@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.4 · 2026-11-17 — The AI camera opens a real camera
+- **`/snap` now opens the device camera** (laptop webcam, iPad, phone) instead of only a file picker: live preview, a shutter button, and a Flip control when the device has more than one camera. New `app/(app)/snap/CameraCapture.tsx`.
+- The still is drawn to a canvas at the camera's own resolution and uploaded as JPEG (quality 0.9) through the existing `uploadScanPhotoAction`, so nothing else in the scan flow changed.
+- Camera tracks are stopped on cancel, after a capture and on unmount — the camera light never stays on.
+- Honest fallbacks instead of a dead button: separate messages for a blocked permission, no camera on the device, a camera already in use by another app, and a non-HTTPS page (getUserMedia needs a secure context; localhost and the Vercel site both qualify). **Upload a photo** stays available in every case.
+- iOS specifics handled: `playsInline` + `muted` so Safari renders the preview inline, and the stream only starts from a tap.
+
 ## v3.3 · 2026-11-17 — Phase 3: live on Vercel
 **https://dailybite-ten.vercel.app** — the app and its 53-tool MCP server now run without anything on the laptop.
 - **Pinned the database with `DAILYBITE_SUPABASE_URL` / `DAILYBITE_SUPABASE_SERVICE_KEY`** (`supabaseTarget()` in `lib/supabase/admin.ts`). A Supabase connection added through Vercel provisions its own empty Supabase project and injects `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` at deploy time, overwriting the dashboard values — so every page 500d with "Could not find the table in the schema cache" while `/api/mcp` kept answering 401. The `DAILYBITE_*` pair wins when set.

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import type { ScanDraft, ScanMode, ScanRow } from "@/lib/scan-types";
 import { confirmScanAction, uploadScanPhotoAction } from "../actions";
+import { CameraCapture } from "./CameraCapture";
 
 const MODES: { k: ScanMode; label: string; desc: string }[] = [
   { k: "calorie", label: "Calorie scan", desc: "Identify food and estimate nutrition" },
@@ -23,6 +24,7 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
   const [draft, setDraft] = useState<ScanDraft | null>(null);
   const [slot, setSlot] = useState(initialSlot ?? guessSlot());
   const [step, setStep] = useState<"choose" | "analysing" | "review">("choose");
+  const [camOpen, setCamOpen] = useState(false);
   const [err, setErr] = useState("");
   const [pending, start] = useTransition();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -103,10 +105,20 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
             ))}
           </section>
           <section className="card side-col" style={{ gap: 10 }}>
-            <div className="thumb" style={{ aspectRatio: "3/4", display: "grid", placeItems: "center", color: "var(--muted)" }}>Photo preview</div>
-            <input ref={fileRef} type="file" accept="image/*" capture="environment" className="sr" onChange={(e) => onFile(e.target.files?.[0])} aria-label="Take or choose a photo" />
-            <button className="btn pri" onClick={() => fileRef.current?.click()}>Take or upload photo</button>
-            <button className="btn" onClick={manual}>Enter by hand</button>
+            {camOpen ? (
+              <CameraCapture
+                onCapture={(file) => { setCamOpen(false); void onFile(file); }}
+                onClose={() => setCamOpen(false)}
+              />
+            ) : (
+              <>
+                <div className="thumb" style={{ aspectRatio: "3/4", display: "grid", placeItems: "center", color: "var(--muted)" }}>Photo preview</div>
+                <button className="btn pri" onClick={() => { setErr(""); setCamOpen(true); }}>Open camera</button>
+                <input ref={fileRef} type="file" accept="image/*" className="sr" onChange={(e) => onFile(e.target.files?.[0])} aria-label="Choose a photo" />
+                <button className="btn" onClick={() => fileRef.current?.click()}>Upload a photo</button>
+                <button className="btn" onClick={manual}>Enter by hand</button>
+              </>
+            )}
             {err && <p style={{ color: "#a32d2d", fontSize: 13 }}>{err}</p>}
           </section>
         </div>
