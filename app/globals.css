@@ -335,8 +335,10 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   /* A fridge is about twice as tall as it is wide, so it is height that runs out
      first: size it from the viewport and let the aspect ratio give the width,
      falling back to width-driven sizing on a narrow screen. */
+  /* Width-driven, so the fridge fills its column instead of leaving a gap beside it;
+     the aspect ratio gives the height. */
   position: relative; transform-style: preserve-3d;
-  height: min(800px, calc(100vh - 210px)); width: auto; max-width: min(430px, 100%);
+  width: 100%; max-width: 520px; height: auto;
   filter: drop-shadow(0 18px 28px rgba(46, 42, 38, 0.18));
 }
 
@@ -420,7 +422,7 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 
 @media (max-width: 860px) {
   .fridge-scene { perspective: 1500px; }
-  .fridge-unit { height: auto; width: min(320px, 100%); max-width: 100%; margin: 0 auto; }
+  .fridge-unit { height: auto; width: min(340px, 100%); max-width: 100%; margin: 0 auto; }
   .pantry { width: 100%; min-height: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -661,7 +663,7 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 /* ---------- Fridge page: pantry cupboard + add-item card (Figma) ---------- */
 .fridge-columns {
   display: grid; gap: 18px; align-items: start;
-  grid-template-columns: minmax(300px, 1.1fr) minmax(200px, 0.75fr) minmax(260px, 0.9fr);
+  grid-template-columns: minmax(320px, 1.3fr) minmax(200px, 0.8fr) minmax(260px, 0.9fr);
 }
 /* a grid column is min-content wide by default, and a three-up row of inputs has a
    stubborn min-content — let the columns shrink instead of pushing the page sideways */
@@ -880,3 +882,37 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .magnet-pick .magnet-art { max-height: 100%; object-fit: contain; }
 .magnet-pick:hover { background: #fff; border-color: var(--grid); }
 .magnet-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* ---------- the journal's ring binder ---------- */
+.binder {
+  position: relative; min-width: 0;
+  padding: 16px 18px 18px 56px;
+  border-radius: 14px; border: 1px solid #E4DED4;
+  background: linear-gradient(145deg, #FDFCFA 0%, #F2EFE9 55%, #E9E5DD 100%);
+  box-shadow: 0 16px 36px rgba(46, 42, 38, 0.16), 0 2px 6px rgba(46, 42, 38, 0.08);
+}
+/* brushed metal, lit from the left like the fridge handles */
+.binder-spine {
+  position: absolute; left: 26px; top: 18px; bottom: 18px; width: 13px; border-radius: 7px;
+  background: linear-gradient(90deg, #AEB5BA 0%, #F2F4F5 32%, #C4CACE 60%, #8F979D 100%);
+  box-shadow: 0 1px 3px rgba(36, 31, 26, 0.35);
+}
+.binder-page {
+  position: relative; z-index: 1; display: flex; flex-direction: column; gap: 22px;
+  padding: 26px 26px 30px; border-radius: 2px 10px 10px 2px; background: #FFFEFC;
+  box-shadow: 0 1px 2px rgba(46, 42, 38, 0.14), 0 10px 22px rgba(46, 42, 38, 0.07);
+  background-image: repeating-linear-gradient(0deg, transparent 0 31px, #EFEDE6 31px 32px);
+}
+.binder-ring { position: absolute; left: 21px; width: 44px; height: 44px; z-index: 2; }
+.binder-ring-art { display: block; width: 100%; height: 100%; }
+.binder .r1 { top: 12%; }
+.binder .r2 { top: calc(50% - 22px); }
+.binder .r3 { bottom: 12%; }
+
+@media (max-width: 860px) {
+  .binder { padding: 12px 12px 14px 42px; border-radius: 12px; }
+  .binder-spine { left: 18px; width: 10px; }
+  .binder-ring { left: 13px; width: 34px; height: 34px; }
+  .binder .r2 { top: calc(50% - 17px); }
+  .binder-page { padding: 18px 16px 22px; }
+}

@@ -24,7 +24,7 @@ export type DecorPiece = {
 type Door = "none" | "freezer" | "fridge";
 
 /** The vector's own natural size, so the layers line up exactly. */
-const ART = { w: 386, h: 780, dividerPct: 34 };
+const ART = { w: 386, h: 710, dividerPct: 34 };
 
 /** Where each kind of food lives, behind the door it belongs to. */
 const SHELVES: { key: FridgeItemView["category"]; label: string; door: "freezer" | "fridge" }[] = [

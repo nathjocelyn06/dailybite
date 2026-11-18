@@ -10,6 +10,7 @@ import { confirmMealAction, deleteMealAction } from "../actions";
 import { ReviewForm } from "./ReviewForm";
 import { MealEditor } from "./MealEditor";
 import { Scrapbook } from "./Scrapbook";
+import { Binder } from "@/components/journal/Binder";
 
 /**
  * Phase 1: day page with meals (photo, place, time, nutrition) + daily review.
@@ -37,14 +38,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         <Link className="btn pri" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </header>
       <div className="split">
-        <section
-          className="grow"
-          aria-label="Journal page"
-          style={{
-            background: "var(--paper)", border: "1px solid var(--line)", borderRadius: 6, padding: 24, display: "flex", flexDirection: "column", gap: 22,
-            backgroundImage: "repeating-linear-gradient(0deg, transparent 0 31px, #edebe3 31px 32px)"
-          }}
-        >
+        <Binder>
           {j.page?.title && <p className="hand" style={{ fontSize: 28, color: "var(--ink)" }}>{j.page.title}</p>}
           <Scrapbook
             date={date}
@@ -92,7 +86,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
               )}
             </article>
           ))}
-        </section>
+        </Binder>
         <aside className="side-col">
           <section className="card">
             <h2 className="h2">Day summary</h2>
