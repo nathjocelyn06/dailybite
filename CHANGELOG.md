@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.7.1 · 2026-11-18 — White page, cream navigation
+- **The page is white**, and the navigation carries the pale cream from your swatch — sampled off it and rebuilt as the gradient it is, `#FFFEFA → #FFFCF4 → #FEF9EA`, on the sidebar and the phone tab bar. The active item is the tinted one again now that the bar is nearly white.
+- Cards get a warmer hairline and a 1px shadow so they still read as cards against white.
+- **Other Services stands off the two cards** — 16px above the heading, 18px under it, 14px between tiles. Below 620px the row holds all four at 56px so the bigger art does not wrap it onto two rows.
+
 ## v4.7 · 2026-11-18 — Grey page, beige navigation, no floating camera
 - **The page is light grey** (`#F3F2F0`) instead of cream, so the white cards and the yellow / pink / green gradients lift off it, and **the navigation is beige** (`#EFE5D5`) — sidebar and phone tab bar both. The active item is the light one now.
 - **More air around the logo and the nav items**: the sidebar has a taller top margin, 6px between items and 46px rows; in the 861–1100px icon rail the logo gets its own space above them.
