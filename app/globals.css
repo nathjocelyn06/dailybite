@@ -352,11 +352,18 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 /* what you see once a door swings away */
 .fridge-inside {
   position: absolute; inset: 2.5% 3.5% 3.5% 3.5%; border-radius: 16px; overflow: hidden;
-  background: linear-gradient(180deg, #FFFDF9 0%, #F6F1EA 100%);
-  display: flex; flex-direction: column; box-shadow: inset 0 2px 14px rgba(46, 42, 38, 0.18);
+  /* cool white cabinet with a little light falling from the top */
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, #FBFCFD 0%, #EDF1F4 55%, #E4E9ED 100%);
+  display: flex; flex-direction: column;
+  box-shadow: inset 0 3px 18px rgba(30, 40, 50, 0.22), inset 0 -10px 20px rgba(30, 40, 50, 0.1);
 }
 .inside-part { padding: 10px 10px 6px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-.inside-part.part-freezer { border-bottom: 3px solid rgba(46, 42, 38, 0.12); background: rgba(217, 239, 253, 0.5); }
+.inside-part.part-freezer {
+  border-bottom: 3px solid rgba(46, 42, 38, 0.14);
+  background: linear-gradient(180deg, rgba(222, 240, 252, 0.75), rgba(206, 230, 245, 0.55));
+}
 
 /* each door is a layer of the artwork, hinged on its right edge — the handles are on the left */
 .door-layer {
@@ -399,8 +406,14 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .sticker-handle.size { right: -12px; bottom: -12px; cursor: nwse-resize; background: var(--coral); }
 .sticker-handle.del { right: -12px; top: -12px; }
 
-.shelf { border-bottom: 2px solid rgba(46, 42, 38, 0.1); padding-bottom: 6px; }
-.shelf:last-child { border-bottom: 0; }
+.shelf { position: relative; padding-bottom: 10px; margin-bottom: 4px; }
+/* a glass shelf rather than a hairline: a translucent slab with a lit front edge */
+.shelf::after {
+  content: ""; position: absolute; left: -4px; right: -4px; bottom: 0; height: 5px; border-radius: 3px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(190, 210, 225, 0.75));
+  box-shadow: 0 1px 3px rgba(30, 40, 50, 0.28);
+}
+.shelf:last-child::after { display: none; }
 .shelf-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .shelf-items { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 4px; }
 .item-chip {
@@ -624,4 +637,42 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
   --cobalt: #6FA8CF;
   --ocean: #4A6572;
   --emerald: #5BC9A0;
+}
+
+
+/* ---------- fridge realism: shadow, sheen, backdrop ---------- */
+.fridge-scene { position: relative; padding: 18px 10px 26px; }
+.fridge-backdrop {
+  position: absolute; inset: 0; border-radius: var(--radius-lg); z-index: 0;
+  /* gingham, the way these retro fridges are always photographed */
+  background-color: #EAF4FC;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.75) 50%, transparent 50%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.75) 50%, transparent 50%);
+  background-size: 28px 28px, 28px 28px;
+  opacity: 0.85;
+}
+.fridge-unit { z-index: 1; }
+
+/* contact shadow on the floor, tighter and darker directly under the unit */
+.fridge-unit::after {
+  content: ""; position: absolute; left: 6%; right: 6%; bottom: -3.2%; height: 4.5%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(30, 28, 25, 0.42), rgba(30, 28, 25, 0) 70%);
+  filter: blur(3px); z-index: -1;
+}
+
+/* enamel sheen across each door */
+.door-gloss {
+  position: absolute; inset: 0; pointer-events: none;
+  mask-size: 100% 100%; -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+  background:
+    linear-gradient(104deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.12) 22%, rgba(255, 255, 255, 0) 42%),
+    linear-gradient(255deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 72%, rgba(30, 28, 25, 0.1) 100%);
+}
+
+@media (max-width: 860px) {
+  .fridge-scene { padding: 12px 6px 20px; }
+  .fridge-backdrop { background-size: 20px 20px, 20px 20px; }
 }

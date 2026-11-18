@@ -35,6 +35,7 @@ const SHELVES: { key: FridgeItemView["category"]; label: string; door: "freezer"
 /** The six brand colours. "Original" keeps the vector's own finish. */
 const COLOURS: { value: string; label: string }[] = [
   { value: "", label: "Original" },
+  { value: "#F7EFE3", label: "Cream" },
   { value: "#FFCAD4", label: "Blush" },
   { value: "#D9EFFD", label: "Sky" },
   { value: "#C2FFE5", label: "Mint" },
@@ -73,7 +74,9 @@ export function Fridge({
 }) {
   const [open, setOpen] = useState<Door>("none");
   const [decorating, setDecorating] = useState(false);
-  const [decor, setDecor] = useState<DecorPiece[]>(initialDecor);
+  // Only stickers live on the door now; post-its, tape and magnets were dropped, so any
+  // leftover rows from the old tray are ignored and fall away on the next save.
+  const [decor, setDecor] = useState<DecorPiece[]>(initialDecor.filter((d) => d.photo_path));
   const [urls, setUrls] = useState<Record<string, string>>(initialUrls);
   const [color, setColor] = useState(initialColor?.startsWith("#") ? initialColor : "");
   const [selected, setSelected] = useState<FridgeItemView | null>(null);
@@ -198,6 +201,7 @@ export function Fridge({
   return (
     <div className="fridge-wrap">
       <div className="fridge-scene">
+        <div className="fridge-backdrop" aria-hidden="true" />
         <div className="fridge-unit" style={{ aspectRatio: `${ART.w} / ${ART.h}` }}>
           {/* interior, revealed as the doors swing away */}
           <div className="fridge-inside">
@@ -330,6 +334,9 @@ function DoorArt({ src, color, alt }: { src: string; color: string; alt: string 
   return (
     <span className="door-art">
       <img src={src} alt={alt} draggable={false} />
+      {/* enamel sheen: a soft diagonal highlight, masked to the door so it never
+          spills past the rounded corners */}
+      <span className="door-gloss" style={{ WebkitMaskImage: `url(${src})`, maskImage: `url(${src})` }} aria-hidden="true" />
       {color && (
         <span
           className="door-tint"

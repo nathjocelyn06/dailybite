@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.3.1 · 2026-11-18 — A more convincing fridge
+Pushed the fridge toward the look of a photographed retro unit, working from your vector rather than copying anyone else's product shot.
+- **Contact shadow** under the unit — tight and dark where it meets the floor, falling off outward — instead of a flat drop shadow.
+- **Enamel sheen**: a diagonal highlight masked to each door's own silhouette, so it curves with the artwork and never spills past the rounded corners.
+- **Gingham backdrop** behind the fridge, the way these retro units are always photographed.
+- **A believable interior**: cool-white cabinet with light falling from the top, glass shelves rendered as translucent slabs with a lit front edge, and a tinted freezer compartment.
+- **Cream** added as a finish, matching the classic retro look.
+- Leftover post-it and magnet rows from the old decoration tray are ignored and drop away on the next save.
+
 ## v4.3 · 2026-11-18 — The real fridge vector, and it opens
 - **`Fridge vector asset.png` is now the fridge.** A PowerShell pass found the chrome divider at 34% of the body and sliced the artwork into `fridge-door-freezer.png` and `fridge-door-main.png`, white knocked out to transparency, in `public/fridge/`.
 - **The doors actually open.** Each door is its own image layer hinged on the *right* edge — the handles are drawn on the left — and swung away on a CSS 3D `rotateY(118deg)`, revealing shelves drawn behind. The chrome handles themselves are the click targets, as on a real fridge.
