@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.12 · 2026-11-18 — Every recipe shows calories
+- **No recipe says "ask Claude" any more.** `lib/nutrition/estimate.ts` works a figure out from the recipe's own ingredient list — the measure converted to grams, a calorie density matched on words in the name — and the tile shows `~755 kcal` with **estimated** under it. No API call, no key, no wait.
+- Seasonings count as zero rather than being guessed at, a bare count ("2 chicken breasts") is read as pieces, and the result is rounded to the nearest 25 because pretending to more precision would be the real lie.
+- It gives up and shows nothing when fewer than two lines, or under a third of the list, could be read — one readable line out of a dozen is a guess, not an estimate.
+- The servings stepper scales off the estimate too, so changing servings moves the number.
+- 5 tests in `tests/estimate.test.ts` (41 in total).
+
 ## v4.11 · 2026-11-18 — Three doors, no video
 - **To Buy is its own page** (`/to-buy`) and the third card on My Kitchen. It was a tab inside Fridge, which made that screen two screens under one title; the fridge is now just the fridge, the door, the shelves and the pantry.
 - **My Kitchen reads like the frame**: Fridge / *See what's inside* / **Open**, Recipes / *Find and cook your next favorite meal.* / **Browse**, To Buy / *A little list for your next grocery trip.* / **Write**, each with a live count under it.

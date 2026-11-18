@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { webDb } from "@/lib/services/db";
 import { splitSteps } from "@/lib/mealdb";
+import { estimateKcalPerServing } from "@/lib/nutrition/estimate";
 import { getRecipeDetail } from "@/lib/recipe-bank";
 import { findSavedByExternal, getSaved, matchFridge } from "@/lib/services/recipes";
 import { RecipeActions } from "./RecipeActions";
@@ -57,6 +58,12 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
     };
   }
 
+  // No source gives calories, so rather than leave the tile empty we work out a rough
+  // figure from the ingredient list and label it as the guess it is.
+  const servings = r.servings ?? 4;
+  const guessedKcal = r.kcal ?? estimateKcalPerServing(r.ingredients, servings);
+  const kcalIsGuess = r.kcal == null && guessedKcal != null;
+
   const have = await matchFridge(db, r.ingredients);
   const missing = have.filter((h) => !h.have).length;
 
@@ -80,7 +87,11 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
           <h1 className="h1">{r.title}</h1>
           <div className="grid" style={{ gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 8 }}>
             <div className="card" style={{ padding: 12 }}><div className="lbl">Time</div><strong>{r.minutes ? `${r.estimated ? "~" : ""}${r.minutes} min` : "—"}</strong></div>
-            <div className="card" style={{ padding: 12 }}><div className="lbl">Calories</div><strong>{r.kcal ? `${r.kcal} kcal` : "ask Claude"}</strong></div>
+            <div className="card" style={{ padding: 12 }}>
+              <div className="lbl">Calories</div>
+              <strong>{guessedKcal ? `${kcalIsGuess ? "~" : ""}${guessedKcal} kcal` : "\u2014"}</strong>
+              {kcalIsGuess && <div className="muted" style={{ fontSize: 11 }}>estimated</div>}
+            </div>
             <div className="card" style={{ padding: 12 }}><div className="lbl">In fridge</div><strong>{r.ingredients.length - missing}/{r.ingredients.length}</strong></div>
           </div>
           <RecipeActions externalId={externalId} savedId={savedId} missing={missing} />
@@ -105,14 +116,19 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
           have={have.map((h) => h.have)}
           baseServings={r.servings ?? 4}
           servingsKnown={r.servings != null}
-          kcalPerServing={r.kcal}
+          kcalPerServing={guessedKcal}
         />
         <section className="card grow" aria-label="Instructions">
           <h2 className="h2" style={{ marginBottom: 12 }}>Instructions</h2>
           <ol style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 12, lineHeight: 1.55 }}>
             {r.steps.map((s, i) => <li key={i}>{s}</li>)}
           </ol>
-          {!r.kcal && <p className="muted" style={{ marginTop: 14 }}>No nutrition data for this recipe. Ask Claude: “estimate calories for {r.title} and save it”.</p>}
+          {kcalIsGuess && (
+            <p className="muted" style={{ marginTop: 14 }}>
+              Calories are worked out from the ingredient list, so treat them as a rough figure. Ask Claude to
+              “estimate calories for {r.title} and save it” for a closer one.
+            </p>
+          )}
         </section>
       </div>
 
