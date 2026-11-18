@@ -4,9 +4,6 @@ import { getJournalDay } from "@/lib/services/journal";
 import { signedUrls } from "@/lib/services/photos";
 import { addDays, dayKey, isDayKey, prettyDay } from "@/lib/dates";
 import { sumEaten } from "@/lib/totals";
-import { MealPhoto } from "@/components/journal/MealPhoto";
-import { ActionButton } from "@/components/ActionButton";
-import { confirmMealAction, deleteMealAction } from "../actions";
 import { MealEditor } from "./MealEditor";
 import { Scrapbook } from "./Scrapbook";
 
@@ -35,6 +32,20 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         <Link className="btn" href={`/journal?date=${addDays(date, 1)}`} aria-label="Next day">›</Link>
         <Link className="btn pri" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </header>
+      {editingId && j.meals.some((m) => m.id === editingId) && (
+        <section className="card" aria-label="Edit meal">
+          {j.meals
+            .filter((m) => m.id === editingId)
+            .map((m) => (
+              <MealEditor
+                key={m.id}
+                meal={{ id: m.id, name: m.name, slot: m.slot, status: m.status, items: m.items }}
+                backHref={`/journal?date=${date}`}
+              />
+            ))}
+        </section>
+      )}
+
       <section className="card day-summary" aria-label="Day summary">
         <h2 className="h2">Day summary</h2>
         <p className="day-kcal">{t.kcal} <span className="muted">kcal</span></p>
@@ -42,53 +53,21 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
       </section>
 
       <Scrapbook
-          date={date}
-          initial={j.elements}
-          photoUrls={urls}
-          meals={j.meals.map((m) => ({ id: m.id, slot: m.slot, name: m.name }))}
-          addMealHref={`/snap?mode=calorie&date=${date}`}
-          left={
-            <div className="polaroids">
-              {j.page?.title && <p className="hand polaroid-day">{j.page.title}</p>}
-              {j.meals.length === 0 && <p className="muted">No meals yet today.</p>}
-              {j.meals.map((m, i) => (
-                <article
-                  key={m.id}
-                  id={m.id}
-                  className={`polaroid ${sp.meal === m.id ? "is-open" : ""}`}
-                  style={{ transform: `rotate(${i % 2 ? 1.6 : -1.8}deg)` }}
-                >
-                  <MealPhoto mealId={m.id} src={m.photo_path ? urls[m.photo_path] : null} alt={m.name} />
-                  <p className="polaroid-caption">{m.notes?.trim() || m.name}</p>
-                  <p className="polaroid-meta">
-                    {[m.slot, m.place, `${m.kcal ?? "?"} kcal`].filter(Boolean).join(" \u00b7 ")}
-                  </p>
-                  {editingId === m.id ? (
-                    <MealEditor
-                      meal={{ id: m.id, name: m.name, slot: m.slot, status: m.status, items: m.items }}
-                      backHref={`/journal?date=${date}&meal=${m.id}`}
-                    />
-                  ) : (
-                    m.status !== "eaten" && (
-                      <div className="polaroid-actions">
-                        <ActionButton action={confirmMealAction} args={[m.id]} className="btn sm pri">Confirm eaten</ActionButton>
-                      </div>
-                    )
-                  )}
-                  {/* delete lives in the corner, as asked — no edit button on the photo */}
-                  <ActionButton
-                    action={deleteMealAction}
-                    args={[m.id]}
-                    confirm={`Delete ${m.name}?`}
-                    className="polaroid-x"
-                    label={`Delete ${m.name}`}
-                  >
-                    ×
-                  </ActionButton>
-                </article>
-              ))}
-            </div>
-          }
+        date={date}
+        initial={j.elements}
+        photoUrls={urls}
+        title={j.page?.title}
+        addMealHref={`/snap?mode=calorie&date=${date}`}
+        meals={j.meals.map((m) => ({
+          id: m.id,
+          slot: m.slot,
+          name: m.name,
+          notes: m.notes,
+          place: m.place,
+          kcal: m.kcal,
+          status: m.status,
+          photo_path: m.photo_path
+        }))}
       />
     </>
   );

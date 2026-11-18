@@ -446,7 +446,8 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 }
 .scrap-el.is-selected { outline: 2px solid var(--ink); outline-offset: 4px; }
 .scrap-sticker span { font-size: clamp(22px, 5vw, 40px); line-height: 1; }
-.scrap-text span, .scrap-text .scrap-input { font-family: var(--hand); font-size: 22px; color: var(--ink); }
+.scrap-text { align-items: stretch; }
+.scrap-text .scrap-input { font-family: var(--font); font-weight: var(--w-subtitle); font-size: 18px; line-height: 1.35; color: var(--ink); }
 .scrap-mood span {
   background: var(--accent-soft); border-radius: 999px; padding: 6px 12px; font-size: 13px; white-space: nowrap;
 }
@@ -455,7 +456,7 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .scrap-doodle { width: 100%; height: 120px; overflow: visible; }
 .scrap-live { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .scrap-input {
-  all: unset; box-sizing: border-box; width: 100%; text-align: center;
+  all: unset; box-sizing: border-box; width: 100%; min-height: 48px; resize: none; white-space: pre-wrap;
   border-bottom: 1px dashed var(--grid); min-height: 28px;
 }
 .scrap-handle {
@@ -691,9 +692,9 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 }
 
 /* primary action in the logo's yellow, as the Figma shows */
-:root { --btn-yellow: #FFD24A; --btn-yellow-line: #E9B413; }
+:root { --btn-yellow: #FBE7A1; --btn-yellow-line: #EBD076; }
 .btn.pri { background: var(--btn-yellow); color: var(--ink); border-color: var(--btn-yellow-line); }
-.btn.pri:hover { background: #FFDC6E; }
+.btn.pri:hover { background: #FDEFC0; }
 
 /* the drawn doors fill their layer exactly, as the bitmap did */
 .fridge-svg { display: block; width: 100%; height: 100%; }
@@ -883,93 +884,96 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .magnet-pick:hover { background: #fff; border-color: var(--grid); }
 .magnet-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-/* ---------- the journal: a ring binder on a dark ground ---------- */
+/* ---------- the journal: a book lying open and flat ---------- */
 .day-summary { display: flex; flex-direction: column; gap: 2px; }
 .day-kcal { font-size: var(--text-2xl); font-weight: var(--w-title); margin: 6px 0 0; }
 
-.binder-stage {
-  border-radius: 20px; padding: clamp(16px, 3vw, 38px);
-  background: radial-gradient(120% 90% at 30% 0%, #5E291B 0%, #441910 55%, #2E0F09 100%);
+/* the cover the book rests on */
+.book-stage {
+  border-radius: 22px; padding: clamp(14px, 2.6vw, 34px);
+  background: linear-gradient(135deg, #D8A6AD 0%, #E098AC 100%);
 }
-.binder {
-  position: relative; max-width: 1100px; margin: 0 auto;
-  padding: 18px 20px 20px 72px; border-radius: 10px;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F4F2EE 60%, #E8E5DF 100%);
-  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.3);
+.book { max-width: 1180px; margin: 0 auto; position: relative; }
+/* the block of pages underneath, peeking out at the edges */
+.book::before,
+.book::after {
+  content: ""; position: absolute; left: 10px; right: 10px; border-radius: 10px;
+  background: #EFE6D6; z-index: 0;
 }
-/* brushed tube with a cap at each end */
-.binder-spine {
-  position: absolute; left: 32px; top: 22px; bottom: 22px; width: 17px; border-radius: 9px;
-  background: linear-gradient(90deg, #9AA2A8 0%, #F4F6F7 30%, #C6CCD0 58%, #7F888E 100%);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-}
-.binder-cap {
-  position: absolute; left: -3px; width: 23px; height: 23px; border-radius: 6px;
-  background: linear-gradient(135deg, #F2F4F5, #98A0A6);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-}
-.binder-cap.top { top: -10px; }
-.binder-cap.bottom { bottom: -10px; }
-.binder-cap::after {
-  content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
-  border-radius: 50%; background: #5F676D; box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
-}
-.binder-page {
-  position: relative; z-index: 1; background: #FFFEFB; border-radius: 2px 8px 8px 2px;
-  padding: clamp(16px, 2vw, 28px);
-  box-shadow: 0 1px 2px rgba(46, 42, 38, 0.16), 0 12px 26px rgba(0, 0, 0, 0.14);
-}
-.binder-ring { position: absolute; left: 20px; width: 56px; height: 44px; z-index: 2; }
-.binder-ring-art { display: block; width: 100%; height: 100%; }
-.binder .r1 { top: 13%; }
-.binder .r2 { top: calc(50% - 22px); }
-.binder .r3 { bottom: 13%; }
+.book::before { top: 5px; bottom: -5px; opacity: 0.85; }
+.book::after { top: 9px; bottom: -9px; left: 18px; right: 18px; opacity: 0.6; }
 
-/* one sheet: the meals down one side, the page you decorate filling the rest */
-.journal-sheet { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: clamp(16px, 2.5vw, 34px); }
-.journal-canvas { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.journal-meals { min-width: 0; }
+.book-spread {
+  position: relative; z-index: 1; min-height: 520px; border-radius: 8px;
+  padding: clamp(18px, 2vw, 30px);
+  /* warm paper, with the gutter darkening where the sheet curves into the fold */
+  background:
+    radial-gradient(60% 100% at 50% 50%, rgba(120, 90, 50, 0.1), rgba(120, 90, 50, 0) 70%),
+    linear-gradient(90deg,
+      #F7EFDF 0%, #FFFCF4 3%, #FFFDF8 42%,
+      #F4E9D6 48.6%, #E7D8BE 50%, #F4E9D6 51.4%,
+      #FFFDF8 58%, #FFFCF4 97%, #F7EFDF 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 18px 40px rgba(90, 50, 55, 0.3),
+    0 3px 8px rgba(90, 50, 55, 0.22);
+}
+/* paper tooth: a faint warm speckle, cheap enough to leave on everywhere */
+.book-spread::before {
+  content: ""; position: absolute; inset: 0; border-radius: 8px; pointer-events: none; opacity: 0.35;
+  background-image:
+    radial-gradient(rgba(150, 120, 80, 0.14) 0.5px, transparent 0.6px),
+    radial-gradient(rgba(150, 120, 80, 0.1) 0.5px, transparent 0.6px);
+  background-size: 7px 7px, 11px 11px;
+  background-position: 0 0, 3px 5px;
+}
+/* the fold itself */
+.book-gutter {
+  position: absolute; top: 0; bottom: 0; left: 50%; width: 46px; transform: translateX(-50%);
+  pointer-events: none; z-index: 1;
+  background: linear-gradient(90deg,
+    rgba(120, 90, 50, 0) 0%, rgba(120, 90, 50, 0.1) 38%,
+    rgba(120, 90, 50, 0.2) 50%, rgba(120, 90, 50, 0.1) 62%, rgba(120, 90, 50, 0) 100%);
+}
+/* rings lying flat along the fold */
+.book-rings {
+  position: absolute; top: 8%; bottom: 8%; left: 50%; transform: translateX(-50%);
+  width: 40px; display: flex; flex-direction: column; justify-content: space-between;
+  align-items: center; pointer-events: none; z-index: 3;
+}
+.ring-art { display: block; width: 40px; height: 18px; filter: drop-shadow(0 1px 1px rgba(90, 60, 30, 0.35)); }
 
-/* two wide actions under the binder */
-.book-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.journal-sheet { position: relative; }
+.journal-canvas { display: flex; flex-direction: column; gap: 8px; }
+.scrap-title { font-size: 26px; font-weight: var(--w-title); margin: 0 0 4px; }
+
+/* two wide actions under the book */
+.book-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
 .book-actions .btn { min-height: 56px; justify-content: center; font-size: var(--text-base); border-radius: 14px; }
 
-/* ---------- meals as polaroids ---------- */
-.polaroids { display: flex; flex-direction: column; gap: 26px; }
-.polaroid-day { font-size: 26px; color: var(--ink); margin: 0; }
+/* ---------- meals as polaroids, placed like anything else ---------- */
+.scrap-meal_card { display: block; }
 .polaroid {
-  position: relative; background: #fff; padding: 10px 10px 14px; border-radius: 3px;
-  align-self: center; width: min(280px, 100%);
+  position: relative; background: #fff; padding: 8px 8px 12px; border-radius: 3px; width: 100%;
   box-shadow: 0 2px 4px rgba(46, 42, 38, 0.16), 0 10px 22px rgba(46, 42, 38, 0.12);
 }
-.polaroid.is-open { outline: 2px dashed var(--ink); outline-offset: 6px; }
-.polaroid-caption { margin: 10px 2px 2px; text-align: center; font-weight: var(--w-subtitle); font-size: var(--text-base); }
+.polaroid-caption { margin: 8px 2px 2px; text-align: center; font-weight: var(--w-subtitle); font-size: 14px; }
 .polaroid-meta {
-  margin: 0 2px; text-align: center; font-size: 11px; letter-spacing: 0.04em;
+  margin: 0 2px; text-align: center; font-size: 10px; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--muted);
 }
-.polaroid-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
 /* the photo is replaceable, but only while Edit Journal is on */
 .meal-photo { position: relative; }
 .meal-photo-edit {
-  all: unset; display: none; position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-  cursor: pointer; min-height: 34px; padding: 0 14px; border-radius: 999px;
-  background: rgba(46, 42, 38, 0.82); color: #fff; font-size: 12px; font-weight: var(--w-subtitle);
+  all: unset; display: none; position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+  cursor: pointer; min-height: 30px; padding: 0 12px; border-radius: 999px;
+  background: rgba(46, 42, 38, 0.82); color: #fff; font-size: 11px; font-weight: var(--w-subtitle);
   align-items: center; white-space: nowrap;
 }
 .journal-sheet.is-editing .meal-photo-edit { display: inline-flex; }
 .meal-photo-edit:hover { background: var(--ink); }
 .meal-photo-edit:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .meal-photo-err { margin: 6px 0 0; font-size: 12px; color: var(--warn-ink); text-align: center; }
-/* delete sits in the corner; there is no edit button on a photo */
-.polaroid-x {
-  all: unset; position: absolute; top: -10px; right: -10px; z-index: 2;
-  width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
-  background: var(--ink); color: #fff; font-size: 15px; line-height: 1;
-  display: grid; place-items: center; box-shadow: 0 2px 5px rgba(46, 42, 38, 0.35);
-}
-.polaroid-x:hover { background: var(--warn-ink); }
-.polaroid-x:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* ---------- post-its ---------- */
 .scrap-postit {
@@ -983,7 +987,8 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 }
 .postit-text {
   all: unset; box-sizing: border-box; width: 100%; min-height: 60px; resize: none;
-  font-family: var(--hand); font-size: 16px; line-height: 1.4; color: #2E2A26; white-space: pre-wrap;
+  font-family: var(--font); font-weight: var(--w-subtitle); font-size: 15px; line-height: 1.4;
+  color: #2E2A26; white-space: pre-wrap;
 }
 .postit-text::placeholder { color: rgba(46, 42, 38, 0.45); }
 .postit-pick {
@@ -993,10 +998,11 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .postit-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 @media (max-width: 860px) {
-  .binder { padding: 12px 12px 14px 52px; }
-  .binder-spine { left: 22px; width: 13px; }
-  .binder-ring { left: 13px; width: 42px; height: 33px; }
-  .binder .r2 { top: calc(50% - 17px); }
-  .journal-sheet { grid-template-columns: 1fr; }
+  /* one page on a phone: a fold down the middle of a 390px screen helps nobody */
+  .book-spread {
+    min-height: 420px;
+    background: linear-gradient(180deg, #FFFDF8 0%, #FFFCF4 100%);
+  }
+  .book-gutter, .book-rings { display: none; }
   .book-actions { grid-template-columns: 1fr; gap: 10px; }
 }

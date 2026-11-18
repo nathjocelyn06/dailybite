@@ -1,9 +1,10 @@
 "use client";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { addElementAction, deleteElementAction, updateElementAction } from "../actions";
+import { addElementAction, deleteElementAction, deleteMealAction, updateElementAction } from "../actions";
 import Link from "next/link";
 import { PhotoDrop } from "./PhotoDrop";
 import { Book } from "@/components/journal/Book";
+import { MealPhoto } from "@/components/journal/MealPhoto";
 
 type Kind = "photo" | "sticker" | "tape" | "text" | "doodle" | "meal_card" | "mood" | "habit";
 
@@ -36,6 +37,17 @@ const POSTITS: { paper: string; pin: string; label: string }[] = [
 /** A post-it is a text element carrying its paper colour — no new kind, so no migration. */
 const isPostit = (el: Element) => el.kind === "text" && !!el.data?.postit;
 
+export type Meal = {
+  id: string;
+  slot: string;
+  name: string;
+  notes?: string | null;
+  place?: string | null;
+  kcal?: number | null;
+  status: string;
+  photo_path?: string | null;
+};
+
 const clampX = (v: number) => Math.min(96, Math.max(0, v));
 const clampY = (v: number) => Math.max(0, v);
 
@@ -52,15 +64,14 @@ export function Scrapbook({
   initial,
   photoUrls,
   meals,
-  left,
+  title,
   addMealHref
 }: {
   date: string;
   initial: Element[];
   photoUrls: Record<string, string>;
-  meals: { id: string; slot: string; name: string }[];
-  /** The left-hand page: the day's meals, rendered on the server. */
-  left: React.ReactNode;
+  meals: Meal[];
+  title?: string | null;
   addMealHref: string;
 }) {
   const [els, setEls] = useState<Element[]>(initial);
@@ -83,6 +94,32 @@ export function Scrapbook({
     const map = timers.current;
     return () => map.forEach((t) => clearTimeout(t));
   }, []);
+
+  const mealById = new Map(meals.map((m) => [m.id, m]));
+
+  /**
+   * A meal appears on the page as a `meal_card` element, which is what gives it a
+   * position of its own. Any meal that has not been placed yet gets a card the first
+   * time the page is opened, laid out down the left-hand page.
+   */
+  useEffect(() => {
+    const placed = new Set(els.filter((e) => e.kind === "meal_card").map((e) => e.meal_id));
+    const missing = meals.filter((m) => !placed.has(m.id));
+    if (!missing.length) return;
+    let i = els.filter((e) => e.kind === "meal_card").length;
+    for (const m of missing) {
+      const row = i++;
+      void addEl("meal_card", {
+        meal_id: m.id,
+        x: 5 + (row % 2) * 4,
+        y: 30 + row * 330,
+        w: 26,
+        rot: row % 2 ? 1.6 : -1.8
+      });
+    }
+    // meals is the trigger; els is read fresh above and would loop if watched
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meals]);
 
   /** Debounced per element, so dragging one thing doesn't rewrite the others. */
   const persist = useCallback((el: Element) => {
@@ -157,7 +194,9 @@ export function Scrapbook({
   }
 
   function onElementDown(e: React.PointerEvent, el: Element, mode: "move" | "resize" | "rotate") {
-    if (!editing || tool !== "select") return;
+    // Everything on the page can be picked up at any time — the editor is only for
+    // adding things and for drawing, which would otherwise fight with dragging.
+    if (editing && tool !== "select") return;
     e.stopPropagation();
     const pos = pagePos(e);
     if (!pos) return;
@@ -194,7 +233,10 @@ export function Scrapbook({
   }
 
   function onPageDown(e: React.PointerEvent) {
-    if (!editing) return;
+    if (!editing) {
+      setSelected(null);
+      return;
+    }
     const pos = pagePos(e);
     if (!pos) return;
 
@@ -238,7 +280,6 @@ export function Scrapbook({
     <div className="scrapbook">
       <Book>
         <div className={`journal-sheet ${editing ? "is-editing" : ""}`}>
-          <div className="journal-meals">{left}</div>
           <div className="journal-canvas">
       <div className="scrap-toolbar">
         {editing && (
@@ -279,12 +320,13 @@ export function Scrapbook({
         onPointerUp={onPageUp}
         onPointerCancel={onPageUp}
       >
+        {title && <p className="scrap-title">{title}</p>}
         {els.length === 0 && !editing && (
-          <p className="hand scrap-empty">Nothing on today&apos;s page yet — press Decorate page.</p>
+          <p className="scrap-empty">Nothing on today&apos;s page yet — press Edit Journal.</p>
         )}
 
         {els.filter((el) => el.kind !== "tape" && el.kind !== "mood").map((el) => {
-          const isSel = editing && el.id === selected;
+          const isSel = el.id === selected;
           const url = el.photo_path ? urls[el.photo_path] : null;
           const note = isPostit(el);
           return (
@@ -298,10 +340,25 @@ export function Scrapbook({
                 transform: `rotate(${el.rot}deg)`,
                 zIndex: el.z,
                 background: note ? ((el.data?.paper as string) ?? POSTITS[0].paper) : undefined,
-                cursor: editing && tool === "select" ? "grab" : "default"
+                cursor: editing && tool !== "select" ? "crosshair" : "grab"
               }}
               onPointerDown={(e) => onElementDown(e, el, "move")}
             >
+              {el.kind === "meal_card" ? (
+                (() => {
+                  const m = el.meal_id ? mealById.get(el.meal_id) : undefined;
+                  if (!m) return <span className="muted">Meal removed</span>;
+                  return (
+                    <div className="polaroid">
+                      <MealPhoto mealId={m.id} src={m.photo_path ? urls[m.photo_path] : null} alt={m.name} />
+                      <p className="polaroid-caption">{m.notes?.trim() || m.name}</p>
+                      <p className="polaroid-meta">
+                        {[m.slot, m.place, `${m.kcal ?? "?"} kcal`].filter(Boolean).join(" \u00b7 ")}
+                      </p>
+                    </div>
+                  );
+                })()
+              ) : null}
               {note && <span className="postit-pin" style={{ background: (el.data?.pin as string) ?? POSTITS[0].pin }} aria-hidden="true" />}
               {note ? (
                 <textarea
@@ -320,15 +377,16 @@ export function Scrapbook({
               ) : el.kind === "photo" && url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={url} alt={el.text ?? "Journal photo"} />
-              ) : isSel && el.kind === "text" ? (
-                <input
+              ) : el.kind === "text" ? (
+                <textarea
                   className="scrap-input"
                   value={el.text ?? ""}
+                  placeholder="Write here\u2026"
                   onChange={(e) => patch(el.id, { text: e.target.value })}
-                  onPointerDown={(e) => e.stopPropagation()}
-                  aria-label="Edit text"
+                  onPointerDown={(e) => { if (isSel) e.stopPropagation(); }}
+                  aria-label="Text box"
                 />
-              ) : (
+              ) : el.kind === "meal_card" ? null : (
                 <span>{el.text}</span>
               )}
 
@@ -336,7 +394,23 @@ export function Scrapbook({
                 <>
                   <button className="scrap-handle resize" onPointerDown={(e) => onElementDown(e, el, "resize")} aria-label="Resize" />
                   <button className="scrap-handle rotate" onPointerDown={(e) => onElementDown(e, el, "rotate")} aria-label="Rotate" />
-                  <button className="scrap-handle del" onClick={() => remove(el.id)} aria-label="Delete">×</button>
+                  <button
+                    className="scrap-handle del"
+                    onClick={() => {
+                      if (el.kind === "meal_card" && el.meal_id) {
+                        const m = mealById.get(el.meal_id);
+                        if (!confirm(`Delete ${m?.name ?? "this meal"}?`)) return;
+                        const mealId = el.meal_id;
+                        remove(el.id);
+                        start(async () => { await deleteMealAction(mealId); });
+                        return;
+                      }
+                      remove(el.id);
+                    }}
+                    aria-label={el.kind === "meal_card" ? "Delete meal" : "Delete"}
+                  >
+                    ×
+                  </button>
                 </>
               )}
             </div>

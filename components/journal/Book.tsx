@@ -1,47 +1,43 @@
 /**
- * The journal: a white ring binder standing on a dark brown ground.
+ * The journal as a book lying open and flat: two facing pages, a soft curve into the
+ * gutter, and flat chrome rings running down the fold.
  *
- * One page, full width. The spine is a brushed tube with a cap at each end and three
- * chrome rings clamped over the paper — each ring draws its back half behind the sheet
- * and its front half over it, which is what makes the page look threaded on rather than
- * pasted underneath. The metal uses the same ramp as the fridge handles and the magnets.
+ * The two pages are a background, not two containers — everything on the spread (meals,
+ * post-its, stickers, text) is positioned in one coordinate space across the whole
+ * sheet, so a polaroid can be dragged from one page to the other without special cases.
  */
 
-function Ring({ id }: { id: string }) {
+function FlatRing() {
   return (
-    <svg viewBox="0 0 56 44" className="binder-ring-art" aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 40 18" className="ring-art" aria-hidden="true" focusable="false">
       <defs>
-        <linearGradient id={`${id}-chrome`} x1="0" y1="0" x2="0.3" y2="1">
-          <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="22%" stopColor="#D2D8DC" />
-          <stop offset="50%" stopColor="#7C848A" />
-          <stop offset="68%" stopColor="#E6EAED" />
-          <stop offset="100%" stopColor="#6B7379" />
+        <linearGradient id="flatring" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FCFDFD" />
+          <stop offset="34%" stopColor="#C8CFD4" />
+          <stop offset="58%" stopColor="#8A9298" />
+          <stop offset="100%" stopColor="#E2E7EA" />
         </linearGradient>
       </defs>
-      {/* the half that passes behind the sheet */}
-      <path d="M20 4a18 18 0 0 0 0 36" fill="none" stroke={`url(#${id}-chrome)`} strokeWidth="5.5" strokeLinecap="round" />
-      {/* the half that comes over the front, and the shadow it casts on the paper */}
-      <path d="M20 4a18 18 0 0 1 0 36" fill="none" stroke="#2A1109" strokeOpacity="0.26" strokeWidth="8" strokeLinecap="round" transform="translate(2 3)" />
-      <path d="M20 4a18 18 0 0 1 0 36" fill="none" stroke={`url(#${id}-chrome)`} strokeWidth="5.5" strokeLinecap="round" />
-      <path d="M28 7a18 18 0 0 1 9 11" fill="none" stroke="#FFFFFF" strokeOpacity="0.9" strokeWidth="1.8" strokeLinecap="round" />
+      {/* seen from above, a ring lying on the fold is a flat oval */}
+      <ellipse cx="20" cy="9" rx="17.5" ry="6.5" fill="none" stroke="url(#flatring)" strokeWidth="3.4" />
+      <path d="M8 5.5a16 16 0 0 1 24 0" fill="none" stroke="#FFFFFF" strokeOpacity="0.8" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
   );
 }
 
 export function Book({ children }: { children: React.ReactNode }) {
   return (
-    <div className="binder-stage">
-      <div className="binder">
-        <span className="binder-spine" aria-hidden="true">
-          <span className="binder-cap top" />
-          <span className="binder-cap bottom" />
-        </span>
-        <div className="binder-page">{children}</div>
-        {/* after the page, so each ring's front half lands on top of the paper */}
-        <span className="binder-ring r1"><Ring id="jr1" /></span>
-        <span className="binder-ring r2"><Ring id="jr2" /></span>
-        <span className="binder-ring r3"><Ring id="jr3" /></span>
+    <div className="book-stage">
+      <div className="book">
+        <div className="book-spread">
+          {children}
+          <span className="book-gutter" aria-hidden="true" />
+          <span className="book-rings" aria-hidden="true">
+            <FlatRing />
+            <FlatRing />
+            <FlatRing />
+          </span>
+        </div>
       </div>
     </div>
   );

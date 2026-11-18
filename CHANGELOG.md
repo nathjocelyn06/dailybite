@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.18 · 2026-11-18 — A book lying open, and everything movable
+- **Two facing pages, flat.** One sheet with the fold painted down the middle — warm paper, a soft curve into the gutter, the block of pages peeking out at the edges, and flat chrome rings lying along the fold. The two pages are a background rather than two containers, so the whole spread is one coordinate space and a polaroid can be dragged from the left page to the right without a special case.
+- **Nothing waits for Edit Journal any more.** Meals, post-its, stickers and text can be picked up, resized and turned at any time; the button now only opens the tray for *adding* things and for drawing, which would otherwise fight with dragging.
+- **Meals are cards on the page.** Each meal gets a `meal_card` element the first time its day is opened, which is what gives it a position of its own; the × on a card deletes the meal, as before.
+- **Text is a box**, resized and rotated like a sticker, set in Headspace Medium — the one text style.
+- Cover goes from brown to the pink gradient `#D8A6AD → #E098AC`, and the yellow buttons go pastel (`#FBE7A1`).
+- A meal opened with `?edit=1` now shows its editor above the book, so Home's **Edit** on a pending estimate still lands somewhere.
+
 ## v4.17 · 2026-11-18 — Edit Journal changes a meal's photo
 - **Change photo** now sits on each polaroid, appearing only while Edit Journal is on. Pick an image and it replaces that meal's photo: the file goes to a server action (the browser has had no Supabase client since v3.1), lands in the private bucket, and the meal row is pointed at the new path.
 - The meals are rendered on the server and handed to the editor as a prop, so they cannot read its state. The button is revealed by `.journal-sheet.is-editing` in CSS instead of threading the flag through — no client wrapper around the whole list.
