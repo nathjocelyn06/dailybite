@@ -237,7 +237,7 @@ export function Scrapbook({
   return (
     <div className="scrapbook">
       <Book>
-        <div className="journal-sheet">
+        <div className={`journal-sheet ${editing ? "is-editing" : ""}`}>
           <div className="journal-meals">{left}</div>
           <div className="journal-canvas">
       <div className="scrap-toolbar">

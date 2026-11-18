@@ -58,7 +58,8 @@ export const updateMealShape = {
   carbs_g: z.number().nonnegative().optional(),
   fat_g: z.number().nonnegative().optional(),
   place: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  photo_path: z.string().nullable().optional().describe("Storage path of a replacement photo; null takes the photo off")
 };
 export const UpdateMealInput = z.object(updateMealShape);
 export type UpdateMealInputT = z.infer<typeof UpdateMealInput>;

@@ -4,7 +4,7 @@ import { getJournalDay } from "@/lib/services/journal";
 import { signedUrls } from "@/lib/services/photos";
 import { addDays, dayKey, isDayKey, prettyDay } from "@/lib/dates";
 import { sumEaten } from "@/lib/totals";
-import { Photo } from "@/components/Photo";
+import { MealPhoto } from "@/components/journal/MealPhoto";
 import { ActionButton } from "@/components/ActionButton";
 import { confirmMealAction, deleteMealAction } from "../actions";
 import { MealEditor } from "./MealEditor";
@@ -58,7 +58,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
                   className={`polaroid ${sp.meal === m.id ? "is-open" : ""}`}
                   style={{ transform: `rotate(${i % 2 ? 1.6 : -1.8}deg)` }}
                 >
-                  <Photo src={m.photo_path ? urls[m.photo_path] : null} alt={m.name} style={{ borderRadius: 1 }} />
+                  <MealPhoto mealId={m.id} src={m.photo_path ? urls[m.photo_path] : null} alt={m.name} />
                   <p className="polaroid-caption">{m.notes?.trim() || m.name}</p>
                   <p className="polaroid-meta">
                     {[m.slot, m.place, `${m.kcal ?? "?"} kcal`].filter(Boolean).join(" \u00b7 ")}

@@ -949,6 +949,18 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
   text-transform: uppercase; color: var(--muted);
 }
 .polaroid-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+/* the photo is replaceable, but only while Edit Journal is on */
+.meal-photo { position: relative; }
+.meal-photo-edit {
+  all: unset; display: none; position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+  cursor: pointer; min-height: 34px; padding: 0 14px; border-radius: 999px;
+  background: rgba(46, 42, 38, 0.82); color: #fff; font-size: 12px; font-weight: var(--w-subtitle);
+  align-items: center; white-space: nowrap;
+}
+.journal-sheet.is-editing .meal-photo-edit { display: inline-flex; }
+.meal-photo-edit:hover { background: var(--ink); }
+.meal-photo-edit:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.meal-photo-err { margin: 6px 0 0; font-size: 12px; color: var(--warn-ink); text-align: center; }
 /* delete sits in the corner; there is no edit button on a photo */
 .polaroid-x {
   all: unset; position: absolute; top: -10px; right: -10px; z-index: 2;

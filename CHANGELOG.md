@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.17 · 2026-11-18 — Edit Journal changes a meal's photo
+- **Change photo** now sits on each polaroid, appearing only while Edit Journal is on. Pick an image and it replaces that meal's photo: the file goes to a server action (the browser has had no Supabase client since v3.1), lands in the private bucket, and the meal row is pointed at the new path.
+- The meals are rendered on the server and handed to the editor as a prop, so they cannot read its state. The button is revealed by `.journal-sheet.is-editing` in CSS instead of threading the flag through — no client wrapper around the whole list.
+- `UpdateMealInput` takes `photo_path`, nullable, so a photo can be replaced or taken off entirely (this also reaches `update_meal` over MCP).
+
 ## v4.16 · 2026-11-18 — The journal is a ring binder on a dark ground
 - **Full width.** Day summary moved above the journal, the side column is gone, and the binder is the page.
 - **A white ring binder on `#441910`**, as in the reference: a brushed spine with a cap at each end and three chrome rings clamped over the paper — each ring's back half behind the sheet, its front half (and its shadow) over it. The yellow two-page book is gone.
