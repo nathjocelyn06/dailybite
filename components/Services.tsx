@@ -20,7 +20,7 @@ export function ServiceGrid({ hrefs }: { hrefs: string[] }) {
   const shortcuts = hrefs.map((h) => SERVICES.find((s) => s.href === h)).filter((s): s is Service => !!s);
   return (
     <>
-      <nav aria-label="Services" className="card svc-grid" style={{ padding: 14 }}>
+      <nav aria-label="Services" className="svc-grid">
         {shortcuts.map((s) => <ServiceTile key={s.href} s={s} />)}
         <button type="button" className="svc" onClick={() => setOpen(true)} aria-haspopup="dialog">
           <span className="svc-icon tone-neutral"><NavIcon name="more" size={26} /></span>

@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.5 · 2026-11-18 — Home, rebuilt from the Figma
+- **Gradient greeting card.** Apricot → blush → lilac, with the date as a pill, the greeting in ExtraBold at `--text-3xl`, and a line saying how much of the day is logged. Search and the bell sit inside it.
+- **The calorie ring moved into that card**, on its own white panel: kcal left in the middle, eaten-of-goal beside it, and the three macro bars under that. Still one coloured arc per meal.
+- **Today's Meal Plan beside Today Food Spend.** The meal plan is four rows — a meal-coloured dot, the photo, the name and kcal — with empty slots dashed and a `+`; *Up next* is now a footnote on it rather than its own card. Food Spend leads with today's number, then the month bar, what's left in mint, and *Scan a receipt*. This replaces "What have I eaten today?" and the old Up next card.
+- **Other Services tiles are gradient chips** — two palette colours each, the icon in a dark enough shade of the same hue to stay legible. The grid no longer sits in a white card.
+- Quick actions (Log meal, Scan receipt, Cook, My progress) are white circles on the gradient instead of black ones on apricot.
+- Two columns above 980px, stacked below; nothing scrolls sideways at 390px.
+
 ## v4.4 · 2026-11-18 — The fridge is drawn, not photographed
 The fridge is now hand-authored vector art (`components/fridge/FridgeArt.tsx`), one SVG per door.
 - **Colour is a real fill**, not a tint laid over a bitmap, so every finish stays clean and the chrome keeps its own metallic ramp. All the shading — top light, lit free edge, hinge-side shadow, two reflection stripes, a hairline enamel rim — sits above the body colour, so one drawing suits cream and coral alike.
