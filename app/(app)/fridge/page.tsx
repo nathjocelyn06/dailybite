@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { webDb } from "@/lib/services/db";
 import { CATEGORY_LABEL, getDecor, listFridge, type FridgeItemView } from "@/lib/services/fridge";
+import { signedUrls } from "@/lib/services/photos";
 import { listShopping } from "@/lib/services/shopping";
 import { getSettings } from "@/lib/services/settings";
 import { ActionButton } from "@/components/ActionButton";
@@ -22,6 +23,7 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
     getSettings(db),
     getDecor(db)
   ]);
+  const stickerUrls = await signedUrls(db, decor.map((d) => d.photo_path));
   const groups = (Object.keys(CATEGORY_LABEL) as FridgeItemView["category"][])
     .map((c) => ({ c, label: CATEGORY_LABEL[c], items: stock.filter((s) => s.category === c) }))
     .filter((g) => g.items.length);
@@ -62,7 +64,7 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
         <div className="split">
           <section className="grow" aria-label="Stock" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {stock.length === 0 && <p className="muted">Your fridge is empty. Add items, scan groceries or a receipt — then open the door.</p>}
-            <Fridge items={stock} initialDecor={decor} initialColor={settings.fridge_color} />
+            <Fridge items={stock} initialDecor={decor} initialColor={settings.fridge_color} initialUrls={stickerUrls} />
           </section>
           <aside className="side-col">
             <section className="card"><h2 className="h2" style={{ marginBottom: 10 }}>Add item</h2><AddFridgeForm /></section>

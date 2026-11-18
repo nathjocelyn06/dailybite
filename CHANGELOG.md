@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.3 · 2026-11-18 — The real fridge vector, and it opens
+- **`Fridge vector asset.png` is now the fridge.** A PowerShell pass found the chrome divider at 34% of the body and sliced the artwork into `fridge-door-freezer.png` and `fridge-door-main.png`, white knocked out to transparency, in `public/fridge/`.
+- **The doors actually open.** Each door is its own image layer hinged on the *right* edge — the handles are drawn on the left — and swung away on a CSS 3D `rotateY(118deg)`, revealing shelves drawn behind. The chrome handles themselves are the click targets, as on a real fridge.
+- **Colour keeps the artwork.** A tint masked to the door's own silhouette and blended with `mix-blend-mode: color` replaces the hue while keeping the chrome highlights and shading; a flat fill would have thrown that detail away. Seven choices: the original finish plus the six brand colours.
+- **Stickers replace the old decoration tray.** Tape, post-its, notes, badges and magnets are gone per the brief; what remains is upload → drag → resize → remove, working today with your own images. Sticker width rides in the unused `text` column, noted for a migration later.
+- Logo swapped to `dailybite logo yellow.png`.
+- 🐛 The door would not cover the interior at first: the modifier class `main` collided with the app shell's global `.main` layout class and forced `display:flex` on the layer. Modifiers are now prefixed (`door-main`, `part-main`, `hit-main`).
+
 ## v4.2 · 2026-11-18 — New design system: Headspace Apercu + the six-colour palette
 - **Headspace Apercu, properly loaded.** The three `.otf` files are served from `public/fonts` through `@font-face` at weights 300 / 500 / 800, and the Google Fonts link (Inter + Caveat) is gone — no network font requests remain. ExtraBold for titles, Medium for subtitles, cards, nav and buttons, Light for body copy. The journal handwriting accent now uses Apercu Light rather than Caveat.
 - **A responsive type scale** on `clamp()`: titles stay prominent on a desktop without overwhelming a phone, body text never drops below ~15 px.

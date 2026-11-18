@@ -339,54 +339,68 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 }
 .seg-links button.on { background: #fff; color: var(--ink); }
 
-/* ---------- Phase 4: the digital fridge (D06-Fridge / M05-Fridge) ---------- */
+/* ---------- Phase 4: the fridge, built on the supplied vector ----------
+   Modifier classes are prefixed (door-main, part-main, hit-main) because the app
+   shell already owns a global `.main` layout class and it was shrinking the door. */
 .fridge-wrap { display: flex; flex-direction: column; gap: 14px; }
-.fridge-scene { display: flex; gap: 16px; align-items: flex-start; perspective: 1800px; }
-.fridge-body {
-  width: min(420px, 100%); border-radius: 22px; padding: 10px; display: flex; flex-direction: column; gap: 10px;
-  box-shadow: 0 10px 30px rgba(35, 31, 28, 0.16); border: 1px solid var(--line);
+.fridge-scene { perspective: 2200px; display: flex; justify-content: flex-start; }
+.fridge-unit {
+  position: relative; width: min(340px, 100%); transform-style: preserve-3d;
+  filter: drop-shadow(0 18px 28px rgba(46, 42, 38, 0.18));
 }
-.fridge-compartment { position: relative; transform-style: preserve-3d; border-radius: 16px; background: #f3f3f1; overflow: hidden; }
-.fridge-compartment.freezer { min-height: 150px; }
-.fridge-compartment.main { min-height: 330px; }
 
-.door {
-  position: absolute; inset: 0; border-radius: 16px; border: 1px solid rgba(35, 31, 28, 0.14);
-  transform-origin: left center; transition: transform 620ms cubic-bezier(0.22, 0.9, 0.3, 1);
-  backface-visibility: hidden; overflow: hidden;
+/* what you see once a door swings away */
+.fridge-inside {
+  position: absolute; inset: 2.5% 3.5% 3.5% 3.5%; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(180deg, #FFFDF9 0%, #F6F1EA 100%);
+  display: flex; flex-direction: column; box-shadow: inset 0 2px 14px rgba(46, 42, 38, 0.18);
 }
-.door.is-open { transform: rotateY(-112deg); }
-.door.is-decorating { outline: 2px dashed var(--ink); outline-offset: -6px; }
-.handle {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 14px; height: 64px; border-radius: 8px; border: 1px solid rgba(35, 31, 28, 0.35);
-  background: rgba(255, 255, 255, 0.75); cursor: pointer; padding: 0;
+.inside-part { padding: 10px 10px 6px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+.inside-part.part-freezer { border-bottom: 3px solid rgba(46, 42, 38, 0.12); background: rgba(217, 239, 253, 0.5); }
+
+/* each door is a layer of the artwork, hinged on its right edge — the handles are on the left */
+.door-layer {
+  position: absolute; left: 0; right: 0; transform-origin: right center; backface-visibility: hidden;
+  transition: transform 720ms cubic-bezier(0.22, 0.9, 0.3, 1); z-index: 2;
 }
-.handle:hover { background: #fff; }
-.door-label { position: absolute; left: 14px; top: 12px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.door-layer.door-freezer { top: 0; }
+.door-layer.is-decorating { outline: 2px dashed var(--ink); outline-offset: -8px; border-radius: 12px; }
+.door-art { position: relative; display: block; width: 100%; height: 100%; }
+.door-art img { width: 100%; height: 100%; display: block; object-fit: fill; }
+/* the tint takes the artwork's own silhouette and keeps its highlights */
+.door-tint {
+  position: absolute; inset: 0; mix-blend-mode: color; pointer-events: none;
+  mask-size: 100% 100%; -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;
+}
+
+/* small targets over the real chrome handles */
+.handle-hit {
+  position: absolute; left: 10%; width: 42%; background: transparent; border: 0; padding: 0;
+  cursor: pointer; z-index: 6; border-radius: 8px;
+}
+.handle-hit.hit-freezer { top: 26.5%; height: 7.5%; }
+.handle-hit.hit-main { top: 35%; height: 7.5%; }
+.handle-hit:focus-visible { outline: 2px solid var(--ink); }
+
 .status-magnet {
-  position: absolute; right: 36px; bottom: 14px; background: var(--sun); color: var(--ink);
+  position: absolute; right: 8%; bottom: 6%; background: var(--apricot); color: var(--ink);
   border-radius: 10px; padding: 8px 10px; font-size: 11px; line-height: 1.35; text-align: center;
-  box-shadow: 0 2px 6px rgba(35, 31, 28, 0.2); transform: rotate(-3deg);
+  box-shadow: 0 2px 6px rgba(46, 42, 38, 0.25); transform: rotate(-3deg); z-index: 3;
 }
 
-.decor {
-  position: absolute; min-width: 44px; min-height: 44px; padding: 8px 10px; border-radius: 6px;
-  font-size: 12px; line-height: 1.3; display: grid; place-items: center; text-align: center;
-  box-shadow: 0 2px 5px rgba(35, 31, 28, 0.18); color: var(--ink); touch-action: none; user-select: none;
+.sticker { position: absolute; touch-action: none; user-select: none; z-index: 4; }
+.sticker img { width: 100%; display: block; filter: drop-shadow(0 2px 4px rgba(46, 42, 38, 0.25)); }
+.sticker.is-picked { outline: 2px solid var(--ink); outline-offset: 3px; }
+.sticker-handle {
+  position: absolute; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--ink);
+  background: #fff; cursor: pointer; padding: 0; font-size: 12px; line-height: 1;
 }
-.decor-postit { font-family: var(--hand); font-size: 16px; }
-.decor-note { font-family: var(--hand); font-size: 16px; border-radius: 10px; }
-.decor-badge { border-radius: 50%; color: #fff; font-weight: 700; }
-.decor-magnet { border-radius: 50%; color: #fff; width: 44px; height: 44px; }
-.decor-strip { height: 26px; min-height: 26px; width: 92px; opacity: 0.85; border-radius: 2px; }
-.decor-x {
-  position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 50%;
-  border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 12px; line-height: 1; padding: 0;
-}
+.sticker-handle.size { right: -12px; bottom: -12px; cursor: nwse-resize; background: var(--coral); }
+.sticker-handle.del { right: -12px; top: -12px; }
 
-.shelves { display: flex; flex-direction: column; gap: 8px; padding: 10px; height: 100%; }
-.shelf { border-bottom: 2px solid rgba(35, 31, 28, 0.12); padding-bottom: 6px; }
+.shelf { border-bottom: 2px solid rgba(46, 42, 38, 0.1); padding-bottom: 6px; }
+.shelf:last-child { border-bottom: 0; }
 .shelf-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .shelf-items { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 4px; }
 .item-chip {
@@ -395,25 +409,23 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 }
 .item-chip:hover { border-color: var(--ink); }
 .item-chip.warn { border-color: var(--warn-line); background: var(--warn-bg); }
-.item-name { font-weight: 600; }
+.item-name { font-weight: var(--w-subtitle); }
 .item-qty { color: var(--muted); font-size: 11px; }
 
 .pantry {
-  flex: 1; min-width: 160px; border: 1px solid var(--line); border-radius: 16px; background: #efe7dc;
-  padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 220px;
+  flex: 1; min-width: 180px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--paper);
+  padding: 14px; display: flex; flex-direction: column; gap: 8px; min-height: 240px;
 }
 .fridge-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 0; padding: 0; }
+.swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 0; padding: 0; }
 
 @media (max-width: 860px) {
-  .fridge-scene { flex-direction: column; perspective: 1200px; }
-  .fridge-body { width: 100%; }
-  .fridge-compartment.main { min-height: 300px; }
+  .fridge-scene { perspective: 1500px; }
+  .fridge-unit { width: min(280px, 100%); margin: 0 auto; }
   .pantry { width: 100%; min-height: 0; }
-  .door.is-open { transform: rotateY(-104deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .door { transition-duration: 1ms; }
+  .door-layer { transition-duration: 1ms; }
 }
 
 /* ---------- Phase 4: the scrapbook journal page (D05-Journal) ---------- */
