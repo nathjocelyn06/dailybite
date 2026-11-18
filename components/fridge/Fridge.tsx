@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import type { FridgeItemView } from "@/lib/services/fridge";
 import { FreezerDoorArt, MainDoorArt } from "./FridgeArt";
-import { saveDecorAction, fridgeQtyAction, fridgeRemoveAction, uploadScanPhotoAction, photoUrlAction } from "@/app/(app)/actions";
+import { MagnetArt, MAGNETS, MAGNET_LABEL, isMagnet, type MagnetKey } from "./MagnetArt";
+import { saveDecorAction, fridgeQtyAction, fridgeRemoveAction } from "@/app/(app)/actions";
 
 export type DecorPiece = {
   id?: string;
@@ -13,8 +14,9 @@ export type DecorPiece = {
   y: number;
   rot: number;
   z: number;
-  /** Stickers keep their width (percent of the door) here — `text` is unused for photos. */
+  /** A magnet's width, as a percent of the door. */
   text?: string | null;
+  /** Which magnet this is (see MagnetArt). `color` is free text in the schema. */
   color?: string | null;
   photo_path?: string | null;
 };
@@ -64,20 +66,17 @@ const sizeOf = (d: DecorPiece) => {
 export function Fridge({
   items,
   initialDecor,
-  initialColor,
-  initialUrls
+  initialColor
 }: {
   items: FridgeItemView[];
   initialDecor: DecorPiece[];
   initialColor: string;
-  initialUrls: Record<string, string>;
 }) {
   const [open, setOpen] = useState<Door>("none");
   const [decorating, setDecorating] = useState(false);
-  // Only stickers live on the door now; post-its, tape and magnets were dropped, so any
-  // leftover rows from the old tray are ignored and fall away on the next save.
-  const [decor, setDecor] = useState<DecorPiece[]>(initialDecor.filter((d) => d.photo_path));
-  const [urls, setUrls] = useState<Record<string, string>>(initialUrls);
+  // Magnets are the only decoration now: uploaded stickers, post-its and tape are gone,
+  // so leftover rows from the old tray are ignored and fall away on the next save.
+  const [decor, setDecor] = useState<DecorPiece[]>(initialDecor.filter((d) => isMagnet(d.color)));
   const [color, setColor] = useState(initialColor?.startsWith("#") ? initialColor : "");
   const [selected, setSelected] = useState<FridgeItemView | null>(null);
   const [picked, setPicked] = useState<number | null>(null);
@@ -85,7 +84,6 @@ export function Fridge({
   const [pending, start] = useTransition();
 
   const doorRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const drag = useRef<{ index: number; mode: "move" | "size"; dx: number; dy: number } | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -156,26 +154,23 @@ export function Fridge({
     persist(decor, color);
   }
 
-  async function uploadSticker(file: File | undefined) {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) return setStatus("Choose an image file");
-    setStatus("Uploading…");
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const { path } = await uploadScanPhotoAction(fd);
-      const url = await photoUrlAction(path);
-      if (url) setUrls((m) => ({ ...m, [path]: url }));
-      const next = [
-        ...decor,
-        { kind: "photo" as const, x: 50, y: 45, rot: Math.round(Math.random() * 10 - 5), z: decor.length, photo_path: path, text: "22" }
-      ];
-      setDecor(next);
-      persist(next, color);
-      setStatus("Sticker added");
-    } catch (e) {
-      setStatus(e instanceof Error ? e.message : "Could not add the sticker");
-    }
+  function addMagnet(name: MagnetKey) {
+    const next = [
+      ...decor,
+      {
+        kind: "magnet" as const,
+        x: 50,
+        y: 45,
+        rot: Math.round(Math.random() * 16 - 8),
+        z: decor.length,
+        color: name,
+        text: "20"
+      }
+    ];
+    setDecor(next);
+    setPicked(next.length - 1);
+    persist(next, color);
+    setStatus(`${MAGNET_LABEL[name]} added`);
   }
 
   const removeAt = (index: number) => {
@@ -232,12 +227,11 @@ export function Fridge({
 
 
             {decor.map((d, i) => {
-              const url = d.photo_path ? urls[d.photo_path] : null;
-              if (!url) return null;
+              if (!isMagnet(d.color)) return null;
               return (
                 <div
                   key={d.id ?? `s-${i}`}
-                  className={`sticker ${decorating && picked === i ? "is-picked" : ""}`}
+                  className={`sticker magnet ${decorating && picked === i ? "is-picked" : ""}`}
                   style={{
                     left: `${d.x}%`,
                     top: `${d.y}%`,
@@ -247,11 +241,11 @@ export function Fridge({
                   }}
                   onPointerDown={(e) => onPointerDown(e, i, "move")}
                 >
-                  <img src={url} alt="" draggable={false} />
+                  <MagnetArt name={d.color} />
                   {decorating && picked === i && (
                     <>
-                      <button className="sticker-handle size" onPointerDown={(e) => onPointerDown(e, i, "size")} aria-label="Resize sticker" />
-                      <button className="sticker-handle del" onClick={() => removeAt(i)} aria-label="Remove sticker">×</button>
+                      <button className="sticker-handle size" onPointerDown={(e) => onPointerDown(e, i, "size")} aria-label="Resize magnet" />
+                      <button className="sticker-handle del" onClick={() => removeAt(i)} aria-label="Remove magnet">×</button>
                     </>
                   )}
                 </div>
@@ -287,14 +281,17 @@ export function Fridge({
 
       {decorating && (
         <section className="card" aria-label="Decorate the fridge" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <span className="lbl">Stickers</span>
-          <input ref={fileRef} type="file" accept="image/*" className="sr" onChange={(e) => void uploadSticker(e.target.files?.[0])} aria-label="Upload a sticker" />
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-            <button className="btn pri" onClick={() => fileRef.current?.click()}>Upload a sticker</button>
-            <span className="muted" style={{ fontSize: 12 }}>
-              Drag a sticker to move it, use the corner to resize, × to remove.
-            </span>
+          <span className="lbl">Magnets</span>
+          <div className="magnet-tray">
+            {MAGNETS.map((m) => (
+              <button key={m} className="magnet-pick" onClick={() => addMagnet(m)} aria-label={`Add the ${MAGNET_LABEL[m].toLowerCase()} magnet`} title={MAGNET_LABEL[m]}>
+                <MagnetArt name={m} />
+              </button>
+            ))}
           </div>
+          <span className="muted" style={{ fontSize: 12 }}>
+            Tap a magnet to put it on the door. Drag to move it, the corner to resize, × to remove.
+          </span>
 
           <span className="lbl">Fridge colour</span>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>

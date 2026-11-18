@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { webDb } from "@/lib/services/db";
 import { CATEGORY_LABEL, getDecor, listFridge, type FridgeItemView } from "@/lib/services/fridge";
-import { signedUrls } from "@/lib/services/photos";
 import { getSettings } from "@/lib/services/settings";
 import { ActionButton } from "@/components/ActionButton";
 import { confirmPendingAction, fridgeRemoveAction } from "../actions";
@@ -20,7 +19,6 @@ export default async function FridgePage() {
     getSettings(db),
     getDecor(db)
   ]);
-  const stickerUrls = await signedUrls(db, decor.map((d) => d.photo_path));
   // The pantry is a cupboard beside the fridge, not a shelf inside it.
   const pantry = stock.filter((s) => s.category === "pantry");
   const groups = (Object.keys(CATEGORY_LABEL) as FridgeItemView["category"][])
@@ -32,7 +30,7 @@ export default async function FridgePage() {
       <header className="head">
         <div className="titles">
           <span className="lbl">Fridge</span>
-          <h1 className="h1">What I have</h1>
+          <h1 className="h1">What’s in My Fridge?</h1>
         </div>
       </header>
 
@@ -58,7 +56,7 @@ export default async function FridgePage() {
         <div className="fridge-columns">
           <section aria-label="Stock" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {stock.length === 0 && <p className="muted">Your fridge is empty. Add items, scan groceries or a receipt — then open the door.</p>}
-            <Fridge items={stock} initialDecor={decor} initialColor={settings.fridge_color} initialUrls={stickerUrls} />
+            <Fridge items={stock} initialDecor={decor} initialColor={settings.fridge_color} />
           </section>
 
           <section className="pantry-panel" aria-label="Pantry cupboard">

@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.13 · 2026-11-18 — Magnets on the fridge door
+- **Nine magnets from your own sheet** (`Magnet Vector Asset.png`): lemon, orange slice, strawberry, apple, kiwi, blueberries, egg on toast, baguette, cheese. The sheet was cut by finding the connected blobs of non-transparent pixels, so each magnet is trimmed to its own artwork rather than a guessed grid, and saved at 256px in `public/magnets/`.
+- **Upload a sticker is gone.** Decorating is now: tap a magnet from the tray to put it on the door, drag to move, corner to resize, × to remove. Positions are still percentages of the door, so a door arranged on a laptop looks right on a phone.
+- A magnet is a `fridge_decor` row with `kind: 'magnet'` and its name in `color`, so no migration was needed. Leftover photo stickers are ignored and fall away on the next save.
+- The fridge page is now **What's in My Fridge?**
+
 ## v4.12 · 2026-11-18 — Every recipe shows calories
 - **No recipe says "ask Claude" any more.** `lib/nutrition/estimate.ts` works a figure out from the recipe's own ingredient list — the measure converted to grams, a calorie density matched on words in the name — and the tile shows `~755 kcal` with **estimated** under it. No API call, no key, no wait.
 - Seasonings count as zero rather than being guessed at, a bare count ("2 chicken breasts") is read as pieces, and the result is rounded to the nearest 25 because pretending to more precision would be the real lie.
