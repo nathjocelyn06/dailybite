@@ -11,13 +11,15 @@ import { ActionButton } from "@/components/ActionButton";
 import { NavIcon } from "@/components/NavIcon";
 import { Photo } from "@/components/Photo";
 import { ServiceGrid } from "@/components/Services";
+import { CalorieRing } from "@/components/CalorieRing";
 import { confirmMealAction } from "./actions";
 
 /**
  * Home — the daily overview, rebuilt from the Figma:
- *   a gradient greeting card (date, greeting, search, bell) holding the calorie ring,
- *   a row of quick actions, then Today's Meal Plan beside Today Food Spend,
- *   Other Services as gradient tiles, one tip, and saved recipes to browse.
+ *   a yellow gradient greeting card holding the daily balance (calories left, eaten of
+ *   goal, macro bars and the ring), then Today's Meal Plan beside Today Food Spend on
+ *   their own pink and green gradients, Other Services as illustrated icons, and saved
+ *   recipes to browse.
  * My progress, Budget and Notifications are reached from here; the four tabs never change.
  */
 export default async function HomePage() {
@@ -28,70 +30,47 @@ export default async function HomePage() {
     unreadCount(db).catch(() => 0)
   ]);
   const urls = await signedUrls(db, s.slots.flatMap((x) => [...x.eaten, ...x.pending].map((m) => m.photo_path)));
-  // The ring is the plate: one coloured arc per meal (breakfast apricot, lunch coral, dinner lilac, snack blush).
-  const ring = mealRing(s.slots.map((x) => ({ slot: x.slot, kcal: x.eaten.reduce((n, m) => n + (m.kcal ?? 0), 0) })), s.goals.kcal);
-  const money = (n: number) => `${s.budget.currency === "KRW" ? "₩" : ""}${Math.round(n).toLocaleString()}`;
-  const tip = makeTip(s);
+  const money = (n: number) => `${s.budget.currency === "KRW" ? "₩" : ""}${Math.round(n).toLocaleString("en-US")}`;
   const monthPct = Math.min(100, (s.budget.spent / Math.max(1, s.budget.budget)) * 100);
   const logged = s.slots.filter((x) => x.eaten.length || x.pending.length).length;
 
   return (
     <>
       {/* ---------- greeting ---------- */}
+      {/* ---------- greeting ---------- */}
       <section className="home-hero" aria-label="Today">
         <div className="home-hero-top">
           <div className="home-greet">
-            <Link href="/calendar" className="home-date">{prettyDay(s.date)}</Link>
             <h1 className="h1">{greeting(new Date(), db.tz)}</h1>
-            <p className="home-sub">
-              {logged === 0
-                ? "Nothing logged yet — start with your first meal."
-                : `${logged} of 4 meals logged · ${Math.max(0, s.remaining_kcal)} kcal still to go.`}
-            </p>
+            <p className="home-sub">Your daily balance</p>
           </div>
           <div className="home-hero-tools">
-            <form action="/archive" className="hero-search" role="search">
-              <NavIcon name="search" size={18} />
-              <label className="sr" htmlFor="home-search">Search your records</label>
-              <input id="home-search" type="search" name="q" placeholder="Search meals, recipes, notes" />
-            </form>
-            <Link href="/notifications" className="avatar" aria-label={`Notifications${unread ? `, ${unread} new` : ""}`}>
+            <Link href="/calendar" className="home-date">{prettyDay(s.date)}</Link>
+            <Link href="/notifications" className="avatar phone-only" aria-label={`Notifications${unread ? `, ${unread} new` : ""}`}>
               <NavIcon name="notifications" size={20} />
               {unread > 0 && <span className="dot">{unread}</span>}
             </Link>
-            <Link href="/more" className="avatar" aria-label="Account and settings">
+            <Link href="/more" className="avatar phone-only" aria-label="Account and settings">
               <NavIcon name="settings" size={20} />
             </Link>
           </div>
         </div>
 
         <Link href="/progress" className="cal-card" aria-label="Today's calories and nutrition, open My progress">
-          <div className="ring" style={{ background: ring }} aria-hidden="true">
-            <span className="ring-hole">
-              <strong>{Math.max(0, s.remaining_kcal)}</strong>
-              <span className="muted">kcal left</span>
-            </span>
-          </div>
           <div className="cal-meta">
-            <span className="lbl">Calories today</span>
-            <strong className="cal-total">{s.eaten.kcal} <span>/ {s.goals.kcal} kcal</span></strong>
+            <span className="cal-left">{Math.max(0, s.remaining_kcal)} remaining</span>
+            <strong className="cal-total">{s.eaten.kcal.toLocaleString("en-US")}/{s.goals.kcal.toLocaleString("en-US")}</strong>
             <div className="macros">
               {([["Protein", s.eaten.protein_g, s.goals.protein_g], ["Carbs", s.eaten.carbs_g, s.goals.carbs_g], ["Fat", s.eaten.fat_g, s.goals.fat_g]] as const).map(([label, v, goal]) => (
                 <div key={label} className="macro">
-                  <span>{label}<em>{v}/{goal} g</em></span>
+                  <span className="macro-head">{label}<em>{v} / {goal} g</em></span>
                   <div className="bar"><span style={{ width: `${Math.min(100, (v / Math.max(1, goal)) * 100)}%` }} /></div>
                 </div>
               ))}
             </div>
           </div>
+          <CalorieRing eaten={s.eaten.kcal} goal={s.goals.kcal} />
         </Link>
-
-        <nav className="quick" aria-label="Quick actions">
-          <Link className="act" href="/snap?mode=calorie"><span className="act-icon"><NavIcon name="camera" size={18} /></span>Log meal</Link>
-          <Link className="act" href="/snap?mode=receipt"><span className="act-icon"><NavIcon name="receipt" size={18} /></span>Scan receipt</Link>
-          <Link className="act" href="/recipes?tab=scanner"><span className="act-icon"><NavIcon name="cook" size={18} /></span>Cook</Link>
-          <Link className="act" href="/progress"><span className="act-icon"><NavIcon name="progress" size={18} /></span>My progress</Link>
-        </nav>
       </section>
 
       {s.pending_confirm.length > 0 && (
@@ -109,7 +88,7 @@ export default async function HomePage() {
 
       {/* ---------- meal plan + spend ---------- */}
       <div className="home-two">
-        <section className="card home-card" aria-label="Today's meal plan">
+        <section className="card home-card card-meal" aria-label="Today's meal plan">
           <div className="head">
             <h2 className="h2" style={{ flex: 1 }}>Today&apos;s Meal Plan</h2>
             <Link href="/journal" className="muted">Journal</Link>
@@ -149,7 +128,7 @@ export default async function HomePage() {
           )}
         </section>
 
-        <section className="card home-card" aria-label="Today food spend">
+        <section className="card home-card card-spend" aria-label="Today food spend">
           <div className="head">
             <h2 className="h2" style={{ flex: 1 }}>Today Food Spend</h2>
             <Link href="/budget" className="muted">Budget</Link>
@@ -173,18 +152,8 @@ export default async function HomePage() {
 
       {/* ---------- services ---------- */}
       <section aria-label="Other services" className="home-services">
-        <h2 className="h2">Other Services</h2>
         <ServiceGrid hrefs={HOME_GRID} />
       </section>
-
-      <Link href={tip.href} className="tip" aria-label={`Today's tip: ${tip.title}`}>
-        <span className="tip-body">
-          <span className="lbl" style={{ color: "var(--tip-label)" }}>Today&apos;s tip</span>
-          <span className="tip-title">{tip.title}</span>
-          <span style={{ fontSize: 14 }}>{tip.body}</span>
-          <span className="tip-cta">{tip.cta}</span>
-        </span>
-      </Link>
 
       <section aria-label="Discover recipes" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div className="head"><h2 className="h2" style={{ flex: 1 }}>Discover good eats</h2><Link href="/recipes" className="muted">See all recipes</Link></div>
@@ -203,30 +172,3 @@ export default async function HomePage() {
   );
 }
 
-type Summary = Awaited<ReturnType<typeof getDailySummary>>;
-
-/** One actionable tip from the user's own data (never generic health claims). */
-function makeTip(s: Summary): { title: string; body: string; cta: string; href: string } {
-  const soon = s.use_soon[0];
-  if (soon) {
-    const when = soon.days_left !== null && soon.days_left > 0 ? `in ${soon.days_left} day${soon.days_left === 1 ? "" : "s"}` : "today";
-    return { title: `${soon.name} expires ${when}`, body: "Find a recipe that uses what is already in your fridge.", cta: "Cook with it", href: "/recipes?tab=scanner" };
-  }
-  if (s.low_stock[0]) return { title: `${s.low_stock[0].name} is running low`, body: "Add it to your grocery list so you don't forget.", cta: "Open grocery list", href: "/fridge?tab=list" };
-  if (!s.upcoming.length) return { title: "Nothing planned yet", body: "Plan tomorrow's meals so shopping and budgeting are easier.", cta: "Plan a meal", href: "/calendar" };
-  return { title: "Write today's reflection", body: "A line or two about how today's food felt goes into your journal.", cta: "Open journal", href: "/journal" };
-}
-
-/** conic-gradient with one segment per meal, sized against the day's calorie goal. */
-function mealRing(slots: { slot: string; kcal: number }[], goal: number): string {
-  let at = 0;
-  const stops: string[] = [];
-  for (const s of slots) {
-    if (!s.kcal) continue;
-    const end = Math.min(360, at + (s.kcal / Math.max(1, goal)) * 360);
-    stops.push(`var(--meal-${s.slot}) ${at}deg ${end}deg`);
-    at = end;
-  }
-  stops.push(`var(--ring-rest) ${at}deg 360deg`);
-  return `conic-gradient(${stops.join(", ")})`;
-}

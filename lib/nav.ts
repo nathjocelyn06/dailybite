@@ -53,8 +53,12 @@ export const SERVICES: Service[] = [
   { section: "account", href: "/more", label: "Settings", short: "Settings", icon: "settings", tone: "neutral", description: "Goals, budget, time zone, privacy" }
 ];
 
-/** Home service grid (Gojek-style): 7 shortcuts + "More". */
-export const HOME_GRID = ["/fridge", "/fridge?tab=list", "/recipes", "/journal", "/budget", "/progress", "/calendar"];
+/**
+ * Home service grid: the four shortcuts the Figma shows, plus "More" — which is still
+ * how Journal, Budget, Calendar and Notifications are reached from Home on a phone,
+ * where there is no sidebar.
+ */
+export const HOME_GRID = ["/fridge", "/fridge?tab=list", "/recipes", "/progress"];
 
 export const KITCHEN_SERVICES = SERVICES.filter((s) => s.section === "kitchen");
 

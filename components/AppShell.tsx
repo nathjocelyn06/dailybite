@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -28,8 +29,7 @@ export function AppShell({ children, unread, tz }: { children: React.ReactNode; 
     <div className="shell">
       <aside className="side">
         <Link href="/" className="brand" aria-label="DailyBite home">
-          <span className="brand-mark" aria-hidden="true"><span /></span>
-          <span className="brand-name">DailyBite</span>
+          <img className="brand-logo" src="/logo-dailybite-wordmark.png" alt="DailyBite" />
         </Link>
         <nav className="nav" aria-label="Main">
           {TABS.map((t) => (
@@ -65,9 +65,7 @@ export function AppShell({ children, unread, tz }: { children: React.ReactNode; 
       </main>
 
       <Link href={cameraHref} className="fab" aria-label="Open AI camera">
-        <span className="fab-dot">
-          <span />
-        </span>
+        <span className="fab-dot"><NavIcon name="camera" size={22} /></span>
         <span className="fab-label">AI camera</span>
       </Link>
 

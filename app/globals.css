@@ -710,78 +710,80 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .fridge-svg { display: block; width: 100%; height: 100%; }
 
 /* ====================================================================
-   Home, rebuilt from the Figma: gradient greeting card holding the
-   calorie ring, Today's Meal Plan beside Today Food Spend, and the
-   service tiles as gradient chips.
+   Home, matched to the Figma: a yellow gradient greeting card holding
+   the daily balance, pink and green gradient cards under it, and the
+   service shortcuts as illustrated icons with no tile behind them.
    ==================================================================== */
 
-:root { --ring-rest: #F0E4D6; }
+:root {
+  --ring-rest: #EAE6DF;        /* the unspent part of the ring and of every bar */
+  --accent-strong: #F2655A;    /* the deeper coral the Figma uses for progress */
+  --title-ink: #000000;        /* titles are black, not the warm ink of body copy */
+}
+
+/* every title is black */
+.h1, h1, .h2, h2, h3, .brand-name, .cal-total, .spend-today, .svc > span { color: var(--title-ink); }
+
+/* ---------- sidebar ---------- */
+.brand { padding: 0 6px; }
+.brand-logo { display: block; width: 100%; max-width: 150px; height: auto; }
+.nav a[aria-current="page"] { background: #F6EFE2; color: var(--title-ink); }
+.nav a[aria-current="page"] .navicon { color: var(--title-ink); }
 
 /* ---------- greeting card ---------- */
 .home-hero {
-  border-radius: 28px; padding: 24px; display: flex; flex-direction: column; gap: 18px;
-  background:
-    radial-gradient(120% 90% at 12% 0%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(135deg, var(--apricot) 0%, var(--blush-pink) 48%, var(--lilac-soft) 100%);
+  border-radius: 26px; padding: 26px 28px 28px; display: flex; flex-direction: column; gap: 20px;
+  background: linear-gradient(162deg, #FFFCEC 0%, #FDF4BF 42%, #F8E35E 100%);
 }
-.home-hero-top { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; }
-.home-greet { flex: 1 1 260px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.home-date {
-  align-self: flex-start; font-size: var(--text-xs); font-weight: var(--w-subtitle);
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); text-decoration: none;
-  background: rgba(255, 255, 255, 0.6); border-radius: 999px; padding: 4px 12px;
-}
+.home-hero-top { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px; }
+.home-greet { flex: 1 1 260px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .home-greet .h1 { font-size: var(--text-3xl); }
-.home-sub { font-size: var(--text-sm); color: var(--ink-2); margin: 0; }
-.home-hero-tools { display: flex; align-items: center; gap: 10px; flex: 1 1 320px; justify-content: flex-end; }
-.home-hero .avatar .dot { border-color: var(--blush-pink); }
+.home-sub { margin: 0; font-weight: var(--w-subtitle); color: var(--ink); }
+.home-hero-tools { display: flex; align-items: center; gap: 10px; }
+.home-date { font-size: var(--text-sm); color: var(--ink-2); text-decoration: none; }
+.home-date:hover { text-decoration: underline; text-underline-offset: 3px; }
+.home-hero .avatar { width: 40px; height: 40px; }
+.home-hero .avatar .dot { border-color: #FDF4BF; }
+/* the sidebar carries Notifications and Settings; the phone has no sidebar */
+.phone-only { display: none; }
+@media (max-width: 860px) { .phone-only { display: grid; } }
 
-/* ---------- calorie ring ---------- */
+/* ---------- daily balance ---------- */
 .cal-card {
-  background: var(--surface); border-radius: 22px; padding: 18px 20px;
-  display: flex; align-items: center; gap: 20px; text-decoration: none; color: var(--ink);
+  background: var(--surface); border-radius: 20px; padding: 22px 26px;
+  display: flex; align-items: center; gap: 24px; text-decoration: none; color: var(--ink);
 }
-.cal-card:hover { background: #fff; }
-.ring {
-  width: 116px; height: 116px; border-radius: 50%; flex: none; display: grid; place-items: center;
-  box-shadow: 0 2px 10px rgba(46, 42, 38, 0.12);
-}
-.ring-hole {
-  width: 88px; height: 88px; border-radius: 50%; background: var(--surface);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
-}
-.ring-hole strong { font-size: var(--text-xl); font-weight: var(--w-title); }
-.ring-hole .muted { font-size: 11px; }
-.cal-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.cal-total { font-size: var(--text-xl); font-weight: var(--w-title); }
-.cal-total span { font-size: var(--text-sm); font-weight: var(--w-body); color: var(--muted); }
-.macros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.macro { display: flex; flex-direction: column; gap: 4px; font-size: 12px; min-width: 0; }
-.macro > span { display: flex; flex-direction: column; }
-.macro em { font-style: normal; color: var(--muted); font-size: 11px; }
-.macro .bar { height: 8px; background: var(--ring-rest); }
-
-/* ---------- quick actions ---------- */
-.quick { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-.quick .act { flex: 1 1 70px; }
-.quick .act-icon { background: var(--surface); color: var(--ink); box-shadow: 0 2px 6px rgba(46, 42, 38, 0.12); }
+.cal-left { font-size: var(--text-sm); color: var(--muted); }
+.cal-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cal-total { font-size: var(--text-3xl); font-weight: var(--w-title); line-height: 1.1; letter-spacing: -0.02em; }
+.macros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 14px; }
+.macro { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.macro-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 11px; font-weight: var(--w-subtitle); }
+.macro-head em { font-style: normal; font-weight: var(--w-body); color: var(--muted); }
+.macro .bar { height: 5px; border-radius: 3px; background: var(--ring-rest); }
+.macro .bar > span { background: var(--accent-strong); }
+.cal-ring { width: 148px; height: 148px; flex: none; }
 
 /* ---------- meal plan + spend ---------- */
-.home-two { display: grid; gap: 16px; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); align-items: start; }
-.home-card { display: flex; flex-direction: column; gap: 12px; }
+.home-two { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: stretch; }
+.home-card { display: flex; flex-direction: column; gap: 12px; border-radius: 22px; }
+.card-meal { background: linear-gradient(180deg, #FFFFFF 0%, #FDF0F3 54%, #F7D3DC 100%); border-color: #F2DDE2; }
+.card-spend { background: linear-gradient(180deg, #FFFFFF 0%, #F5FBE2 54%, #E3F5A8 100%); border-color: #E4EDC8; }
+
 .slots { display: flex; flex-direction: column; gap: 8px; }
 .slot {
   display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px;
-  background: var(--paper); border: 1px solid var(--line-soft); text-decoration: none; color: var(--ink);
+  background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(46, 42, 38, 0.06);
+  text-decoration: none; color: var(--ink);
 }
-.slot:hover { border-color: var(--grid); }
-.slot-empty { border-style: dashed; background: transparent; }
+.slot:hover { background: #fff; }
+.slot-empty { background: transparent; border-style: dashed; border-color: rgba(46, 42, 38, 0.18); }
 .slot-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .slot-breakfast { background: var(--meal-breakfast); }
 .slot-lunch { background: var(--meal-lunch); }
 .slot-dinner { background: var(--meal-dinner); }
 .slot-snack { background: var(--meal-snack); }
-.slot-thumb { width: 48px; height: 48px; flex: none; border-radius: 12px; overflow: hidden; }
+.slot-thumb { width: 46px; height: 46px; flex: none; border-radius: 12px; overflow: hidden; }
 .slot-thumb > * { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; border-radius: 12px; }
 .slot-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .slot-text strong { font-weight: var(--w-subtitle); text-transform: capitalize; }
@@ -793,40 +795,39 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .home-card .spend-today + .muted { margin-top: -6px; }
 .spend-bar { display: flex; flex-direction: column; gap: 6px; }
 .spend-bar .bar { background: var(--ring-rest); }
+.spend-bar .bar > span { background: var(--accent-strong); }
 .spend-bar .bar > span.over { background: var(--warn-ink); }
 .spend-left {
   display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  background: var(--mint); border-radius: 14px; padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.78); border-radius: 14px; padding: 10px 14px;
 }
 .spend-left strong { font-size: var(--text-lg); font-weight: var(--w-title); }
+.home-card .btn { background: rgba(255, 255, 255, 0.85); }
 
-/* ---------- services ---------- */
-.home-services { display: flex; flex-direction: column; gap: 10px; }
-.svc-icon { color: var(--ink); box-shadow: 0 2px 8px rgba(46, 42, 38, 0.1); }
-/* gradient tiles: two palette colours each, dark enough ink to stay legible */
-.svc-icon.tone-emerald { background: linear-gradient(145deg, #C2FFE5, #A8E8FF); color: #0B6B4A; }
-.svc-icon.tone-amber { background: linear-gradient(145deg, #FFDBA7, #FFCAD4); color: #8A5A18; }
-.svc-icon.tone-vermilion { background: linear-gradient(145deg, #FF877E, #FFCAD4); color: #6E231D; }
-.svc-icon.tone-blush { background: linear-gradient(145deg, #FFCAD4, #EDD4FF); color: #8E3A63; }
-.svc-icon.tone-sun { background: linear-gradient(145deg, #FFDBA7, #C2FFE5); color: #6E5A12; }
-.svc-icon.tone-periwinkle { background: linear-gradient(145deg, #D9EFFD, #EDD4FF); color: #3F5F86; }
-.svc-icon.tone-lilac { background: linear-gradient(145deg, #EDD4FF, #FFCAD4); color: #5E3F8C; }
-.svc-icon.tone-cobalt { background: linear-gradient(145deg, #D9EFFD, #C2FFE5); color: #1F5C86; }
-.svc-icon.tone-ocean { background: linear-gradient(145deg, #C2FFE5, #D9EFFD); color: #0E5E6B; }
-.svc-icon.tone-coral { background: linear-gradient(145deg, #FF877E, #FFDBA7); color: #6E231D; }
-.svc-icon.tone-neutral { background: linear-gradient(145deg, #FFF1E3, #F3E6D8); color: var(--ink-2); }
+/* ---------- services: illustrated, no tile ---------- */
+.home-services { display: flex; flex-direction: column; gap: 12px; }
+.link-btn { all: unset; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.link-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+.svc-grid.art { gap: 10px; }
+.svc-grid.art .svc { gap: 10px; min-height: 96px; padding: 10px 2px; font-weight: var(--w-subtitle); }
+.svc-grid.art .svc:hover { background: rgba(46, 42, 38, 0.04); }
+.svc-art { width: 54px; height: 54px; display: block; }
 
-/* ---------- tip ---------- */
-.tip-body { flex: 1 1 auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
-.tip-title { font-size: var(--text-xl); font-weight: var(--w-title); line-height: 1.2; }
+/* ---------- AI camera ---------- */
+.fab { background: var(--btn-yellow); color: var(--title-ink); box-shadow: 0 4px 14px rgba(46, 42, 38, 0.2); }
+.fab:hover { background: #FFDC6E; }
+.fab-dot { width: 36px; height: 36px; background: transparent; color: var(--title-ink); }
 
 @media (max-width: 980px) {
   .home-two { grid-template-columns: 1fr; }
 }
 @media (max-width: 860px) {
-  .home-hero { padding: 18px; border-radius: 24px; }
-  .home-hero-tools { flex: 1 1 100%; justify-content: flex-start; }
-  .cal-card { flex-direction: column; align-items: stretch; gap: 14px; }
-  .ring { align-self: center; }
-  .quick .act { flex: 1 1 62px; }
+  .home-hero { padding: 20px; border-radius: 22px; }
+  /* on a phone the date leads the row and the two account buttons sit together at the end */
+  .home-hero-tools { order: -1; width: 100%; }
+  .home-hero-tools .phone-only:first-of-type { margin-left: auto; }
+  .cal-card { flex-direction: column-reverse; align-items: stretch; gap: 16px; padding: 18px; }
+  .cal-ring { align-self: center; }
+  /* three macro columns are too narrow to put the value beside the label */
+  .macro-head { flex-direction: column; align-items: flex-start; gap: 1px; }
 }

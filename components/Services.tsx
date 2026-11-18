@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SERVICES, SECTION_LABEL, type Service } from "@/lib/nav";
 import { NavIcon } from "./NavIcon";
+import { ServiceArt } from "./ServiceArt";
 
 export function ServiceTile({ s, sub }: { s: Service; sub?: string }) {
   return (
@@ -20,12 +21,18 @@ export function ServiceGrid({ hrefs }: { hrefs: string[] }) {
   const shortcuts = hrefs.map((h) => SERVICES.find((s) => s.href === h)).filter((s): s is Service => !!s);
   return (
     <>
-      <nav aria-label="Services" className="svc-grid">
-        {shortcuts.map((s) => <ServiceTile key={s.href} s={s} />)}
-        <button type="button" className="svc" onClick={() => setOpen(true)} aria-haspopup="dialog">
-          <span className="svc-icon tone-neutral"><NavIcon name="more" size={26} /></span>
-          <span>More</span>
-        </button>
+      <div className="head">
+        <h2 className="h2" style={{ flex: 1 }}>Other Services</h2>
+        {/* the Figma shows four icons, so everything else lives behind this */}
+        <button type="button" className="link-btn muted" onClick={() => setOpen(true)} aria-haspopup="dialog">See all</button>
+      </div>
+      <nav aria-label="Services" className="svc-grid art">
+        {shortcuts.map((s) => (
+          <Link key={s.href} href={s.href} className="svc">
+            <ServiceArt name={s.icon} />
+            <span>{s.short}</span>
+          </Link>
+        ))}
       </nav>
       {open && <AllServicesSheet onClose={() => setOpen(false)} />}
     </>

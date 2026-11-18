@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.6 · 2026-11-18 — Home matched to the Figma frame
+- **The logo is in the sidebar.** `logo-dailybite.png` cropped to its wordmark and knocked back to transparency (`logo-dailybite-wordmark.png`), replacing the coral mark and the typed "DailyBite".
+- **Yellow greeting card.** Pale cream to saturated yellow, with *Good morning* in black and *Your daily balance* under it; the date sits top right.
+- **Titles are black** (`--title-ink`), including the active sidebar item, which was coral.
+- **The calorie ring is drawn, not a conic-gradient** (`components/CalorieRing.tsx`): a hairline track with one coral arc sweeping from the top, so it keeps a rounded cap at any size. The balance card now reads *N remaining* → *eaten/goal* → three thin macro bars, with the ring at the right.
+- **The two cards carry their own gradients** — Today's Meal Plan white to pink, Today Food Spend white to green — instead of being plain white.
+- **Illustrated service icons** (`components/ServiceArt.tsx`): solid gradient shapes with no tile behind them — a blue fridge, a yellow basket, a coral bowl with steam, a purple chart. Home now shows exactly those four, with **See all** opening the full sheet; progress, budget, calendar and the rest stay reachable there, from My Kitchen and from the sidebar.
+- **AI camera** is a yellow pill with a camera glyph and black text, not a black pill with a coral dot.
+- **Today's tip is gone**, and with it `makeTip`.
+- 🐛 Calorie and money figures were formatted in the server's locale (`0/1.800`); they are pinned to `en-US` now.
+
 ## v4.5 · 2026-11-18 — Home, rebuilt from the Figma
 - **Gradient greeting card.** Apricot → blush → lilac, with the date as a pill, the greeting in ExtraBold at `--text-3xl`, and a line saying how much of the day is logged. Search and the bell sit inside it.
 - **The calorie ring moved into that card**, on its own white panel: kcal left in the middle, eaten-of-goal beside it, and the three macro bars under that. Still one coloured arc per meal.
