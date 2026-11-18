@@ -730,12 +730,12 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .nav a { min-height: 46px; }
 /* the active item is the light one now that the bar itself is beige */
 .nav a:hover { background: #FBF4E6; }
-.nav a[aria-current="page"] { background: #F7EFDD; color: var(--title-ink); }
+.nav a[aria-current="page"] { background: var(--btn-yellow); color: var(--title-ink); }
 .nav a[aria-current="page"] .navicon { color: var(--title-ink); }
 .nav.account { border-top-color: var(--side-line); padding-top: 16px; gap: 4px; }
 .tabbar { border-top-color: var(--side-line); }
 .tabbar a[aria-current="page"] { color: var(--title-ink); }
-.tabbar a[aria-current="page"] .tab-icon { background: #F7EFDD; }
+.tabbar a[aria-current="page"] .tab-icon { background: var(--btn-yellow); }
 @media (min-width: 861px) and (max-width: 1100px) {
   /* the icon rail: the logo needs its own breathing room above the items */
   .side { padding: 22px 8px 18px; gap: 20px; }
@@ -850,3 +850,25 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .snap-single { display: flex; flex-direction: column; gap: 12px; max-width: 460px; }
 .snap-single > .side-col { flex: none; width: 100%; display: flex; flex-direction: column; gap: 10px; }
 .snap-mode-line { margin: 0; }
+
+/* ---------- My Kitchen: two doors ---------- */
+.kitchen-doors { display: flex; flex-direction: column; gap: 22px; }
+.kitchen-door {
+  display: flex; align-items: center; gap: 34px; min-height: 210px;
+  background: #F5F5F4; border: 1px solid #EBE8E3; border-radius: 18px; padding: 34px 36px;
+  box-shadow: 0 1px 3px rgba(46, 42, 38, 0.06);
+}
+.kitchen-door .svc-art { width: 132px; height: 132px; flex: none; }
+.kitchen-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.kitchen-text h2 { font-size: var(--text-2xl); font-weight: var(--w-title); color: var(--title-ink); }
+.kitchen-text p { margin: 0; font-size: var(--text-lg); font-weight: var(--w-subtitle); }
+.kitchen-open {
+  flex: none; align-self: flex-start; background: #fff; border-color: #E6E2DC;
+  min-height: 52px; padding: 0 28px; border-radius: 12px; font-size: var(--text-base);
+}
+@media (max-width: 720px) {
+  .kitchen-door { flex-wrap: wrap; gap: 18px; min-height: 0; padding: 22px; }
+  .kitchen-door .svc-art { width: 84px; height: 84px; }
+  .kitchen-text { flex-basis: 140px; }
+  .kitchen-open { width: 100%; align-self: stretch; justify-content: center; }
+}

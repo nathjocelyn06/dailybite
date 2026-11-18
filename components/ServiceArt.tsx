@@ -33,7 +33,9 @@ export function ServiceArt({ name }: Props) {
   return (
     <svg className="svc-art" viewBox="0 0 64 64" role="img" aria-hidden="true" focusable="false">
       <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0.4" y2="1">
+        {/* userSpaceOnUse so two stacked shapes share one ramp instead of each
+            restarting it — that is what makes the fridge read as one object */}
+        <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="10" y1="2" x2="44" y2="62">
           <stop offset="0%" stopColor={ramp[0]} />
           <stop offset="100%" stopColor={ramp[1]} />
         </linearGradient>
@@ -46,14 +48,14 @@ export function ServiceArt({ name }: Props) {
 function Shape({ name, id }: { name: IconKey; id: string }) {
   const fill = `url(#${id})`;
   switch (name) {
-    // a two-door fridge, seam across the top third, pale handles on the left
+    // freezer and fridge as two separate boxes with a gap, each with its own handle
     case "fridge":
       return (
         <>
-          <rect x="18" y="6" width="28" height="52" rx="7" fill={fill} />
-          <rect x="18" y="23" width="28" height="2.5" fill="#FFFFFF" opacity="0.85" />
-          <rect x="23" y="14" width="3.5" height="6" rx="1.75" fill="#FFFFFF" opacity="0.9" />
-          <rect x="23" y="30" width="3.5" height="9" rx="1.75" fill="#FFFFFF" opacity="0.9" />
+          <rect x="11" y="2" width="42" height="23" rx="6" fill={fill} />
+          <rect x="38" y="10" width="5" height="9" rx="2.5" fill="#FFFFFF" />
+          <rect x="11" y="29" width="42" height="33" rx="6" fill={fill} />
+          <rect x="38" y="39" width="5" height="12" rx="2.5" fill="#FFFFFF" />
         </>
       );
     // a shopping basket: tapered body with slots, handle arcing over the top
@@ -69,18 +71,17 @@ function Shape({ name, id }: { name: IconKey; id: string }) {
           </g>
         </>
       );
-    // a bowl of something hot, steam curling off it
+    // a bowl of something hot: a half disc with three strokes of steam leaning off it
     case "recipes":
     case "cook":
       return (
         <>
-          <g fill="none" stroke={fill} strokeWidth="4" strokeLinecap="round">
-            <path d="M24 18c-3-3 3-5 0-9" />
-            <path d="M32 17c-3-4 3-6 0-10" />
-            <path d="M40 18c-3-3 3-5 0-9" />
+          <g stroke={fill} strokeWidth="6" strokeLinecap="round">
+            <path d="M22 22 L26 10" />
+            <path d="M32 22 L36 10" />
+            <path d="M42 22 L46 10" />
           </g>
-          <path d="M8 31h48a24 24 0 0 1-48 0z" fill={fill} />
-          <rect x="6" y="27" width="52" height="6" rx="3" fill={fill} />
+          <path d="M5 31 L59 31 A27 27 0 0 1 5 31 Z" fill={fill} />
         </>
       );
     // bars climbing to the right, with the trend line over them

@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.8 · 2026-11-18 — My Kitchen is two doors
+- **My Kitchen is the Figma frame**: *What's In My Kitchen?* over two tall grey cards — the illustrated icon, the name, a line of description and an **Open** button. Nothing else.
+- Each card keeps a live count under its description (`7 items · 0 to buy`, `1 saved · 6 you could cook tonight`), so the doors still say what is behind them.
+- **What can I cook tonight?, Use soon and To buy came off this page.** They were duplicating their own pages: cook-tonight is *Cook from my fridge*, use-soon and low stock are on the fridge door itself, and the shopping list is the fridge's To buy tab. The six shortcut tiles went with them, and `ServiceTile` with those.
+- **The active navigation item is yellow** on the sidebar and the phone tab bar, as this frame shows.
+- The fridge icon is two boxes with a gap and a handle each, and the bowl is a half disc under three strokes of steam — both matching the frame. Their gradients now run across the whole icon (`userSpaceOnUse`) instead of restarting on each shape.
+
 ## v4.7.1 · 2026-11-18 — White page, cream navigation
 - **The page is white**, and the navigation carries the pale cream from your swatch — sampled off it and rebuilt as the gradient it is, `#FFFEFA → #FFFCF4 → #FEF9EA`, on the sidebar and the phone tab bar. The active item is the tinted one again now that the bar is nearly white.
 - Cards get a warmer hairline and a 1px shadow so they still read as cards against white.

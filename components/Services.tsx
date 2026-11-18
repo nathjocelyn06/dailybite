@@ -1,18 +1,6 @@
 import Link from "next/link";
 import { SERVICES, type Service } from "@/lib/nav";
-import { NavIcon } from "./NavIcon";
 import { ServiceArt } from "./ServiceArt";
-
-/** A service as a tinted chip + label. Used by My Kitchen. */
-export function ServiceTile({ s, sub }: { s: Service; sub?: string }) {
-  return (
-    <Link href={s.href} className="svc">
-      <span className={`svc-icon tone-${s.tone}`}><NavIcon name={s.icon} size={26} /></span>
-      <span>{s.short}</span>
-      {sub && <span className="svc-sub">{sub}</span>}
-    </Link>
-  );
-}
 
 /**
  * Home's "Other Services": the four shortcuts the Figma shows, as illustrated icons
