@@ -1,7 +1,9 @@
 "use client";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { addElementAction, deleteElementAction, updateElementAction } from "../actions";
+import Link from "next/link";
 import { PhotoDrop } from "./PhotoDrop";
+import { Book } from "@/components/journal/Book";
 
 type Kind = "photo" | "sticker" | "tape" | "text" | "doodle" | "meal_card" | "mood" | "habit";
 
@@ -21,11 +23,18 @@ export type Element = {
   meal_id?: string | null;
 };
 
-type Tool = "select" | "sticker" | "tape" | "text" | "mood" | "doodle";
+type Tool = "select" | "text" | "doodle";
 
 const STICKERS = ["🍓", "🥑", "☕", "🍞", "🌶️", "🥕", "⭐", "♥"];
-const MOODS = ["😀 good", "🙂 fine", "😐 meh", "😴 tired", "🤤 stuffed"];
-const TAPE_COLOURS = ["#F9D312", "#F3A9C8", "#9A80BD", "#038248"];
+/** Post-it papers and the pin that holds each one up. */
+const POSTITS: { paper: string; pin: string; label: string }[] = [
+  { paper: "#FFD84A", pin: "#C9960B", label: "Yellow" },
+  { paper: "#FF9DC0", pin: "#E0417F", label: "Pink" },
+  { paper: "#BFA6F5", pin: "#6C4BC4", label: "Lilac" },
+  { paper: "#A8E6CF", pin: "#2C8F6B", label: "Mint" }
+];
+/** A post-it is a text element carrying its paper colour — no new kind, so no migration. */
+const isPostit = (el: Element) => el.kind === "text" && !!el.data?.postit;
 
 const clampX = (v: number) => Math.min(96, Math.max(0, v));
 const clampY = (v: number) => Math.max(0, v);
@@ -42,12 +51,17 @@ export function Scrapbook({
   date,
   initial,
   photoUrls,
-  meals
+  meals,
+  left,
+  addMealHref
 }: {
   date: string;
   initial: Element[];
   photoUrls: Record<string, string>;
   meals: { id: string; slot: string; name: string }[];
+  /** The left-hand page: the day's meals, rendered on the server. */
+  left: React.ReactNode;
+  addMealHref: string;
 }) {
   const [els, setEls] = useState<Element[]>(initial);
   const [tool, setTool] = useState<Tool>("select");
@@ -222,10 +236,11 @@ export function Scrapbook({
 
   return (
     <div className="scrapbook">
+      <Book
+        left={left}
+        right={
+          <>
       <div className="scrap-toolbar">
-        <button className={`btn sm ${editing ? "pri" : ""}`} onClick={() => { setEditing(!editing); setSelected(null); setTool("select"); }} aria-pressed={editing}>
-          {editing ? "Done" : "Decorate page"}
-        </button>
         {editing && (
           <>
             {(["select", "text", "doodle"] as Tool[]).map((t) => (
@@ -234,19 +249,20 @@ export function Scrapbook({
               </button>
             ))}
             <span className="scrap-sep" aria-hidden="true" />
+            {POSTITS.map((n) => (
+              <button
+                key={n.paper}
+                className="postit-pick"
+                style={{ background: n.paper }}
+                onClick={() => void addEl("text", { text: "", w: 42, data: { postit: true, paper: n.paper, pin: n.pin } })}
+                aria-label={`Add a ${n.label.toLowerCase()} post-it`}
+                title={`${n.label} post-it`}
+              />
+            ))}
+            <span className="scrap-sep" aria-hidden="true" />
             {STICKERS.slice(0, 6).map((s) => (
               <button key={s} className="btn sm" onClick={() => void addEl("sticker", { text: s })} aria-label={`Add sticker ${s}`}>{s}</button>
             ))}
-            <select
-              className="input scrap-select"
-              value=""
-              onChange={(e) => { if (e.target.value) void addEl("mood", { text: e.target.value, w: 20 }); }}
-              aria-label="Add a mood stamp"
-            >
-              <option value="">Mood…</option>
-              {MOODS.map((m) => <option key={m} value={m}>{m}</option>)}
-            </select>
-            <button className="btn sm" onClick={() => void addEl("tape", { text: "", data: { color: TAPE_COLOURS[els.length % TAPE_COLOURS.length] } })}>Tape</button>
             <button className="btn sm" onClick={() => setPhotoOpen(true)}>Photo</button>
             <span className="muted" role="status" style={{ fontSize: 12 }}>{status}</span>
           </>
@@ -267,32 +283,44 @@ export function Scrapbook({
           <p className="hand scrap-empty">Nothing on today&apos;s page yet — press Decorate page.</p>
         )}
 
-        {els.map((el) => {
+        {els.filter((el) => el.kind !== "tape" && el.kind !== "mood").map((el) => {
           const isSel = editing && el.id === selected;
           const url = el.photo_path ? urls[el.photo_path] : null;
+          const note = isPostit(el);
           return (
             <div
               key={el.id}
-              className={`scrap-el scrap-${el.kind} ${isSel ? "is-selected" : ""}`}
+              className={`scrap-el scrap-${el.kind} ${note ? "scrap-postit" : ""} ${isSel ? "is-selected" : ""}`}
               style={{
                 left: `${el.x}%`,
                 top: `${el.y}px`,
                 width: `${el.w}%`,
                 transform: `rotate(${el.rot}deg)`,
                 zIndex: el.z,
-                background: el.kind === "tape" ? ((el.data?.color as string) ?? TAPE_COLOURS[0]) : undefined,
+                background: note ? ((el.data?.paper as string) ?? POSTITS[0].paper) : undefined,
                 cursor: editing && tool === "select" ? "grab" : "default"
               }}
               onPointerDown={(e) => onElementDown(e, el, "move")}
             >
-              {el.kind === "doodle" ? (
+              {note && <span className="postit-pin" style={{ background: (el.data?.pin as string) ?? POSTITS[0].pin }} aria-hidden="true" />}
+              {note ? (
+                <textarea
+                  className="postit-text"
+                  value={el.text ?? ""}
+                  placeholder={editing ? "Write a note…" : ""}
+                  readOnly={!editing}
+                  onChange={(e) => patch(el.id, { text: e.target.value })}
+                  onPointerDown={(e) => { if (editing) e.stopPropagation(); }}
+                  aria-label="Post-it note"
+                />
+              ) : el.kind === "doodle" ? (
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="scrap-doodle">
                   <path d={(el.data?.path as string) ?? ""} fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               ) : el.kind === "photo" && url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={url} alt={el.text ?? "Journal photo"} />
-              ) : isSel && (el.kind === "text" || el.kind === "mood") ? (
+              ) : isSel && el.kind === "text" ? (
                 <input
                   className="scrap-input"
                   value={el.text ?? ""}
@@ -320,6 +348,17 @@ export function Scrapbook({
             <path d={drawing} fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         )}
+      </div>
+
+          </>
+        }
+      />
+
+      <div className="book-actions">
+        <button className="btn pri" onClick={() => { setEditing(!editing); setSelected(null); setTool("select"); }} aria-pressed={editing}>
+          {editing ? "Done editing" : "Edit Journal"}
+        </button>
+        <Link className="btn pri" href={addMealHref}>Add meal</Link>
       </div>
 
       {photoOpen && (

@@ -10,7 +10,6 @@ import { confirmMealAction, deleteMealAction } from "../actions";
 import { ReviewForm } from "./ReviewForm";
 import { MealEditor } from "./MealEditor";
 import { Scrapbook } from "./Scrapbook";
-import { Binder } from "@/components/journal/Binder";
 
 /**
  * Phase 1: day page with meals (photo, place, time, nutrition) + daily review.
@@ -38,55 +37,45 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         <Link className="btn pri" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </header>
       <div className="split">
-        <Binder>
-          {j.page?.title && <p className="hand" style={{ fontSize: 28, color: "var(--ink)" }}>{j.page.title}</p>}
-          <Scrapbook
-            date={date}
-            initial={j.elements as never}
-            photoUrls={urls}
-            meals={j.meals.map((m) => ({ id: m.id, slot: m.slot, name: m.name }))}
-          />
-          {j.meals.length === 0 && <p className="hand">No meals yet. Snap one!</p>}
-          {j.meals.map((m, i) => (
-            <article
-              key={m.id}
-              id={m.id}
-              style={{
-                display: "flex", flexWrap: "wrap", gap: 20, alignItems: "flex-start",
-                flexDirection: i % 2 ? "row-reverse" : "row",
-                outline: sp.meal === m.id ? "2px dashed var(--ink)" : "none", outlineOffset: 6, borderRadius: 4
-              }}
-            >
-              <div style={{ width: 240, background: "#fff", border: "1px solid var(--line)", padding: "8px 8px 12px", transform: `rotate(${i % 2 ? 2 : -2}deg)`, boxShadow: "0 1px 3px rgba(0,0,0,.07)" }}>
-                <Photo src={m.photo_path ? urls[m.photo_path] : null} alt={m.name} style={{ borderRadius: 2 }} />
-                <p className="hand" style={{ textAlign: "center", fontSize: 18, marginTop: 6 }}>{m.notes ?? ""}</p>
-              </div>
-              {editingId === m.id ? (
-                <MealEditor
-                  meal={{ id: m.id, name: m.name, slot: m.slot, status: m.status, items: m.items }}
-                  backHref={`/journal?date=${date}&meal=${m.id}`}
-                />
-              ) : (
-                <div style={{ flex: "1 1 220px", display: "flex", flexDirection: "column", gap: 6 }}>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <span className="chip">{m.slot}</span>
-                    {m.place && <span className="chip">{m.place}</span>}
-                    <span className={`chip ${m.status !== "eaten" ? "warn" : ""}`}>{m.status.replace("_", " ")}</span>
-                    {m.estimate_source === "ai" && <span className="chip">AI estimate</span>}
-                  </div>
-                  <h2 className="h2" style={{ fontSize: 20 }}>{m.name}</h2>
-                  <span className="muted">{m.kcal ?? "?"} kcal · P {m.protein_g ?? 0} · C {m.carbs_g ?? 0} · F {m.fat_g ?? 0}</span>
-                  {m.items.length > 0 && <span className="muted">{m.items.map((x) => `${x.name}${x.portion ? ` (${x.portion})` : ""}`).join(", ")}</span>}
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {m.status !== "eaten" && <ActionButton action={confirmMealAction} args={[m.id]} className="btn sm pri">Confirm eaten</ActionButton>}
-                    <Link className="btn sm" href={`/journal?date=${date}&meal=${m.id}&edit=1`}>Edit</Link>
-                    <ActionButton action={deleteMealAction} args={[m.id]} confirm={`Delete ${m.name}?`}>Delete</ActionButton>
-                  </div>
-                </div>
-              )}
-            </article>
-          ))}
-        </Binder>
+        <Scrapbook
+          date={date}
+          initial={j.elements}
+          photoUrls={urls}
+          meals={j.meals.map((m) => ({ id: m.id, slot: m.slot, name: m.name }))}
+          addMealHref={`/snap?mode=calorie&date=${date}`}
+          left={
+            <div className="polaroids">
+              {j.page?.title && <p className="hand polaroid-day">{j.page.title}</p>}
+              {j.meals.length === 0 && <p className="muted">No meals yet today.</p>}
+              {j.meals.map((m, i) => (
+                <article
+                  key={m.id}
+                  id={m.id}
+                  className={`polaroid ${sp.meal === m.id ? "is-open" : ""}`}
+                  style={{ transform: `rotate(${i % 2 ? 1.6 : -1.8}deg)` }}
+                >
+                  <Photo src={m.photo_path ? urls[m.photo_path] : null} alt={m.name} style={{ borderRadius: 1 }} />
+                  <p className="polaroid-caption">{m.notes?.trim() || m.name}</p>
+                  <p className="polaroid-meta">
+                    {[m.slot, m.place, `${m.kcal ?? "?"} kcal`].filter(Boolean).join(" \u00b7 ")}
+                  </p>
+                  {editingId === m.id ? (
+                    <MealEditor
+                      meal={{ id: m.id, name: m.name, slot: m.slot, status: m.status, items: m.items }}
+                      backHref={`/journal?date=${date}&meal=${m.id}`}
+                    />
+                  ) : (
+                    <div className="polaroid-actions">
+                      {m.status !== "eaten" && <ActionButton action={confirmMealAction} args={[m.id]} className="btn sm pri">Confirm eaten</ActionButton>}
+                      <Link className="btn sm" href={`/journal?date=${date}&meal=${m.id}&edit=1`}>Edit</Link>
+                      <ActionButton action={deleteMealAction} args={[m.id]} confirm={`Delete ${m.name}?`}>Delete</ActionButton>
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          }
+        />
         <aside className="side-col">
           <section className="card">
             <h2 className="h2">Day summary</h2>

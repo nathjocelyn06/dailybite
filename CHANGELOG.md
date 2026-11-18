@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.15 · 2026-11-18 — The journal is an open book
+- **Two pages in a yellow cover**, joined by three drawn metal fittings down the gutter (`components/journal/Book.tsx`). The ring binder is gone, and so is the ruled-paper texture. Below 860px the spread folds into one page — a two-page book at 390px is unreadable.
+- **Meals are polaroids on the left page**, caption and meta *inside* the frame: the note (or the meal name), then slot · place · kcal in small caps. Confirm / Edit / Delete sit under the photo.
+- **Post-its, with a pin.** Four papers in the toolbar; tap one and it lands on the page with a domed pin at its top edge. Type straight into it, drag, resize, rotate, remove. A post-it is a `text` element carrying `data.postit` and its paper colour, so no new element kind and no migration.
+- **Mood stamps and tape are gone** from the toolbar, and any rows left over from either are no longer drawn.
+- **Edit Journal** and **Add meal** are two wide buttons under the book, as in the prototype.
+
 ## v4.14 · 2026-11-18 — A wider fridge and a real ring binder
 - **The fridge fills its column.** It was sized from the viewport height, which left a gap beside it; it is width-driven again (up to 520px) and the aspect ratio gives the height. The artwork is a little stockier (386×710 rather than 386×780) and its column took the extra space from the pantry panel.
 - **The journal page is a ring binder** (`components/journal/Binder.tsx`): a cover, a brushed-metal spine, and three chrome rings clamped over the paper. The rings are drawn, not photographed, with the same metallic ramp as the fridge handles — the back half of each ring renders behind the page and the front half over it, which is what makes the sheet look threaded on rather than pasted under. The ruled paper and everything on it are unchanged.
