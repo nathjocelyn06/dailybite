@@ -1,8 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { webDb } from "@/lib/services/db";
 import { getDailySummary } from "@/lib/services/dashboard";
-import { listSaved } from "@/lib/services/recipes";
 import { unreadCount } from "@/lib/services/notifications";
 import { signedUrls } from "@/lib/services/photos";
 import { greeting, prettyDay } from "@/lib/dates";
@@ -18,15 +16,13 @@ import { confirmMealAction } from "./actions";
  * Home — the daily overview, rebuilt from the Figma:
  *   a yellow gradient greeting card holding the daily balance (calories left, eaten of
  *   goal, macro bars and the ring), then Today's Meal Plan beside Today Food Spend on
- *   their own pink and green gradients, Other Services as illustrated icons, and saved
- *   recipes to browse.
+ *   their own pink and green gradients, and Other Services as illustrated icons.
  * My progress, Budget and Notifications are reached from here; the four tabs never change.
  */
 export default async function HomePage() {
   const db = await webDb();
-  const [s, saved, unread] = await Promise.all([
+  const [s, unread] = await Promise.all([
     getDailySummary(db),
-    listSaved(db).catch(() => []),
     unreadCount(db).catch(() => 0)
   ]);
   const urls = await signedUrls(db, s.slots.flatMap((x) => [...x.eaten, ...x.pending].map((m) => m.photo_path)));
@@ -155,19 +151,6 @@ export default async function HomePage() {
         <ServiceGrid hrefs={HOME_GRID} />
       </section>
 
-      <section aria-label="Discover recipes" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div className="head"><h2 className="h2" style={{ flex: 1 }}>Discover good eats</h2><Link href="/recipes" className="muted">See all recipes</Link></div>
-        <div className="hscroll">
-          {saved.slice(0, 8).map((r) => (
-            <Link key={r.id} href={r.source === "themealdb" ? `/recipes/themealdb/${r.external_id}` : `/recipes/mine/${r.id}`} style={{ display: "flex", flexDirection: "column", gap: 6, textDecoration: "none" }}>
-              {r.thumb_url ? <img className="thumb" src={r.thumb_url} alt="" loading="lazy" /> : <div className="thumb" aria-hidden="true" />}
-              <span style={{ fontWeight: 600, fontSize: 14 }}>{r.title}</span>
-              <span className="muted" style={{ fontSize: 12 }}>{[r.category, r.minutes ? `${r.minutes} min` : null, r.video_url ? "video" : null].filter(Boolean).join(" · ")}</span>
-            </Link>
-          ))}
-          <Link href="/recipes" className="empty" style={{ minHeight: 150 }}>Browse recipes &rarr;</Link>
-        </div>
-      </section>
     </>
   );
 }

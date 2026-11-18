@@ -27,6 +27,9 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
   const [slot, setSlot] = useState(initialSlot ?? guessSlot());
   const [step, setStep] = useState<"choose" | "analysing" | "review">("choose");
   const [camOpen, setCamOpen] = useState(false);
+  // Arriving with ?mode= means the choice is already made (Scan a receipt, Log breakfast …),
+  // so go straight to camera / upload / by hand. The list is one click away if it was wrong.
+  const [picking, setPicking] = useState(!MODES.some((m) => m.k === initialMode));
   // Foods picked from the barcode/search panel, before they become a meal draft.
   const [picked, setPicked] = useState<ScanRow[]>([]);
   const [err, setErr] = useState("");
@@ -141,17 +144,23 @@ export function SnapClient({ initialMode, initialSlot, date }: { initialMode?: s
       </header>
 
       {step === "choose" && (
-        <div className="split">
-          <section className="grow" aria-label="What are you scanning?" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <span className="lbl">What are you scanning?</span>
-            {ordered.map((m, i) => (
-              <button key={m.k} className="card" onClick={() => setMode(m.k)} aria-pressed={mode === m.k}
-                style={{ textAlign: "left", cursor: "pointer", padding: 14, borderWidth: mode === m.k ? 2 : 1, borderColor: mode === m.k ? "var(--ink)" : "var(--line)", background: mode === m.k ? "#f4f7e6" : "#fff" }}>
-                <strong>{m.label}</strong> {i === 0 && <span className="chip" style={{ minHeight: 20, fontSize: 10 }}>suggested here</span>}
-                <div className="muted">{m.desc}</div>
-              </button>
-            ))}
-          </section>
+        <div className={picking ? "split" : "snap-single"}>
+          {picking ? (
+            <section className="grow" aria-label="What are you scanning?" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <span className="lbl">What are you scanning?</span>
+              {ordered.map((m, i) => (
+                <button key={m.k} className="card" onClick={() => { setMode(m.k); setPicking(false); }} aria-pressed={mode === m.k}
+                  style={{ textAlign: "left", cursor: "pointer", padding: 14, borderWidth: mode === m.k ? 2 : 1, borderColor: mode === m.k ? "var(--ink)" : "var(--line)", background: mode === m.k ? "#f4f7e6" : "#fff" }}>
+                  <strong>{m.label}</strong> {i === 0 && <span className="chip" style={{ minHeight: 20, fontSize: 10 }}>suggested here</span>}
+                  <div className="muted">{m.desc}</div>
+                </button>
+              ))}
+            </section>
+          ) : (
+            <p className="muted snap-mode-line">
+              {MODES.find((m) => m.k === mode)?.desc}. <button type="button" className="link-btn" onClick={() => setPicking(true)}>Scan something else</button>
+            </p>
+          )}
           {mode === "barcode" ? (
             <div className="side-col" style={{ gap: 10 }}>
               <FoodLookup onAdd={(row) => setPicked((p) => [...p, row])} />

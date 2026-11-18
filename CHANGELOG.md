@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.7 · 2026-11-18 — Grey page, beige navigation, no floating camera
+- **The page is light grey** (`#F3F2F0`) instead of cream, so the white cards and the yellow / pink / green gradients lift off it, and **the navigation is beige** (`#EFE5D5`) — sidebar and phone tab bar both. The active item is the light one now.
+- **More air around the logo and the nav items**: the sidebar has a taller top margin, 6px between items and 46px rows; in the 861–1100px icon rail the logo gets its own space above them.
+- **Other Services icons are bigger** — 72px art in 120px tiles.
+- **Discover good eats is gone**, and with it the **See all** link and the all-services sheet: the four shortcuts are the whole row, and everything else is reached from its own tab, from My Kitchen or from the sidebar.
+- **A scan opens on the camera.** Arriving at `/snap` with a mode — *Scan a receipt*, a meal slot's `+`, *Scan groceries* — goes straight to **Open camera / Upload a photo / Enter by hand** instead of the list of scan types; *Scan something else* brings the list back.
+- **The floating AI camera button is gone from every page.** Each scan is now started from where it belongs.
+
 ## v4.6 · 2026-11-18 — Home matched to the Figma frame
 - **The logo is in the sidebar.** `logo-dailybite.png` cropped to its wordmark and knocked back to transparency (`logo-dailybite-wordmark.png`), replacing the coral mark and the typed "DailyBite".
 - **Yellow greeting card.** Pale cream to saturated yellow, with *Good morning* in black and *Your daily balance* under it; the date sits top right.

@@ -103,19 +103,6 @@ img { max-width: 100%; display: block; }
   .tabbar a[aria-current="page"] .tab-icon { background: var(--accent-soft); }
 }
 
-/* floating AI camera */
-.fab {
-  position: fixed; right: 24px; bottom: 24px; z-index: 30; display: flex; align-items: center; gap: 10px;
-  min-height: 56px; padding: 0 20px 0 8px; border-radius: 999px; background: var(--ink); color: #fff;
-  text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
-}
-.fab-dot { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
-.fab-dot span { width: 16px; height: 16px; border: 2px solid var(--ink); border-radius: 50%; }
-@media (max-width: 860px) {
-  .fab { right: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); padding: 0; width: 60px; height: 60px; justify-content: center; }
-  .fab-label { display: none; }
-}
-
 /* ---------- building blocks ---------- */
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px; }
 .card.paper { background: var(--paper); }
@@ -532,12 +519,14 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   --apricot: #FFDBA7;
   --lilac-soft: #EDD4FF;
 
-  /* ---- neutrals: warm cream, not grey paper ---- */
-  --paper-bg: #FFF8F0;
+  /* ---- neutrals: a light grey page so the white and gradient cards lift off it,
+         with the navigation in beige ---- */
+  --paper-bg: #F3F2F0;
   --bg: var(--paper-bg);
-  --paper: #FFFDF9;
+  --paper: #FAFAF9;
   --surface: #ffffff;
-  --side: #FFFDF9;
+  --side: #EFE5D5;
+  --side-line: #E2D5C1;
   --line: #EFE2D6;
   --line-soft: #F5EBE1;
   --grid: #E3D5C7;
@@ -724,11 +713,26 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 /* every title is black */
 .h1, h1, .h2, h2, h3, .brand-name, .cal-total, .spend-today, .svc > span { color: var(--title-ink); }
 
-/* ---------- sidebar ---------- */
-.brand { padding: 0 6px; }
-.brand-logo { display: block; width: 100%; max-width: 150px; height: auto; }
-.nav a[aria-current="page"] { background: #F6EFE2; color: var(--title-ink); }
+/* ---------- sidebar: beige, with room to breathe around the logo ---------- */
+.side { border-right-color: var(--side-line); padding: 26px 14px 20px; gap: 26px; }
+.brand { padding: 2px 8px 0; }
+.brand-logo { display: block; width: 100%; max-width: 142px; height: auto; }
+.nav { gap: 6px; }
+.nav a { min-height: 46px; }
+/* the active item is the light one now that the bar itself is beige */
+.nav a:hover { background: rgba(255, 255, 255, 0.45); }
+.nav a[aria-current="page"] { background: #FFFDF8; color: var(--title-ink); }
 .nav a[aria-current="page"] .navicon { color: var(--title-ink); }
+.nav.account { border-top-color: var(--side-line); padding-top: 16px; gap: 4px; }
+.tabbar { border-top-color: var(--side-line); }
+.tabbar a[aria-current="page"] { color: var(--title-ink); }
+.tabbar a[aria-current="page"] .tab-icon { background: #FFFDF8; }
+@media (min-width: 861px) and (max-width: 1100px) {
+  /* the icon rail: the logo needs its own breathing room above the items */
+  .side { padding: 22px 8px 18px; gap: 20px; }
+  .brand { padding: 0; }
+  .brand-logo { max-width: 72px; }
+}
 
 /* ---------- greeting card ---------- */
 .home-hero {
@@ -808,15 +812,10 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .home-services { display: flex; flex-direction: column; gap: 12px; }
 .link-btn { all: unset; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .link-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
-.svc-grid.art { gap: 10px; }
-.svc-grid.art .svc { gap: 10px; min-height: 96px; padding: 10px 2px; font-weight: var(--w-subtitle); }
+.svc-grid.art { gap: 10px; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); }
+.svc-grid.art .svc { gap: 12px; min-height: 120px; padding: 12px 2px; font-size: 13px; font-weight: var(--w-subtitle); }
 .svc-grid.art .svc:hover { background: rgba(46, 42, 38, 0.04); }
-.svc-art { width: 54px; height: 54px; display: block; }
-
-/* ---------- AI camera ---------- */
-.fab { background: var(--btn-yellow); color: var(--title-ink); box-shadow: 0 4px 14px rgba(46, 42, 38, 0.2); }
-.fab:hover { background: #FFDC6E; }
-.fab-dot { width: 36px; height: 36px; background: transparent; color: var(--title-ink); }
+.svc-art { width: 72px; height: 72px; display: block; }
 
 @media (max-width: 980px) {
   .home-two { grid-template-columns: 1fr; }
@@ -831,3 +830,8 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
   /* three macro columns are too narrow to put the value beside the label */
   .macro-head { flex-direction: column; align-items: flex-start; gap: 1px; }
 }
+
+/* ---------- AI camera page: straight to capture when the mode is already known ---------- */
+.snap-single { display: flex; flex-direction: column; gap: 12px; max-width: 460px; }
+.snap-single > .side-col { flex: none; width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.snap-mode-line { margin: 0; }

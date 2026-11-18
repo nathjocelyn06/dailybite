@@ -9,21 +9,14 @@ import { LiveSync } from "./LiveSync";
 /**
  * Four destinations only: Home, My Kitchen, Journal, Archive.
  * Desktop: compact sidebar (icons + labels at tablet width). Phone (≤ 860px): fixed bottom bar
- * with the same four tabs. Notifications (bell) and Settings (avatar) sit in the Account section
+ * with the same four tabs. Notifications (bell) and Settings (gear) sit in the Account section
  * on desktop and in the Home / My Kitchen headers on phone.
+ * There is no floating camera button: the scans are reached from where they belong —
+ * a meal slot on Home, Scan a receipt on the spend card, Scan groceries in My Kitchen.
  */
 export function AppShell({ children, unread, tz }: { children: React.ReactNode; unread: number; tz: string }) {
   const pathname = usePathname() || "/";
   const crumb = breadcrumbFor(pathname);
-  const cameraHref = pathname.startsWith("/fridge")
-    ? "/snap?mode=ingredient"
-    : pathname.startsWith("/budget") || pathname.startsWith("/kitchen")
-      ? "/snap?mode=receipt"
-      : pathname.startsWith("/recipes")
-        ? "/snap?mode=recipe_finder"
-        : pathname.startsWith("/journal")
-          ? "/snap?mode=journal"
-          : "/snap";
 
   return (
     <div className="shell">
@@ -64,10 +57,6 @@ export function AppShell({ children, unread, tz }: { children: React.ReactNode; 
         {children}
       </main>
 
-      <Link href={cameraHref} className="fab" aria-label="Open AI camera">
-        <span className="fab-dot"><NavIcon name="camera" size={22} /></span>
-        <span className="fab-label">AI camera</span>
-      </Link>
 
       <nav className="tabbar" aria-label="Main tabs">
         {TABS.map((t) => (
