@@ -883,37 +883,64 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .magnet-pick:hover { background: #fff; border-color: var(--grid); }
 .magnet-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-/* ---------- the journal as an open book ---------- */
-.book {
-  display: grid; grid-template-columns: 1fr 34px 1fr; align-items: stretch;
-  border-radius: 22px; padding: 10px;
-  background: linear-gradient(160deg, #FDF3CE 0%, #F8E79C 100%);
-  box-shadow: 0 16px 34px rgba(46, 42, 38, 0.14), 0 2px 6px rgba(46, 42, 38, 0.07);
-}
-.book-page {
-  position: relative; min-width: 0; background: #FFFDF4; padding: 22px;
-  box-shadow: inset 0 0 0 1px rgba(46, 42, 38, 0.05);
-}
-.book-left { border-radius: 16px 2px 2px 16px; }
-.book-right { border-radius: 2px 16px 16px 2px; }
-/* the gutter: the fold's shadow, with three fittings down it */
-.book-gutter {
-  display: flex; flex-direction: column; justify-content: space-evenly; align-items: center;
-  background: linear-gradient(90deg, rgba(46, 42, 38, 0.1), rgba(46, 42, 38, 0) 40%, rgba(46, 42, 38, 0) 60%, rgba(46, 42, 38, 0.1));
-}
-.book-hinge { width: 28px; height: 16px; }
-.book-hinge-art { display: block; width: 100%; height: 100%; filter: drop-shadow(0 1px 1px rgba(46, 42, 38, 0.3)); }
+/* ---------- the journal: a ring binder on a dark ground ---------- */
+.day-summary { display: flex; flex-direction: column; gap: 2px; }
+.day-kcal { font-size: var(--text-2xl); font-weight: var(--w-title); margin: 6px 0 0; }
 
-/* two wide actions under the book, as in the prototype */
+.binder-stage {
+  border-radius: 20px; padding: clamp(16px, 3vw, 38px);
+  background: radial-gradient(120% 90% at 30% 0%, #5E291B 0%, #441910 55%, #2E0F09 100%);
+}
+.binder {
+  position: relative; max-width: 1100px; margin: 0 auto;
+  padding: 18px 20px 20px 72px; border-radius: 10px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F4F2EE 60%, #E8E5DF 100%);
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+/* brushed tube with a cap at each end */
+.binder-spine {
+  position: absolute; left: 32px; top: 22px; bottom: 22px; width: 17px; border-radius: 9px;
+  background: linear-gradient(90deg, #9AA2A8 0%, #F4F6F7 30%, #C6CCD0 58%, #7F888E 100%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.binder-cap {
+  position: absolute; left: -3px; width: 23px; height: 23px; border-radius: 6px;
+  background: linear-gradient(135deg, #F2F4F5, #98A0A6);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.binder-cap.top { top: -10px; }
+.binder-cap.bottom { bottom: -10px; }
+.binder-cap::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%; background: #5F676D; box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.binder-page {
+  position: relative; z-index: 1; background: #FFFEFB; border-radius: 2px 8px 8px 2px;
+  padding: clamp(16px, 2vw, 28px);
+  box-shadow: 0 1px 2px rgba(46, 42, 38, 0.16), 0 12px 26px rgba(0, 0, 0, 0.14);
+}
+.binder-ring { position: absolute; left: 20px; width: 56px; height: 44px; z-index: 2; }
+.binder-ring-art { display: block; width: 100%; height: 100%; }
+.binder .r1 { top: 13%; }
+.binder .r2 { top: calc(50% - 22px); }
+.binder .r3 { bottom: 13%; }
+
+/* one sheet: the meals down one side, the page you decorate filling the rest */
+.journal-sheet { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: clamp(16px, 2.5vw, 34px); }
+.journal-canvas { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.journal-meals { min-width: 0; }
+
+/* two wide actions under the binder */
 .book-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
 .book-actions .btn { min-height: 56px; justify-content: center; font-size: var(--text-base); border-radius: 14px; }
 
-/* ---------- meals as polaroids on the left page ---------- */
+/* ---------- meals as polaroids ---------- */
 .polaroids { display: flex; flex-direction: column; gap: 26px; }
 .polaroid-day { font-size: 26px; color: var(--ink); margin: 0; }
 .polaroid {
-  background: #fff; padding: 10px 10px 14px; border-radius: 3px; align-self: center; width: min(300px, 100%);
-  box-shadow: 0 2px 4px rgba(46, 42, 38, 0.14), 0 10px 22px rgba(46, 42, 38, 0.1);
+  position: relative; background: #fff; padding: 10px 10px 14px; border-radius: 3px;
+  align-self: center; width: min(280px, 100%);
+  box-shadow: 0 2px 4px rgba(46, 42, 38, 0.16), 0 10px 22px rgba(46, 42, 38, 0.12);
 }
 .polaroid.is-open { outline: 2px dashed var(--ink); outline-offset: 6px; }
 .polaroid-caption { margin: 10px 2px 2px; text-align: center; font-weight: var(--w-subtitle); font-size: var(--text-base); }
@@ -922,6 +949,15 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
   text-transform: uppercase; color: var(--muted);
 }
 .polaroid-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+/* delete sits in the corner; there is no edit button on a photo */
+.polaroid-x {
+  all: unset; position: absolute; top: -10px; right: -10px; z-index: 2;
+  width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+  background: var(--ink); color: #fff; font-size: 15px; line-height: 1;
+  display: grid; place-items: center; box-shadow: 0 2px 5px rgba(46, 42, 38, 0.35);
+}
+.polaroid-x:hover { background: var(--warn-ink); }
+.polaroid-x:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* ---------- post-its ---------- */
 .scrap-postit {
@@ -945,9 +981,10 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .postit-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 @media (max-width: 860px) {
-  /* a two-page spread is unreadable on a phone: fold it into one page */
-  .book { grid-template-columns: 1fr; padding: 8px; gap: 8px; }
-  .book-gutter { display: none; }
-  .book-page { border-radius: 14px; padding: 16px; }
+  .binder { padding: 12px 12px 14px 52px; }
+  .binder-spine { left: 22px; width: 13px; }
+  .binder-ring { left: 13px; width: 42px; height: 33px; }
+  .binder .r2 { top: calc(50% - 17px); }
+  .journal-sheet { grid-template-columns: 1fr; }
   .book-actions { grid-template-columns: 1fr; gap: 10px; }
 }

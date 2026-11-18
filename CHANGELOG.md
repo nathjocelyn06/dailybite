@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.16 · 2026-11-18 — The journal is a ring binder on a dark ground
+- **Full width.** Day summary moved above the journal, the side column is gone, and the binder is the page.
+- **A white ring binder on `#441910`**, as in the reference: a brushed spine with a cap at each end and three chrome rings clamped over the paper — each ring's back half behind the sheet, its front half (and its shadow) over it. The yellow two-page book is gone.
+- **The polaroid lost its buttons.** Delete is an × in the corner; a meal still waiting on you keeps a single *Confirm eaten*. Editing lives behind **Edit Journal**.
+- **Daily review is gone**, and `ReviewForm` with it. A page title set earlier still shows; Claude can still write one through `write_journal_review`.
+
 ## v4.15 · 2026-11-18 — The journal is an open book
 - **Two pages in a yellow cover**, joined by three drawn metal fittings down the gutter (`components/journal/Book.tsx`). The ring binder is gone, and so is the ruled-paper texture. Below 860px the spread folds into one page — a two-page book at 390px is unreadable.
 - **Meals are polaroids on the left page**, caption and meta *inside* the frame: the note (or the meal name), then slot · place · kcal in small caps. Confirm / Edit / Delete sit under the photo.

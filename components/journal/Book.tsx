@@ -1,41 +1,48 @@
 /**
- * The journal as an open book: two cream pages in a soft yellow cover, joined by three
- * little metal fittings down the gutter.
+ * The journal: a white ring binder standing on a dark brown ground.
  *
- * The fittings are drawn rather than photographed so they keep the same metallic ramp
- * as the fridge handles and the old binder rings. On a phone the spread folds into one
- * page and the gutter disappears — a two-page spread at 390px would be unreadable.
+ * One page, full width. The spine is a brushed tube with a cap at each end and three
+ * chrome rings clamped over the paper — each ring draws its back half behind the sheet
+ * and its front half over it, which is what makes the page look threaded on rather than
+ * pasted underneath. The metal uses the same ramp as the fridge handles and the magnets.
  */
 
-function Hinge() {
+function Ring({ id }: { id: string }) {
   return (
-    <svg viewBox="0 0 28 16" className="book-hinge-art" aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 56 44" className="binder-ring-art" aria-hidden="true" focusable="false">
       <defs>
-        <linearGradient id="book-hinge" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#F2F4F5" />
-          <stop offset="40%" stopColor="#BDC4C8" />
-          <stop offset="62%" stopColor="#8E969C" />
-          <stop offset="100%" stopColor="#CDD3D7" />
+        <linearGradient id={`${id}-chrome`} x1="0" y1="0" x2="0.3" y2="1">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="22%" stopColor="#D2D8DC" />
+          <stop offset="50%" stopColor="#7C848A" />
+          <stop offset="68%" stopColor="#E6EAED" />
+          <stop offset="100%" stopColor="#6B7379" />
         </linearGradient>
       </defs>
-      <rect x="1" y="4" width="26" height="8" rx="4" fill="url(#book-hinge)" />
-      <circle cx="6" cy="8" r="4.5" fill="url(#book-hinge)" />
-      <circle cx="22" cy="8" r="4.5" fill="url(#book-hinge)" />
-      <rect x="4" y="5.5" width="20" height="1.6" rx="0.8" fill="#FFFFFF" opacity="0.7" />
+      {/* the half that passes behind the sheet */}
+      <path d="M20 4a18 18 0 0 0 0 36" fill="none" stroke={`url(#${id}-chrome)`} strokeWidth="5.5" strokeLinecap="round" />
+      {/* the half that comes over the front, and the shadow it casts on the paper */}
+      <path d="M20 4a18 18 0 0 1 0 36" fill="none" stroke="#2A1109" strokeOpacity="0.26" strokeWidth="8" strokeLinecap="round" transform="translate(2 3)" />
+      <path d="M20 4a18 18 0 0 1 0 36" fill="none" stroke={`url(#${id}-chrome)`} strokeWidth="5.5" strokeLinecap="round" />
+      <path d="M28 7a18 18 0 0 1 9 11" fill="none" stroke="#FFFFFF" strokeOpacity="0.9" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
 
-export function Book({ left, right }: { left: React.ReactNode; right: React.ReactNode }) {
+export function Book({ children }: { children: React.ReactNode }) {
   return (
-    <div className="book">
-      <div className="book-page book-left">{left}</div>
-      <div className="book-gutter" aria-hidden="true">
-        <span className="book-hinge"><Hinge /></span>
-        <span className="book-hinge"><Hinge /></span>
-        <span className="book-hinge"><Hinge /></span>
+    <div className="binder-stage">
+      <div className="binder">
+        <span className="binder-spine" aria-hidden="true">
+          <span className="binder-cap top" />
+          <span className="binder-cap bottom" />
+        </span>
+        <div className="binder-page">{children}</div>
+        {/* after the page, so each ring's front half lands on top of the paper */}
+        <span className="binder-ring r1"><Ring id="jr1" /></span>
+        <span className="binder-ring r2"><Ring id="jr2" /></span>
+        <span className="binder-ring r3"><Ring id="jr3" /></span>
       </div>
-      <div className="book-page book-right">{right}</div>
     </div>
   );
 }

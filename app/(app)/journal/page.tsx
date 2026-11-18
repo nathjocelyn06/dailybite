@@ -7,14 +7,13 @@ import { sumEaten } from "@/lib/totals";
 import { Photo } from "@/components/Photo";
 import { ActionButton } from "@/components/ActionButton";
 import { confirmMealAction, deleteMealAction } from "../actions";
-import { ReviewForm } from "./ReviewForm";
 import { MealEditor } from "./MealEditor";
 import { Scrapbook } from "./Scrapbook";
 
 /**
- * Phase 1: day page with meals (photo, place, time, nutrition) + daily review.
- * Phase 4 (docs/PLAN.md): the scrapbook editor (drag/resize photos, stickers, tape, doodles)
- * from design/wireframes/D05-Journal.dc.html, stored in journal_elements.
+ * The day page: the day's totals, then the journal itself — a ring binder holding the
+ * meals as polaroids and a page you can decorate (journal_elements). Full width: the
+ * binder is the page, so there is no side column beside it.
  */
 export default async function JournalPage({ searchParams }: { searchParams: Promise<{ date?: string; meal?: string; edit?: string }> }) {
   const sp = await searchParams;
@@ -36,8 +35,13 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         <Link className="btn" href={`/journal?date=${addDays(date, 1)}`} aria-label="Next day">›</Link>
         <Link className="btn pri" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </header>
-      <div className="split">
-        <Scrapbook
+      <section className="card day-summary" aria-label="Day summary">
+        <h2 className="h2">Day summary</h2>
+        <p className="day-kcal">{t.kcal} <span className="muted">kcal</span></p>
+        <p className="muted">{t.meals} meals eaten · P {t.protein_g} g · C {t.carbs_g} g · F {t.fat_g} g</p>
+      </section>
+
+      <Scrapbook
           date={date}
           initial={j.elements}
           photoUrls={urls}
@@ -65,26 +69,27 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
                       backHref={`/journal?date=${date}&meal=${m.id}`}
                     />
                   ) : (
-                    <div className="polaroid-actions">
-                      {m.status !== "eaten" && <ActionButton action={confirmMealAction} args={[m.id]} className="btn sm pri">Confirm eaten</ActionButton>}
-                      <Link className="btn sm" href={`/journal?date=${date}&meal=${m.id}&edit=1`}>Edit</Link>
-                      <ActionButton action={deleteMealAction} args={[m.id]} confirm={`Delete ${m.name}?`}>Delete</ActionButton>
-                    </div>
+                    m.status !== "eaten" && (
+                      <div className="polaroid-actions">
+                        <ActionButton action={confirmMealAction} args={[m.id]} className="btn sm pri">Confirm eaten</ActionButton>
+                      </div>
+                    )
                   )}
+                  {/* delete lives in the corner, as asked — no edit button on the photo */}
+                  <ActionButton
+                    action={deleteMealAction}
+                    args={[m.id]}
+                    confirm={`Delete ${m.name}?`}
+                    className="polaroid-x"
+                    label={`Delete ${m.name}`}
+                  >
+                    ×
+                  </ActionButton>
                 </article>
               ))}
             </div>
           }
-        />
-        <aside className="side-col">
-          <section className="card">
-            <h2 className="h2">Day summary</h2>
-            <p style={{ fontSize: 28, fontWeight: 700, marginTop: 8 }}>{t.kcal} <span className="muted">kcal</span></p>
-            <p className="muted">{t.meals} meals eaten · P {t.protein_g} g · C {t.carbs_g} g · F {t.fat_g} g</p>
-          </section>
-          <section className="card"><h2 className="h2" style={{ marginBottom: 10 }}>Daily review</h2><ReviewForm date={date} page={j.page} /></section>
-        </aside>
-      </div>
+      />
     </>
   );
 }

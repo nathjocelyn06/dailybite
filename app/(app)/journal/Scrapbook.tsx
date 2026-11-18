@@ -236,10 +236,10 @@ export function Scrapbook({
 
   return (
     <div className="scrapbook">
-      <Book
-        left={left}
-        right={
-          <>
+      <Book>
+        <div className="journal-sheet">
+          <div className="journal-meals">{left}</div>
+          <div className="journal-canvas">
       <div className="scrap-toolbar">
         {editing && (
           <>
@@ -350,9 +350,9 @@ export function Scrapbook({
         )}
       </div>
 
-          </>
-        }
-      />
+          </div>
+        </div>
+      </Book>
 
       <div className="book-actions">
         <button className="btn pri" onClick={() => { setEditing(!editing); setSelected(null); setTool("select"); }} aria-pressed={editing}>
