@@ -342,3 +342,10 @@ export async function updateMyRecipeAction(id: string, patch: unknown): Promise<
   all();
   return { id: r.id };
 }
+
+/** A short-lived signed URL for a photo we just uploaded, so the page can show it at once. */
+export async function photoUrlAction(path: string): Promise<string | null> {
+  const { signedUrls } = await import("@/lib/services/photos");
+  const map = await signedUrls(await webDb(), [path]);
+  return map[path] ?? null;
+}

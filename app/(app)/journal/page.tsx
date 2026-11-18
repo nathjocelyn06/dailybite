@@ -46,7 +46,12 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
           }}
         >
           {j.page?.title && <p className="hand" style={{ fontSize: 28, color: "var(--ink)" }}>{j.page.title}</p>}
-          <Scrapbook date={date} initial={j.elements as never} photoUrls={urls} />
+          <Scrapbook
+            date={date}
+            initial={j.elements as never}
+            photoUrls={urls}
+            meals={j.meals.map((m) => ({ id: m.id, slot: m.slot, name: m.name }))}
+          />
           {j.meals.length === 0 && <p className="hand">No meals yet. Snap one!</p>}
           {j.meals.map((m, i) => (
             <article

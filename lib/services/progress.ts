@@ -93,3 +93,44 @@ export async function deleteBodyPhoto(db: Db, id: string) {
   ) as { photo_path: string };
   await db.sb.storage.from("photos").remove([row.photo_path]);
 }
+
+export type HabitCount = { kind: "mood" | "habit"; label: string; count: number; lastOn: string };
+
+/**
+ * Mood stamps and habit stickers from the scrapbook pages, counted over a window.
+ *
+ * The journal is where these are recorded, so Progress reads them rather than keeping a
+ * second tally that could drift. Elements hang off `journal_pages`, so the date filter
+ * goes through that join.
+ */
+export async function habitCounts(db: Db, days = 30): Promise<HabitCount[]> {
+  const today = dayKey(new Date(), db.tz);
+  const from = addDays(today, -days + 1);
+  const rows = must(
+    await db.sb
+      .from("journal_elements")
+      .select("kind,text,journal_pages!inner(date)")
+      .eq("user_id", db.userId)
+      .in("kind", ["mood", "habit"])
+      .gte("journal_pages.date", from)
+      .lte("journal_pages.date", today),
+    "habit counts"
+  ) as { kind: "mood" | "habit"; text: string | null; journal_pages: { date: string } | { date: string }[] }[];
+
+  const tally = new Map<string, HabitCount>();
+  for (const r of rows) {
+    const label = (r.text ?? "").trim();
+    if (!label) continue;
+    const page = Array.isArray(r.journal_pages) ? r.journal_pages[0] : r.journal_pages;
+    const date = page?.date ?? from;
+    const key = `${r.kind}:${label}`;
+    const cur = tally.get(key);
+    if (cur) {
+      cur.count += 1;
+      if (date > cur.lastOn) cur.lastOn = date;
+    } else {
+      tally.set(key, { kind: r.kind, label, count: 1, lastOn: date });
+    }
+  }
+  return [...tally.values()].sort((a, b) => b.count - a.count);
+}

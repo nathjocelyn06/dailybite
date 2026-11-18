@@ -456,3 +456,11 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   .scrap-page { min-height: 360px; }
   .scrap-handle { width: 28px; height: 28px; }
 }
+
+
+/* ---------- journal photo crop ---------- */
+.crop-box {
+  position: relative; width: min(320px, 100%); aspect-ratio: 1; overflow: hidden; border-radius: 12px;
+  background: #1a1917; touch-action: none; cursor: grab; border: 1px solid var(--line);
+}
+.crop-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: center; user-select: none; }

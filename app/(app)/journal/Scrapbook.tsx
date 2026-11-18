@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { addElementAction, deleteElementAction, updateElementAction } from "../actions";
+import { PhotoDrop } from "./PhotoDrop";
 
 type Kind = "photo" | "sticker" | "tape" | "text" | "doodle" | "meal_card" | "mood" | "habit";
 
@@ -17,6 +18,7 @@ export type Element = {
   text?: string | null;
   data?: Record<string, unknown>;
   photo_path?: string | null;
+  meal_id?: string | null;
 };
 
 type Tool = "select" | "sticker" | "tape" | "text" | "mood" | "doodle";
@@ -39,17 +41,22 @@ const clampY = (v: number) => Math.max(0, v);
 export function Scrapbook({
   date,
   initial,
-  photoUrls
+  photoUrls,
+  meals
 }: {
   date: string;
   initial: Element[];
   photoUrls: Record<string, string>;
+  meals: { id: string; slot: string; name: string }[];
 }) {
   const [els, setEls] = useState<Element[]>(initial);
   const [tool, setTool] = useState<Tool>("select");
   const [selected, setSelected] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState("");
+  const [photoOpen, setPhotoOpen] = useState(false);
+  // Signed URLs for photos added in this session, on top of the ones the page sent.
+  const [urls, setUrls] = useState<Record<string, string>>(photoUrls);
   const [, start] = useTransition();
 
   const pageRef = useRef<HTMLDivElement>(null);
@@ -240,7 +247,7 @@ export function Scrapbook({
               {MOODS.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
             <button className="btn sm" onClick={() => void addEl("tape", { text: "", data: { color: TAPE_COLOURS[els.length % TAPE_COLOURS.length] } })}>Tape</button>
-            <a className="btn sm" href={`/snap?mode=journal&date=${date}`}>Photo</a>
+            <button className="btn sm" onClick={() => setPhotoOpen(true)}>Photo</button>
             <span className="muted" role="status" style={{ fontSize: 12 }}>{status}</span>
           </>
         )}
@@ -262,7 +269,7 @@ export function Scrapbook({
 
         {els.map((el) => {
           const isSel = editing && el.id === selected;
-          const url = el.photo_path ? photoUrls[el.photo_path] : null;
+          const url = el.photo_path ? urls[el.photo_path] : null;
           return (
             <div
               key={el.id}
@@ -314,6 +321,37 @@ export function Scrapbook({
           </svg>
         )}
       </div>
+
+      {photoOpen && (
+        <PhotoDrop
+          onCancel={() => setPhotoOpen(false)}
+          onPlaced={(path, url) => {
+            setPhotoOpen(false);
+            if (url) setUrls((m) => ({ ...m, [path]: url }));
+            void addEl("photo", { photo_path: path, w: 30 });
+          }}
+        />
+      )}
+
+      {sel?.kind === "photo" && meals.length > 0 && (
+        <label className="field" style={{ maxWidth: 360 }}>
+          Which meal is this?
+          <select
+            className="input"
+            value={sel.meal_id ?? ""}
+            onChange={(e) => {
+              const meal_id = e.target.value || null;
+              setEls((l) => l.map((x) => (x.id === sel.id ? { ...x, meal_id } : x)));
+              start(async () => { await updateElementAction(sel.id, { meal_id }); });
+            }}
+          >
+            <option value="">Not linked</option>
+            {meals.map((m) => (
+              <option key={m.id} value={m.id}>{m.slot}: {m.name}</option>
+            ))}
+          </select>
+        </label>
+      )}
 
       {sel && (
         <p className="muted" style={{ fontSize: 12 }}>
