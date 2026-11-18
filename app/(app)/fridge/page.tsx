@@ -24,6 +24,8 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
     getDecor(db)
   ]);
   const stickerUrls = await signedUrls(db, decor.map((d) => d.photo_path));
+  // The pantry is a cupboard beside the fridge, not a shelf inside it.
+  const pantry = stock.filter((s) => s.category === "pantry");
   const groups = (Object.keys(CATEGORY_LABEL) as FridgeItemView["category"][])
     .map((c) => ({ c, label: CATEGORY_LABEL[c], items: stock.filter((s) => s.category === c) }))
     .filter((g) => g.items.length);
@@ -61,15 +63,31 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
       )}
 
       {tab === "fridge" ? (
-        <div className="split">
-          <section className="grow" aria-label="Stock" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className="fridge-columns">
+          <section aria-label="Stock" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {stock.length === 0 && <p className="muted">Your fridge is empty. Add items, scan groceries or a receipt — then open the door.</p>}
             <Fridge items={stock} initialDecor={decor} initialColor={settings.fridge_color} initialUrls={stickerUrls} />
           </section>
-          <aside className="side-col">
-            <section className="card"><h2 className="h2" style={{ marginBottom: 10 }}>Add item</h2><AddFridgeForm /></section>
-            <Link className="btn" href="/recipes?tab=scanner">Cook from my fridge</Link>
-          </aside>
+
+          <section className="pantry-panel" aria-label="Pantry cupboard">
+            <h2>Pantry Cupboard</h2>
+            {pantry.length === 0 && <p className="muted">Nothing in the cupboard yet.</p>}
+            {pantry.map((i) => (
+              <div className="row" key={i.id}>
+                <span style={{ flex: 1 }}>{i.name}</span>
+                <span className="muted">{i.qty} {i.unit}</span>
+                {i.low && <span className="chip warn">low</span>}
+              </div>
+            ))}
+          </section>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <section className="form-card" aria-label="Add item">
+              <h2>Add item</h2>
+              <AddFridgeForm />
+            </section>
+            <Link className="btn" href="/recipes?tab=scanner" style={{ justifyContent: "center" }}>Cook from my fridge</Link>
+          </div>
         </div>
       ) : (
         <div className="split">

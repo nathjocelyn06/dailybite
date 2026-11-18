@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.4 · 2026-11-18 — The fridge is drawn, not photographed
+The fridge is now hand-authored vector art (`components/fridge/FridgeArt.tsx`), one SVG per door.
+- **Colour is a real fill**, not a tint laid over a bitmap, so every finish stays clean and the chrome keeps its own metallic ramp. All the shading — top light, lit free edge, hinge-side shadow, two reflection stripes, a hairline enamel rim — sits above the body colour, so one drawing suits cream and coral alike.
+- **Chrome bar handles** on two stand-offs, meeting at the door seam, with the gap throwing a shadow onto both doors. Kickplate at the foot.
+- **It fits the screen.** A fridge is about twice as tall as it is wide, so height runs out first: the unit is sized from the viewport (`min(800px, 100vh - 210px)`) and the aspect ratio gives the width — falling back to width-driven sizing below 860px.
+- The sliced product-photo PNGs in `public/fridge/` are gone; nothing references them.
+- **The Fridge page follows the Figma**: three columns — the fridge, a dashed **Pantry Cupboard** panel listing everything on the pantry shelf, and an **Add item** card with *Cook from my fridge* under it. Two columns below 1100px, stacked below 760px.
+- Primary buttons are the logo's yellow (`#FFD24A`) with ink text. The gingham backdrop is gone — the fridge sits on the page's own cream.
+- 🐛 The fridge page scrolled sideways at 390px: a grid column is min-content wide by default and the three-up Qty/Unit/Expires row would not shrink. `min-width: 0` on the columns and the form fields.
+
 ## v4.3.1 · 2026-11-18 — A more convincing fridge
 Pushed the fridge toward the look of a photographed retro unit, working from your vector rather than copying anyone else's product shot.
 - **Contact shadow** under the unit — tight and dark where it meets the floor, falling off outward — instead of a flat drop shadow.

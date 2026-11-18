@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import type { FridgeItemView } from "@/lib/services/fridge";
+import { FreezerDoorArt, MainDoorArt } from "./FridgeArt";
 import { saveDecorAction, fridgeQtyAction, fridgeRemoveAction, uploadScanPhotoAction, photoUrlAction } from "@/app/(app)/actions";
 
 export type DecorPiece = {
@@ -21,7 +22,7 @@ export type DecorPiece = {
 type Door = "none" | "freezer" | "fridge";
 
 /** The vector's own natural size, so the layers line up exactly. */
-const ART = { w: 386, h: 877, dividerPct: 34 };
+const ART = { w: 386, h: 780, dividerPct: 34 };
 
 /** Where each kind of food lives, behind the door it belongs to. */
 const SHELVES: { key: FridgeItemView["category"]; label: string; door: "freezer" | "fridge" }[] = [
@@ -34,7 +35,6 @@ const SHELVES: { key: FridgeItemView["category"]; label: string; door: "freezer"
 
 /** The six brand colours. "Original" keeps the vector's own finish. */
 const COLOURS: { value: string; label: string }[] = [
-  { value: "", label: "Original" },
   { value: "#F7EFE3", label: "Cream" },
   { value: "#FFCAD4", label: "Blush" },
   { value: "#D9EFFD", label: "Sky" },
@@ -193,6 +193,7 @@ export function Fridge({
     persist(decor, c);
   };
 
+  const finish = color || "#F7EFE3";
   const shelfItems = (key: FridgeItemView["category"]) => items.filter((i) => i.category === key);
   const doorStyle = (which: "freezer" | "fridge") => ({
     transform: open === which ? "rotateY(118deg)" : "rotateY(0deg)"
@@ -201,7 +202,6 @@ export function Fridge({
   return (
     <div className="fridge-wrap">
       <div className="fridge-scene">
-        <div className="fridge-backdrop" aria-hidden="true" />
         <div className="fridge-unit" style={{ aspectRatio: `${ART.w} / ${ART.h}` }}>
           {/* interior, revealed as the doors swing away */}
           <div className="fridge-inside">
@@ -219,7 +219,7 @@ export function Fridge({
 
           {/* freezer door */}
           <div className="door-layer door-freezer" style={{ height: `${ART.dividerPct}%`, ...doorStyle("freezer") }}>
-            <DoorArt src="/fridge/fridge-door-freezer.png" color={color} alt="Freezer door" />
+            <FreezerDoorArt color={finish} idPrefix="fridge" />
           </div>
 
           {/* fridge door — the one you decorate */}
@@ -231,7 +231,7 @@ export function Fridge({
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
           >
-            <DoorArt src="/fridge/fridge-door-main.png" color={color} alt="Fridge door" />
+            <MainDoorArt color={finish} idPrefix="fridge" />
 
             <span className="status-magnet" aria-label={`${useSoon} to use soon, ${lowStock} running low`}>
               <strong>{useSoon}</strong> use soon
@@ -326,25 +326,6 @@ export function Fridge({
 
       {selected && <SelectedItem item={selected} onClose={() => setSelected(null)} />}
     </div>
-  );
-}
-
-/** The door art plus its colour tint, masked to the artwork's own shape. */
-function DoorArt({ src, color, alt }: { src: string; color: string; alt: string }) {
-  return (
-    <span className="door-art">
-      <img src={src} alt={alt} draggable={false} />
-      {/* enamel sheen: a soft diagonal highlight, masked to the door so it never
-          spills past the rounded corners */}
-      <span className="door-gloss" style={{ WebkitMaskImage: `url(${src})`, maskImage: `url(${src})` }} aria-hidden="true" />
-      {color && (
-        <span
-          className="door-tint"
-          style={{ background: color, WebkitMaskImage: `url(${src})`, maskImage: `url(${src})` }}
-          aria-hidden="true"
-        />
-      )}
-    </span>
   );
 }
 

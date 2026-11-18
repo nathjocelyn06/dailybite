@@ -345,7 +345,11 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .fridge-wrap { display: flex; flex-direction: column; gap: 14px; }
 .fridge-scene { perspective: 2200px; display: flex; justify-content: flex-start; }
 .fridge-unit {
-  position: relative; width: min(340px, 100%); transform-style: preserve-3d;
+  /* A fridge is about twice as tall as it is wide, so it is height that runs out
+     first: size it from the viewport and let the aspect ratio give the width,
+     falling back to width-driven sizing on a narrow screen. */
+  position: relative; transform-style: preserve-3d;
+  height: min(800px, calc(100vh - 210px)); width: auto; max-width: min(430px, 100%);
   filter: drop-shadow(0 18px 28px rgba(46, 42, 38, 0.18));
 }
 
@@ -434,7 +438,7 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 
 @media (max-width: 860px) {
   .fridge-scene { perspective: 1500px; }
-  .fridge-unit { width: min(280px, 100%); margin: 0 auto; }
+  .fridge-unit { height: auto; width: min(320px, 100%); max-width: 100%; margin: 0 auto; }
   .pantry { width: 100%; min-height: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -641,17 +645,7 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 
 
 /* ---------- fridge realism: shadow, sheen, backdrop ---------- */
-.fridge-scene { position: relative; padding: 18px 10px 26px; }
-.fridge-backdrop {
-  position: absolute; inset: 0; border-radius: var(--radius-lg); z-index: 0;
-  /* gingham, the way these retro fridges are always photographed */
-  background-color: #EAF4FC;
-  background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.75) 50%, transparent 50%),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.75) 50%, transparent 50%);
-  background-size: 28px 28px, 28px 28px;
-  opacity: 0.85;
-}
+.fridge-scene { position: relative; padding: 6px 0 26px; }
 .fridge-unit { z-index: 1; }
 
 /* contact shadow on the floor, tighter and darker directly under the unit */
@@ -673,6 +667,44 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 }
 
 @media (max-width: 860px) {
-  .fridge-scene { padding: 12px 6px 20px; }
-  .fridge-backdrop { background-size: 20px 20px, 20px 20px; }
+  .fridge-scene { padding: 4px 0 18px; }
 }
+
+
+/* ---------- Fridge page: pantry cupboard + add-item card (Figma) ---------- */
+.fridge-columns {
+  display: grid; gap: 18px; align-items: start;
+  grid-template-columns: minmax(300px, 1.1fr) minmax(200px, 0.75fr) minmax(260px, 0.9fr);
+}
+/* a grid column is min-content wide by default, and a three-up row of inputs has a
+   stubborn min-content — let the columns shrink instead of pushing the page sideways */
+.fridge-columns > * { min-width: 0; }
+.pantry-panel {
+  border: 2px dashed var(--grid); border-radius: 12px; background: #FDF6EC;
+  padding: 18px; min-height: 380px; display: flex; flex-direction: column; gap: 10px;
+}
+.pantry-panel h2 { font-weight: var(--w-title); font-size: var(--text-lg); margin: 0; }
+.form-card {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px;
+  display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(46, 42, 38, 0.04);
+}
+.form-card h2 { font-weight: var(--w-title); font-size: var(--text-lg); margin: 0; }
+.form-card .field { gap: 6px; min-width: 0; }
+.form-card .input { border-radius: 10px; min-height: 42px; min-width: 0; width: 100%; }
+@media (max-width: 1100px) {
+  .fridge-columns { grid-template-columns: minmax(280px, 1fr) minmax(240px, 1fr); }
+  .fridge-columns > :last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .fridge-columns { grid-template-columns: 1fr; }
+  .fridge-columns > :last-child { grid-column: auto; }
+  .pantry-panel { min-height: 0; }
+}
+
+/* primary action in the logo's yellow, as the Figma shows */
+:root { --btn-yellow: #FFD24A; --btn-yellow-line: #E9B413; }
+.btn.pri { background: var(--btn-yellow); color: var(--ink); border-color: var(--btn-yellow-line); }
+.btn.pri:hover { background: #FFDC6E; }
+
+/* the drawn doors fill their layer exactly, as the bitmap did */
+.fridge-svg { display: block; width: 100%; height: 100%; }

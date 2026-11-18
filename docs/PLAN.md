@@ -117,6 +117,8 @@ Claude connectors now point at `https://dailybite-ten.vercel.app/api/mcp?key=…
   - **Decor coordinates are percentages of the door, not pixels**, so a door arranged on a laptop still looks right on a phone. `DecorInput` keeps them as ints.
   - 🧪 Verified: doors swing on `rotateY(-112deg)` (104 on phones), shelves list stock by category with expiry/low flags, the status magnet counts use-soon and low items, tapping an item gives Use 1 / Restock / Remove / Recipes using this, and a post-it dragged on the door is in `fridge_decor` a second later.
   - 🔲 Still to do: photos on the door (needs the photo picker), and freezer/fridge doors opening independently on phones where they stack.
+  - ✅ **Drawn, not photographed** (v4.4) — `components/fridge/FridgeArt.tsx` is one hand-authored SVG per door, so the finish is a real fill and the chrome keeps its own ramp. Chrome bar handles meet at the seam; kickplate at the foot. The unit is sized from the viewport height so the whole fridge is on screen, width following the aspect ratio.
+  - ✅ **Figma layout** — `/fridge` is three columns: fridge · dashed **Pantry Cupboard** panel · **Add item** card with *Cook from my fridge*. Two columns under 1100px, stacked under 760px.
 - ✅ **Scrapbook journal editor** — `app/(app)/journal/Scrapbook.tsx`, from `D05-Journal`. Elements live in `journal_elements` (x as % of width, y in px, w %, rot, z).
   - ✅ Toolbar: Decorate page, Select, Text, Doodle, six stickers, Mood stamps, Tape, Photo.
   - ✅ Drag to move, corner handle to resize, top handle to rotate, × to delete; each element saves 500 ms after you stop, debounced per element so moving one never rewrites the others.
