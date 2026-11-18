@@ -4,7 +4,7 @@ import Link from "next/link";
 import { missingToShoppingAction, planRecipeAction, saveRecipeAction } from "../../../actions";
 import { dayKey } from "@/lib/dates";
 
-export function RecipeActions({ source, externalId, savedId, missing }: { source: "themealdb" | "bank"; externalId: string | null; savedId: string | null; missing: number }) {
+export function RecipeActions({ externalId, savedId, missing }: { externalId: string | null; savedId: string | null; missing: number }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState("");
   const [planOpen, setPlanOpen] = useState(false);
@@ -25,11 +25,11 @@ export function RecipeActions({ source, externalId, savedId, missing }: { source
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button className="btn" disabled={pending} onClick={() => run(() => saveRecipeAction(source, externalId), "Saved to your collection.")}>
+        <button className="btn" disabled={pending} onClick={() => run(() => saveRecipeAction("themealdb", externalId), "Saved to your collection.")}>
           {savedId ? "Saved ✓" : "Save to collection"}
         </button>
         <button className="btn pri" disabled={pending} onClick={() => setPlanOpen(!planOpen)}>Add to meal plan</button>
-        <button className="btn" disabled={pending || missing === 0} onClick={() => run(() => missingToShoppingAction(source, externalId), "Missing ingredients added to your shopping list.")}>
+        <button className="btn" disabled={pending || missing === 0} onClick={() => run(() => missingToShoppingAction("themealdb", externalId), "Missing ingredients added to your shopping list.")}>
           {missing ? `Add ${missing} missing to list` : "You have everything"}
         </button>
       </div>
@@ -41,7 +41,7 @@ export function RecipeActions({ source, externalId, savedId, missing }: { source
               <option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option>
             </select>
           </label>
-          <button className="btn pri" disabled={pending || !date} onClick={() => run(() => planRecipeAction({ source, external_id: externalId, date, slot }), `Planned for ${slot} on ${date}.`)}>
+          <button className="btn pri" disabled={pending || !date} onClick={() => run(() => planRecipeAction({ source: "themealdb", external_id: externalId, date, slot }), `Planned for ${slot} on ${date}.`)}>
             Plan it
           </button>
         </div>

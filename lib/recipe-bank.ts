@@ -1,14 +1,13 @@
 /**
- * The recipe bank: one browser over every free source DailyBite can read.
+ * The recipe browser: one layer over every source DailyBite can read for free.
  *
- *   themealdb  — photos and YouTube videos, no times and no nutrition (we estimate)
- *   bank       — fewer recipes, but real times, a stated difficulty and calories/serving
- *
- * Both are free and keyless, and nothing is scraped. One source failing never empties
- * the browser: each is caught on its own and whatever came back is what you see.
+ * Right now that is TheMealDB alone. A second source was tried and dropped: it was
+ * demo data — ingredients with no quantities and five-line methods — and you cannot
+ * cook from that. A source has to carry measures and a real method to earn a place
+ * here. The `source` field stays on every card and in every tool so a genuine second
+ * source can be added without touching the pages again.
  */
 import { searchMeals, getMeal, listCategories, type RecipeCard, type RecipeDetail, type RecipeSource } from "./mealdb";
-import { searchFree, getFree, freeMealTypes } from "./freebank";
 
 export type BrowseQuery = {
   query?: string;
@@ -25,35 +24,29 @@ const DETAIL_BUDGET = 24;
 
 export async function browseRecipes(q: BrowseQuery): Promise<{ recipes: RecipeCard[]; partial: boolean }> {
   const wantsDetail = !!q.maxMinutes || !!q.difficulty;
-  const [mealdb, bank] = await Promise.allSettled([
-    searchMeals({ query: q.query, category: q.category }),
-    searchFree({ query: q.query, category: q.category })
-  ]);
+  const found = await Promise.allSettled([searchMeals({ query: q.query, category: q.category })]);
+  const first = found[0];
+  if (first.status === "rejected") return { recipes: [], partial: true };
 
-  let fromMealdb = mealdb.status === "fulfilled" ? mealdb.value : [];
-  const fromBank = bank.status === "fulfilled" ? bank.value : [];
-
-  if (wantsDetail && fromMealdb.length) {
-    const details = await Promise.all(fromMealdb.slice(0, DETAIL_BUDGET).map((c) => getMeal(c.external_id).catch(() => null)));
-    fromMealdb = details.filter((d): d is RecipeDetail => !!d).map(({ steps: _s, step_list: _l, ...rest }) => rest);
+  let cards = first.value;
+  if (wantsDetail && cards.length) {
+    const details = await Promise.all(cards.slice(0, DETAIL_BUDGET).map((c) => getMeal(c.external_id).catch(() => null)));
+    cards = details.filter((d): d is RecipeDetail => !!d).map(({ steps: _s, step_list: _l, ...rest }) => rest);
   }
 
   const fits = (c: RecipeCard) =>
     (!q.maxMinutes || (c.est_minutes ?? Infinity) <= q.maxMinutes) &&
     (!q.difficulty || c.est_difficulty === q.difficulty);
 
-  // The bank first: those cards carry calories, which is what this app is for.
-  const recipes = [...fromBank.filter(fits), ...fromMealdb.filter(fits)].slice(0, 48);
-  return { recipes, partial: mealdb.status === "rejected" || bank.status === "rejected" };
+  return { recipes: cards.filter(fits).slice(0, 48), partial: false };
 }
 
-export async function getBankRecipe(source: RecipeSource, id: string): Promise<RecipeDetail | null> {
-  return source === "bank" ? getFree(id) : getMeal(id);
+export async function getRecipeDetail(_source: RecipeSource, id: string): Promise<RecipeDetail | null> {
+  return getMeal(id);
 }
 
-/** One category list across both sources, for the single "Meal type / diet" filter. */
+/** The category list the "Meal type / diet" filter offers. */
 export async function browseCategories(): Promise<string[]> {
-  const [a, b] = await Promise.allSettled([listCategories(), freeMealTypes()]);
-  const list = [...(a.status === "fulfilled" ? a.value : []), ...(b.status === "fulfilled" ? b.value : [])];
+  const list = await listCategories().catch(() => [] as string[]);
   return [...new Set(list.map((s) => s.trim()).filter(Boolean))].sort();
 }

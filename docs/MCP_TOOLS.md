@@ -18,14 +18,14 @@ Endpoint: `{APP_URL}/api/mcp?key=MCP_ACCESS_KEY` (Streamable HTTP). Every tool r
 | `delete_journal_element` | Remove an element from a journal page. |
 | `month_overview` | Per-day calories eaten, meals, planned meals, food spend and journal flag for a month. |
 | `day_detail` | Everything recorded on one date: meals, journal, expenses, fridge changes. |
-| `search_recipes` | Search the recipe bank: TheMealDB (photos, YouTube videos, times estimated) plus a free bank whose recipes state real prep/cook time, difficulty and calories per serving. Filter by text, category, max minutes or difficulty. Empty = random picks. Every result carries its own `source`. |
-| `get_recipe` | Full recipe: ingredients with measures, steps, YouTube video, time and difficulty, calories per serving where the source states them, and which ingredients are already in the fridge. Takes `source` alongside `external_id`. |
+| `search_recipes` | Browse recipes (TheMealDB: photos, YouTube videos, measures, full method; time and difficulty are our estimates). Filter by text, category, max minutes or difficulty. Empty = a varied opening set. Every result carries its `source`. |
+| `get_recipe` | Full recipe: ingredients with measures, the method split into followable steps, YouTube video, estimated time/difficulty, and which ingredients are already in the fridge. |
 | `find_recipe_videos` | YouTube videos for a dish (needs YOUTUBE_API_KEY; otherwise returns a YouTube search link). |
-| `save_recipe` | Save a recipe from the bank into the user's collection folder. TheMealDB recipes are kept as a reference and take your calorie estimate; free-bank recipes are copied in whole with the calories they already carry. |
+| `save_recipe` | Save a TheMealDB recipe into the user's collection folder. Optionally store your calorie estimate per serving. |
 | `list_saved_recipes` | Recipes the user saved, optionally one folder. |
 | `delete_saved_recipe` | Remove a recipe from the collection. |
 | `recipes_from_ingredients` | AI ingredient scanner backend: given ingredient names (e.g. from a photo), rank recipes that use them plus fridge stock (expiring first). |
-| `add_missing_to_shopping` | Compare a recipe's ingredients with the fridge and add the missing ones to the shopping list. Takes `source` alongside `external_id`. |
+| `add_missing_to_shopping` | Compare a recipe's ingredients with the fridge and add the missing ones to the shopping list. |
 | `list_fridge` | Items in the fridge/pantry with qty, unit, expiry state and low-stock flag. include_pending shows scanned items waiting for confirmation. |
 | `add_fridge_items` | Add items to the fridge. Use status pending for anything recognised from a photo or receipt so the user can check it. |
 | `confirm_fridge_items` | Approve pending fridge items (all, or by id) after the user checked them. |

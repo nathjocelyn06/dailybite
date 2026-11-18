@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { scannerAction, deleteRecipeAction } from "../actions";
+import { NavIcon } from "@/components/NavIcon";
 
 type Card = {
-  source: "themealdb" | "bank";
+  source: "themealdb";
   external_id: string;
   title: string;
   thumb_url: string | null;
@@ -36,12 +37,19 @@ export function RecipesClient(props: {
       </header>
       <nav className="tabs" aria-label="Recipe areas">
         {([
-          ["discover", "Find"],
-          ["collection", "Saved"],
-          ["scanner", "Cook from my fridge"]
-        ] as const).map(([k, label]) => (
-          <a key={k} href={`?tab=${k}`} aria-current={tab === k ? "page" : undefined} onClick={(e) => { e.preventDefault(); setTab(k); history.replaceState(null, "", `?tab=${k}`); }}>
-            {label}
+          ["discover", "Find", false],
+          ["collection", "Saved", true],
+          ["scanner", "Cook from my fridge", false]
+        ] as const).map(([k, label, asIcon]) => (
+          <a
+            key={k}
+            href={`?tab=${k}`}
+            aria-current={tab === k ? "page" : undefined}
+            aria-label={asIcon ? label : undefined}
+            title={asIcon ? label : undefined}
+            onClick={(e) => { e.preventDefault(); setTab(k); history.replaceState(null, "", `?tab=${k}`); }}
+          >
+            {asIcon ? <NavIcon name="saved" size={18} /> : label}
           </a>
         ))}
       </nav>
@@ -59,14 +67,14 @@ function RecipeGrid({ list }: { list: Card[] }) {
       {list.map((r) => (
         <Link key={`${r.source}-${r.external_id}`} href={`/recipes/${r.source}/${r.external_id}`} className="card" style={{ padding: 0, overflow: "hidden", textDecoration: "none" }}>
           <div style={{ position: "relative" }}>
-            {r.thumb_url ? <img src={r.source === "themealdb" ? `${r.thumb_url}/preview` : r.thumb_url} alt="" style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover" }} loading="lazy" /> : <div className="thumb" />}
+            {r.thumb_url ? <img src={`${r.thumb_url}/preview`} alt="" style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover" }} loading="lazy" /> : <div className="thumb" />}
             {r.youtube_id && <span className="chip" style={{ position: "absolute", left: 10, bottom: 10 }}>▶ video</span>}
             {r.kcal_per_serving ? <span className="chip fresh" style={{ position: "absolute", right: 10, bottom: 10 }}>{r.kcal_per_serving} kcal</span> : null}
           </div>
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 6 }}>
             <span style={{ fontWeight: 600 }}>{r.title}</span>
             <span className="muted">
-              {[r.category, r.area, r.est_minutes ? `${r.source === "bank" ? "" : "~"}${r.est_minutes} min` : null, r.est_difficulty].filter(Boolean).join(" · ") || "Tap for ingredients & video"}
+              {[r.category, r.area, r.est_minutes ? `~${r.est_minutes} min` : null, r.est_difficulty].filter(Boolean).join(" · ") || "Tap for ingredients & video"}
             </span>
           </div>
         </Link>

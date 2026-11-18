@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.10 · 2026-11-18 — Recipes you can actually cook from
+- **The second recipe source is gone.** It was demo data: ingredients listed as bare names with no quantities and a five-line method. You cannot cook from that, so it has no place in a cooking app. Every recipe now comes from TheMealDB, which carries real measures (`3/4 cup soy sauce`), a full method, a photo, a YouTube video and a link to the original. The `source` field stays on every card and tool so a genuine second source can join without touching the pages.
+- **The method is split into steps you can follow while cooking.** Paragraphs first, then any paragraph over 200 characters is broken again at sentence ends — one action per line, not a word rewritten. The Teriyaki Chicken Casserole goes from 6 dense paragraphs to 10 steps, and "350° F" and "½ cup" are left intact rather than split down the middle.
+- **Saved** in the recipe tabs is a bookmark icon, labelled for screen readers.
+- The "Add a YouTube API key to show more videos here" line is gone; the section now shows just the search link until there are videos.
+- 🐛 **The browser opened on a single recipe.** Its default view fired twelve `random.php` calls — all the same URL, so Next's fetch cache collapsed them into one response and the dedupe left exactly one card. It now lists a few random letters instead: distinct, cacheable URLs, 24 varied recipes.
+
 ## v4.9 · 2026-11-18 — The recipe bank
 - **Find now searches a bank, not one API.** `lib/recipe-bank.ts` browses TheMealDB **and** a second free, keyless source (`lib/freebank.ts`). Nothing is scraped and no key is needed. Each source is awaited separately, so one being down shows the other's results with a note rather than an empty page.
 - **The second source is the one that pays for itself**: its recipes state a real prep + cook time, a difficulty and **calories per serving**, which TheMealDB has none of. Those cards carry a kcal badge, their time has no `~`, and the servings stepper on the detail page works off real numbers.

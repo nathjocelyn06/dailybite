@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { webDb } from "@/lib/services/db";
 import { youtubeEmbed, youtubeId, splitSteps } from "@/lib/mealdb";
-import { getBankRecipe } from "@/lib/recipe-bank";
+import { getRecipeDetail } from "@/lib/recipe-bank";
 import { findSavedByExternal, getSaved, matchFridge } from "@/lib/services/recipes";
 import { RecipeActions } from "./RecipeActions";
 import { Ingredients } from "./Ingredients";
@@ -32,8 +32,8 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
   let savedId: string | null = null;
   let externalId: string | null = null;
 
-  if (source === "themealdb" || source === "bank") {
-    const m = await getBankRecipe(source, id);
+  if (source === "themealdb") {
+    const m = await getRecipeDetail(source, id);
     if (!m) notFound();
     const saved = await findSavedByExternal(db, id, source);
     savedId = saved?.id ?? null;
@@ -95,8 +95,8 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
             <div className="card" style={{ padding: 12 }}><div className="lbl">Calories</div><strong>{r.kcal ? `${r.kcal} kcal` : "ask Claude"}</strong></div>
             <div className="card" style={{ padding: 12 }}><div className="lbl">In fridge</div><strong>{r.ingredients.length - missing}/{r.ingredients.length}</strong></div>
           </div>
-          <RecipeActions source={source === "bank" ? "bank" : "themealdb"} externalId={externalId} savedId={savedId} missing={missing} />
-          {source !== "themealdb" && source !== "bank" && savedId && (
+          <RecipeActions externalId={externalId} savedId={savedId} missing={missing} />
+          {source !== "themealdb" && savedId && (
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <Link className="btn pri" href={`/recipes/edit?id=${savedId}`}>Edit recipe</Link>
               <Link className="btn" href="/recipes?tab=collection">All my recipes</Link>

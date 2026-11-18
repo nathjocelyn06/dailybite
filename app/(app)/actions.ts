@@ -16,7 +16,7 @@ import { updateSettings } from "@/lib/services/settings";
 import { addShopping, deleteShopping, moveBoughtToFridge, setBought } from "@/lib/services/shopping";
 import { writeReview, addElement, updateElement, deleteElement } from "@/lib/services/journal";
 import { addMissingToShopping, deleteSaved, saveRecipe } from "@/lib/services/recipes";
-import { getBankRecipe } from "@/lib/recipe-bank";
+import { getRecipeDetail } from "@/lib/recipe-bank";
 import { dismiss, markRead } from "@/lib/services/notifications";
 import { addReflection, upsertGoal } from "@/lib/services/progress";
 import { ElementInput } from "@/lib/schemas";
@@ -130,7 +130,7 @@ export async function deleteElementAction(id: string) {
 }
 
 // ---- recipes ----
-export async function saveRecipeAction(source: "themealdb" | "bank", externalId: string, folder?: string) {
+export async function saveRecipeAction(source: "themealdb", externalId: string, folder?: string) {
   await saveRecipe(await webDb(), { source, external_id: externalId, folder });
   all();
 }
@@ -138,9 +138,9 @@ export async function deleteRecipeAction(id: string) {
   await deleteSaved(await webDb(), id);
   all();
 }
-export async function planRecipeAction(input: { source: "themealdb" | "bank"; external_id: string; date: string; slot: string }) {
+export async function planRecipeAction(input: { source: "themealdb"; external_id: string; date: string; slot: string }) {
   const db = await webDb();
-  const r = await getBankRecipe(input.source, input.external_id);
+  const r = await getRecipeDetail(input.source, input.external_id);
   if (!r) throw new Error("Recipe not found");
   const saved = await saveRecipe(db, { source: input.source, external_id: input.external_id, folder: "Meal plan" });
   await logMeal(db, {
@@ -155,9 +155,9 @@ export async function planRecipeAction(input: { source: "themealdb" | "bank"; ex
   });
   all();
 }
-export async function missingToShoppingAction(source: "themealdb" | "bank", externalId: string) {
+export async function missingToShoppingAction(source: "themealdb", externalId: string) {
   const db = await webDb();
-  const r = await getBankRecipe(source, externalId);
+  const r = await getRecipeDetail(source, externalId);
   if (!r) throw new Error("Recipe not found");
   const res = await addMissingToShopping(db, r);
   all();

@@ -31,7 +31,7 @@ export function MoreVideos({ query }: { query: string }) {
           <iframe src={`https://www.youtube-nocookie.com/embed/${playing}?autoplay=1`} title="Recipe video" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
         </div>
       )}
-      {videos.length ? (
+      {videos.length > 0 && (
         <div className="grid">
           {videos.map((v) => (
             <button key={v.id} onClick={() => setPlaying(v.id)} style={{ all: "unset", cursor: "pointer", display: "flex", flexDirection: "column", gap: 6 }} aria-label={`Play ${v.title}`}>
@@ -41,8 +41,6 @@ export function MoreVideos({ query }: { query: string }) {
             </button>
           ))}
         </div>
-      ) : (
-        <p className="muted">Add a YouTube API key to show more videos here, or use the search link.</p>
       )}
     </section>
   );

@@ -12,7 +12,7 @@ import { getDailySummary } from "../services/dashboard";
 import { listMeals, logMeal, updateMeal, confirmMeal, deleteMeal } from "../services/meals";
 import { getJournalDay, writeReview, addElement, updateElement, deleteElement } from "../services/journal";
 import { monthOverview, dayDetail } from "../services/calendar";
-import { browseRecipes, getBankRecipe } from "../recipe-bank";
+import { browseRecipes, getRecipeDetail } from "../recipe-bank";
 import {
   saveRecipe, listSaved, deleteSaved, recipesFromIngredients, addMissingToShopping, matchFridge
 } from "../services/recipes";
@@ -244,12 +244,11 @@ export function registerTools(server: McpServer) {
       title: "Recipe detail",
       description: "Full recipe: ingredients with measures, steps, YouTube video, time and difficulty, calories per serving where the source states them, and which ingredients are already in the fridge.",
       inputSchema: {
-        external_id: z.string().describe("The id from search_recipes"),
-        source: z.enum(["themealdb", "bank"]).optional().describe("Which source the id belongs to; defaults to themealdb")
+        external_id: z.string().describe("The id from search_recipes")
       }
     },
-    async ({ external_id, source }) => run(async (db) => {
-      const r = await getBankRecipe(source ?? "themealdb", external_id);
+    async ({ external_id }) => run(async (db) => {
+      const r = await getRecipeDetail("themealdb", external_id);
       if (!r) throw new Error("Recipe not found");
       const fridge = await matchFridge(db, r.ingredients);
       return { text: `${r.title}${r.video_url ? ` · video: ${r.video_url}` : ""}`, data: { ...r, in_fridge: fridge }, link: `/recipes/themealdb/${external_id}` };
@@ -273,17 +272,13 @@ export function registerTools(server: McpServer) {
         "Save a recipe from the bank into the user's collection folder. For a TheMealDB recipe you may also store your calorie estimate per serving; free-bank recipes already carry their own, and are copied in whole so they survive the source going away.",
       inputSchema: {
         external_id: z.string(),
-        source: z.enum(["themealdb", "bank"]).optional(),
         folder: z.string().optional(),
         kcal_per_serving: z.number().int().positive().optional(),
         servings: z.number().int().positive().optional()
       }
     },
-    async ({ source, external_id, folder, kcal_per_serving, servings }) => run(async (db) => {
-      const r =
-        source === "bank"
-          ? await saveRecipe(db, { source: "bank", external_id, folder })
-          : await saveRecipe(db, { source: "themealdb", external_id, folder, kcal_per_serving, servings });
+    async ({ external_id, folder, kcal_per_serving, servings }) => run(async (db) => {
+      const r = await saveRecipe(db, { source: "themealdb", external_id, folder, kcal_per_serving, servings });
       return { text: `Saved "${r.title}" to ${r.folder}.`, data: r, link: `/recipes?tab=collection` };
     })
   );
@@ -321,10 +316,10 @@ export function registerTools(server: McpServer) {
     {
       title: "Add missing ingredients",
       description: "Compare a recipe's ingredients with the fridge and add the missing ones to the shopping list.",
-      inputSchema: { external_id: z.string(), source: z.enum(["themealdb", "bank"]).optional() }
+      inputSchema: { external_id: z.string() }
     },
-    async ({ external_id, source }) => run(async (db) => {
-      const r = await getBankRecipe(source ?? "themealdb", external_id);
+    async ({ external_id }) => run(async (db) => {
+      const r = await getRecipeDetail("themealdb", external_id);
       if (!r) throw new Error("Recipe not found");
       const res = await addMissingToShopping(db, r);
       return { text: `Missing: ${res.missing.join(", ") || "nothing"}. Added ${res.added} to the shopping list.`, data: res, link: "/fridge?tab=list" };
