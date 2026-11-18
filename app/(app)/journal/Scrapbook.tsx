@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { addElementAction, deleteElementAction, deleteMealAction, updateElementAction } from "../actions";
 import Link from "next/link";
-import { PhotoDrop } from "./PhotoDrop";
 import { Book } from "@/components/journal/Book";
 import { MealPhoto } from "@/components/journal/MealPhoto";
 
@@ -23,8 +22,6 @@ export type Element = {
   photo_path?: string | null;
   meal_id?: string | null;
 };
-
-type Tool = "select" | "text" | "doodle";
 
 const STICKERS = ["🍓", "🥑", "☕", "🍞", "🌶️", "🥕", "⭐", "♥"];
 /** Post-it papers and the pin that holds each one up. */
@@ -75,19 +72,15 @@ export function Scrapbook({
   addMealHref: string;
 }) {
   const [els, setEls] = useState<Element[]>(initial);
-  const [tool, setTool] = useState<Tool>("select");
   const [selected, setSelected] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState("");
-  const [photoOpen, setPhotoOpen] = useState(false);
   // Signed URLs for photos added in this session, on top of the ones the page sent.
   const [urls, setUrls] = useState<Record<string, string>>(photoUrls);
   const [, start] = useTransition();
 
   const pageRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ id: string; mode: "move" | "resize" | "rotate"; dx: number; dy: number } | null>(null);
-  const stroke = useRef<{ points: [number, number][]; y0: number } | null>(null);
-  const [drawing, setDrawing] = useState<string>("");
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -101,25 +94,45 @@ export function Scrapbook({
    * A meal appears on the page as a `meal_card` element, which is what gives it a
    * position of its own. Any meal that has not been placed yet gets a card the first
    * time the page is opened, laid out down the left-hand page.
+   *
+   * The ref is load-bearing: effects run twice in development, and `addEl` is async, so
+   * without it the second pass sees the same empty `els` and files a second card for
+   * every meal. Any duplicate already saved is cleared out here too.
    */
+  const placing = useRef<Set<string>>(new Set());
   useEffect(() => {
-    const placed = new Set(els.filter((e) => e.kind === "meal_card").map((e) => e.meal_id));
-    const missing = meals.filter((m) => !placed.has(m.id));
+    const cards = els.filter((e) => e.kind === "meal_card");
+    const seen = new Set<string>();
+    const extra: Element[] = [];
+    for (const c of cards) {
+      if (!c.meal_id) continue;
+      if (seen.has(c.meal_id)) extra.push(c);
+      else seen.add(c.meal_id);
+    }
+    if (extra.length) {
+      const ids = new Set(extra.map((e) => e.id));
+      setEls((l) => l.filter((e) => !ids.has(e.id)));
+      start(async () => { for (const e of extra) await deleteElementAction(e.id); });
+      return;
+    }
+
+    const missing = meals.filter((m) => !seen.has(m.id) && !placing.current.has(m.id));
     if (!missing.length) return;
-    let i = els.filter((e) => e.kind === "meal_card").length;
+    let row = seen.size;
     for (const m of missing) {
-      const row = i++;
+      placing.current.add(m.id);
+      const i = row++;
       void addEl("meal_card", {
         meal_id: m.id,
-        x: 5 + (row % 2) * 4,
-        y: 30 + row * 330,
+        x: 5 + (i % 2) * 4,
+        y: 30 + i * 330,
         w: 26,
-        rot: row % 2 ? 1.6 : -1.8
+        rot: i % 2 ? 1.6 : -1.8
       });
     }
-    // meals is the trigger; els is read fresh above and would loop if watched
+    // meals and els are both read fresh above; watching els would loop on every drag
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meals]);
+  }, [meals, els.length]);
 
   /** Debounced per element, so dragging one thing doesn't rewrite the others. */
   const persist = useCallback((el: Element) => {
@@ -164,7 +177,7 @@ export function Scrapbook({
       kind,
       x: 12 + Math.random() * 50,
       y: 40 + Math.random() * 240,
-      w: kind === "tape" ? 22 : kind === "text" ? 34 : 14,
+      w: kind === "text" ? 34 : 14,
       rot: Math.round(Math.random() * 12 - 6),
       z: els.length,
       data: {},
@@ -174,7 +187,6 @@ export function Scrapbook({
       const created = (await addElementAction(date, base)) as Element;
       setEls((l) => [...l, { ...base, ...created } as Element]);
       setSelected(created.id);
-      setTool("select");
     } catch {
       setStatus("Could not add that");
     }
@@ -194,9 +206,7 @@ export function Scrapbook({
   }
 
   function onElementDown(e: React.PointerEvent, el: Element, mode: "move" | "resize" | "rotate") {
-    // Everything on the page can be picked up at any time — the editor is only for
-    // adding things and for drawing, which would otherwise fight with dragging.
-    if (editing && tool !== "select") return;
+    // Everything on the page can be picked up at any time.
     e.stopPropagation();
     const pos = pagePos(e);
     if (!pos) return;
@@ -208,12 +218,6 @@ export function Scrapbook({
   function onPageMove(e: React.PointerEvent) {
     const pos = pagePos(e);
     if (!pos) return;
-
-    if (stroke.current) {
-      stroke.current.points.push([pos.xPct, pos.yPx - stroke.current.y0]);
-      setDrawing(toPath(stroke.current.points));
-      return;
-    }
 
     const d = drag.current;
     if (!d) return;
@@ -232,86 +236,47 @@ export function Scrapbook({
     }
   }
 
-  function onPageDown(e: React.PointerEvent) {
-    if (!editing) {
-      setSelected(null);
-      return;
-    }
-    const pos = pagePos(e);
-    if (!pos) return;
-
-    if (tool === "doodle") {
-      stroke.current = { points: [[pos.xPct, 0]], y0: pos.yPx };
-      setDrawing("");
-      return;
-    }
-    if (tool === "text") {
-      void addEl("text", { x: clampX(pos.xPct), y: clampY(pos.yPx), text: "write here" });
-      return;
-    }
+  function onPageDown() {
     setSelected(null);
   }
 
   function onPageUp() {
-    if (stroke.current) {
-      const path = toPath(stroke.current.points);
-      const y0 = stroke.current.y0;
-      const pts = stroke.current.points;
-      stroke.current = null;
-      setDrawing("");
-      if (pts.length > 2) {
-        const xs = pts.map((p) => p[0]);
-        void addEl("doodle", {
-          x: clampX(Math.min(...xs)),
-          y: clampY(y0),
-          w: Math.min(90, Math.max(10, Math.max(...xs) - Math.min(...xs))),
-          rot: 0,
-          data: { path, minX: Math.min(...xs) }
-        });
-      }
-      return;
-    }
-    if (drag.current) drag.current = null;
+    drag.current = null;
   }
 
   const sel = els.find((e) => e.id === selected) ?? null;
 
   return (
     <div className="scrapbook">
+      <section className="card elements-tray" aria-label="Add to the page">
+        <h2 className="h2">Add to the page</h2>
+        <div className="scrap-toolbar">
+          <button className="btn sm" onClick={() => void addEl("text", { text: "", w: 30 })}>Text box</button>
+          <span className="scrap-sep" aria-hidden="true" />
+          {POSTITS.map((n) => (
+            <button
+              key={n.paper}
+              className="postit-pick"
+              style={{ background: n.paper }}
+              onClick={() => void addEl("text", { text: "", w: 42, data: { postit: true, paper: n.paper, pin: n.pin } })}
+              aria-label={`Add a ${n.label.toLowerCase()} post-it`}
+              title={`${n.label} post-it`}
+            />
+          ))}
+          <span className="scrap-sep" aria-hidden="true" />
+          {STICKERS.map((st) => (
+            <button key={st} className="btn sm" onClick={() => void addEl("sticker", { text: st })} aria-label={`Add sticker ${st}`}>{st}</button>
+          ))}
+          <span className="muted" role="status" style={{ fontSize: 12 }}>{status}</span>
+        </div>
+        <p className="muted" style={{ fontSize: 12, margin: 0 }}>
+          Drag anything on the page to move it, the corner to resize, the top dot to turn it, × to remove.
+        </p>
+      </section>
+
       <Book>
         <div className={`journal-sheet ${editing ? "is-editing" : ""}`}>
           <div className="journal-canvas">
-      <div className="scrap-toolbar">
-        {editing && (
-          <>
-            {(["select", "text", "doodle"] as Tool[]).map((t) => (
-              <button key={t} className={`btn sm ${tool === t ? "pri" : ""}`} onClick={() => setTool(t)} aria-pressed={tool === t}>
-                {t === "select" ? "Select" : t === "text" ? "Text" : "Doodle"}
-              </button>
-            ))}
-            <span className="scrap-sep" aria-hidden="true" />
-            {POSTITS.map((n) => (
-              <button
-                key={n.paper}
-                className="postit-pick"
-                style={{ background: n.paper }}
-                onClick={() => void addEl("text", { text: "", w: 42, data: { postit: true, paper: n.paper, pin: n.pin } })}
-                aria-label={`Add a ${n.label.toLowerCase()} post-it`}
-                title={`${n.label} post-it`}
-              />
-            ))}
-            <span className="scrap-sep" aria-hidden="true" />
-            {STICKERS.slice(0, 6).map((s) => (
-              <button key={s} className="btn sm" onClick={() => void addEl("sticker", { text: s })} aria-label={`Add sticker ${s}`}>{s}</button>
-            ))}
-            <button className="btn sm" onClick={() => setPhotoOpen(true)}>Photo</button>
-            <span className="muted" role="status" style={{ fontSize: 12 }}>{status}</span>
-          </>
-        )}
-      </div>
-
-      {editing && tool === "doodle" && <p className="muted" style={{ fontSize: 12 }}>Drag on the page to draw.</p>}
-
       <div
         ref={pageRef}
         className={`scrap-page ${editing ? "is-editing" : ""}`}
@@ -320,12 +285,11 @@ export function Scrapbook({
         onPointerUp={onPageUp}
         onPointerCancel={onPageUp}
       >
-        {title && <p className="scrap-title">{title}</p>}
         {els.length === 0 && !editing && (
           <p className="scrap-empty">Nothing on today&apos;s page yet — press Edit Journal.</p>
         )}
 
-        {els.filter((el) => el.kind !== "tape" && el.kind !== "mood").map((el) => {
+        {els.filter((el) => el.kind !== "tape" && el.kind !== "mood" && el.kind !== "doodle").map((el) => {
           const isSel = el.id === selected;
           const url = el.photo_path ? urls[el.photo_path] : null;
           const note = isPostit(el);
@@ -340,7 +304,7 @@ export function Scrapbook({
                 transform: `rotate(${el.rot}deg)`,
                 zIndex: el.z,
                 background: note ? ((el.data?.paper as string) ?? POSTITS[0].paper) : undefined,
-                cursor: editing && tool !== "select" ? "crosshair" : "grab"
+                cursor: "grab"
               }}
               onPointerDown={(e) => onElementDown(e, el, "move")}
             >
@@ -396,6 +360,7 @@ export function Scrapbook({
                   <button className="scrap-handle rotate" onPointerDown={(e) => onElementDown(e, el, "rotate")} aria-label="Rotate" />
                   <button
                     className="scrap-handle del"
+                    onPointerDown={(e) => e.stopPropagation()}
                     onClick={() => {
                       if (el.kind === "meal_card" && el.meal_id) {
                         const m = mealById.get(el.meal_id);
@@ -417,11 +382,6 @@ export function Scrapbook({
           );
         })}
 
-        {drawing && (
-          <svg className="scrap-live" viewBox="0 0 100 400" preserveAspectRatio="none">
-            <path d={drawing} fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        )}
       </div>
 
           </div>
@@ -429,22 +389,11 @@ export function Scrapbook({
       </Book>
 
       <div className="book-actions">
-        <button className="btn pri" onClick={() => { setEditing(!editing); setSelected(null); setTool("select"); }} aria-pressed={editing}>
+        <button className="btn pri" onClick={() => { setEditing(!editing); setSelected(null); }} aria-pressed={editing}>
           {editing ? "Done editing" : "Edit Journal"}
         </button>
         <Link className="btn pri" href={addMealHref}>Add meal</Link>
       </div>
-
-      {photoOpen && (
-        <PhotoDrop
-          onCancel={() => setPhotoOpen(false)}
-          onPlaced={(path, url) => {
-            setPhotoOpen(false);
-            if (url) setUrls((m) => ({ ...m, [path]: url }));
-            void addEl("photo", { photo_path: path, w: 30 });
-          }}
-        />
-      )}
 
       {sel?.kind === "photo" && meals.length > 0 && (
         <label className="field" style={{ maxWidth: 360 }}>

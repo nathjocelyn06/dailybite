@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.19 · 2026-11-18 — The tray comes out of the book
+- 🐛 **You could not delete anything.** The × on a selected element sat inside the element, so its pointerdown started a drag and the browser dropped the click that followed. It stops the event now, and delete works on post-its, text, stickers and meal cards alike.
+- 🐛 **Meals were getting two polaroids.** Effects run twice in development and the card is filed asynchronously, so the second pass saw the same empty page and filed again. A ref holds the meals already being placed, and duplicates already saved are cleared on load.
+- **Add to the page is its own card**, between Day summary and the book: a text box, four post-its and the stickers. **Photo and Doodle are gone**, along with the tool modes they needed — dragging and drawing cannot both own a drag on the paper.
+- **A long silver spine** runs down the fold with **half-circle rings** standing on it.
+- The pink cover is brighter (`#F2B9C2 → #FBA3BE`), the buttons are the old yellow again, and the page title no longer prints on the paper.
+
 ## v4.18 · 2026-11-18 — A book lying open, and everything movable
 - **Two facing pages, flat.** One sheet with the fold painted down the middle — warm paper, a soft curve into the gutter, the block of pages peeking out at the edges, and flat chrome rings lying along the fold. The two pages are a background rather than two containers, so the whole spread is one coordinate space and a polaroid can be dragged from the left page to the right without a special case.
 - **Nothing waits for Edit Journal any more.** Meals, post-its, stickers and text can be picked up, resized and turned at any time; the button now only opens the tray for *adding* things and for drawing, which would otherwise fight with dragging.
