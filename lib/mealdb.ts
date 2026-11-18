@@ -6,13 +6,21 @@
 const KEY = process.env.MEALDB_API_KEY || "1";
 const BASE = `https://www.themealdb.com/api/json/v1/${KEY}`;
 
+/** Where a browsable recipe came from. Both are free and need no key. */
+export type RecipeSource = "themealdb" | "bank";
+
 export type RecipeCard = {
-  source: "themealdb";
+  source: RecipeSource;
   external_id: string;
   title: string;
   thumb_url: string | null;
   category: string | null;
   area: string | null;
+  /** Present when the source states them, or once a detail lookup has estimated them. */
+  est_minutes?: number;
+  est_difficulty?: "Easy" | "Medium" | "Hard";
+  kcal_per_serving?: number | null;
+  youtube_id?: string | null;
 };
 
 export type RecipeDetail = RecipeCard & {
@@ -25,6 +33,10 @@ export type RecipeDetail = RecipeCard & {
   tags: string[];
   est_minutes: number;
   est_difficulty: "Easy" | "Medium" | "Hard";
+  servings: number | null;
+  kcal_per_serving: number | null;
+  /** TheMealDB states no time or difficulty, so ours are guesses; the bank's are not. */
+  times_estimated: boolean;
 };
 
 type Raw = Record<string, string | null | undefined>;
@@ -77,6 +89,9 @@ export function parseMeal(m: Raw): RecipeDetail {
     youtube_id: youtubeId(video_url),
     source_url: m.strSource?.trim() || null,
     tags: (m.strTags ?? "").split(",").map((t) => t.trim()).filter(Boolean),
+    servings: null,
+    kcal_per_serving: null,
+    times_estimated: true,
     ...estimate(ingredients.length, step_list.length)
   };
 }
@@ -101,20 +116,18 @@ async function get(path: string): Promise<{ meals: Raw[] | null }> {
 export async function searchMeals(q: {
   query?: string;
   category?: string;
-  area?: string;
+  /** Not a browse filter any more — kept because "Cook from my fridge" searches by it. */
   ingredient?: string;
 }): Promise<RecipeCard[]> {
   let list: Raw[] = [];
   if (q.query) list = (await get(`search.php?s=${encodeURIComponent(q.query)}`)).meals ?? [];
   else if (q.ingredient) list = (await get(`filter.php?i=${encodeURIComponent(q.ingredient.trim().replace(/\s+/g, "_"))}`)).meals ?? [];
   else if (q.category) list = (await get(`filter.php?c=${encodeURIComponent(q.category)}`)).meals ?? [];
-  else if (q.area) list = (await get(`filter.php?a=${encodeURIComponent(q.area)}`)).meals ?? [];
   else list = await randomMeals(12);
 
   let cards = list.map(card);
-  // filter.php results lack category/area; apply secondary filters only when the data exists.
+  // filter.php results lack a category, so only narrow when the data is actually there.
   if (q.query && q.category) cards = cards.filter((c) => c.category?.toLowerCase() === q.category!.toLowerCase());
-  if (q.query && q.area) cards = cards.filter((c) => c.area?.toLowerCase() === q.area!.toLowerCase());
   return cards;
 }
 
@@ -135,7 +148,3 @@ export async function listCategories(): Promise<string[]> {
   return (data.meals ?? []).map((m) => String(m.strCategory));
 }
 
-export async function listAreas(): Promise<string[]> {
-  const data = await get("list.php?a=list");
-  return (data.meals ?? []).map((m) => String(m.strArea));
-}

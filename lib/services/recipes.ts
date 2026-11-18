@@ -1,6 +1,7 @@
 import "server-only";
 import { type Db, must, clean } from "./db";
-import { getMeal, searchMeals, type RecipeCard, type RecipeDetail } from "../mealdb";
+import { getMeal, searchMeals, type RecipeCard, type RecipeDetail, type RecipeSource } from "../mealdb";
+import { getBankRecipe } from "../recipe-bank";
 import { listFridge } from "./fridge";
 import { addShopping } from "./shopping";
 
@@ -39,9 +40,23 @@ export async function getSaved(db: Db, id: string): Promise<SavedRecipe | null> 
   return must(await db.sb.from("recipes").select(COLS).eq("user_id", db.userId).eq("id", id).maybeSingle(), "get recipe") as SavedRecipe | null;
 }
 
-export async function findSavedByExternal(db: Db, externalId: string): Promise<SavedRecipe | null> {
+/**
+ * Where a browsed recipe lands in the user's own table.
+ *
+ * TheMealDB recipes are kept as a reference (`source: 'themealdb'` + its id) because the
+ * API can always be asked again. Free-bank recipes are **copied in whole** as the user's
+ * own, keyed `bank:<id>`: they carry stated times and calories per serving that are worth
+ * keeping even if the source goes away, and the schema's source check only allows
+ * 'mine' and 'themealdb', so this needs no migration.
+ */
+export function savedKey(source: RecipeSource, externalId: string): { source: "mine" | "themealdb"; external_id: string } {
+  return source === "bank" ? { source: "mine", external_id: `bank:${externalId}` } : { source: "themealdb", external_id: externalId };
+}
+
+export async function findSavedByExternal(db: Db, externalId: string, source: RecipeSource = "themealdb"): Promise<SavedRecipe | null> {
+  const key = savedKey(source, externalId);
   return must(
-    await db.sb.from("recipes").select(COLS).eq("user_id", db.userId).eq("source", "themealdb").eq("external_id", externalId).maybeSingle(),
+    await db.sb.from("recipes").select(COLS).eq("user_id", db.userId).eq("source", key.source).eq("external_id", key.external_id).maybeSingle(),
     "find recipe"
   ) as SavedRecipe | null;
 }
@@ -51,8 +66,37 @@ export async function saveRecipe(
   db: Db,
   input:
     | { source: "themealdb"; external_id: string; folder?: string; kcal_per_serving?: number; servings?: number }
+    | { source: "bank"; external_id: string; folder?: string }
     | ({ source: "mine"; title: string } & Partial<Omit<SavedRecipe, "id" | "external_id" | "source">>)
 ): Promise<SavedRecipe> {
+  if (input.source === "bank") {
+    const b = await getBankRecipe("bank", input.external_id);
+    if (!b) throw new Error(`Recipe ${input.external_id} is not in the recipe bank`);
+    const key = savedKey("bank", input.external_id);
+    const row = {
+      user_id: db.userId,
+      source: key.source,
+      external_id: key.external_id,
+      title: b.title,
+      category: b.category,
+      area: b.area,
+      thumb_url: b.thumb_url,
+      video_url: null,
+      source_url: null,
+      ingredients: b.ingredients,
+      steps: b.steps,
+      minutes: b.est_minutes,
+      difficulty: b.est_difficulty,
+      diet_tags: b.tags.filter((t) => /vegan|vegetarian|gluten|dairy/i.test(t)).map((t) => t.toLowerCase()),
+      kcal_per_serving: b.kcal_per_serving,
+      servings: b.servings,
+      folder: input.folder ?? "Saved"
+    };
+    return must(
+      await db.sb.from("recipes").upsert(row, { onConflict: "user_id,source,external_id" }).select(COLS).single(),
+      "save recipe"
+    ) as SavedRecipe;
+  }
   if (input.source === "themealdb") {
     const m = await getMeal(input.external_id);
     if (!m) throw new Error(`Recipe ${input.external_id} not found on TheMealDB`);

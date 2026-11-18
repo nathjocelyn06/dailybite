@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { scannerAction, deleteRecipeAction } from "../actions";
 
 type Card = {
+  source: "themealdb" | "bank";
   external_id: string;
   title: string;
   thumb_url: string | null;
@@ -12,6 +13,7 @@ type Card = {
   area: string | null;
   est_minutes?: number;
   est_difficulty?: string;
+  kcal_per_serving?: number | null;
   youtube_id?: string | null;
 };
 type Saved = { id: string; title: string; thumb_url: string | null; folder: string; source: string; external_id: string | null; video: boolean; minutes: number | null };
@@ -19,7 +21,7 @@ type Tab = "discover" | "collection" | "scanner";
 
 export function RecipesClient(props: {
   initialTab: Tab;
-  initialQuery: { query: string; category: string; area: string; ingredient: string };
+  initialQuery: { query: string; category: string };
   initialIngredients: string;
   saved: Saved[];
 }) {
@@ -55,15 +57,16 @@ function RecipeGrid({ list }: { list: Card[] }) {
   return (
     <div className="grid">
       {list.map((r) => (
-        <Link key={r.external_id} href={`/recipes/themealdb/${r.external_id}`} className="card" style={{ padding: 0, overflow: "hidden", textDecoration: "none" }}>
+        <Link key={`${r.source}-${r.external_id}`} href={`/recipes/${r.source}/${r.external_id}`} className="card" style={{ padding: 0, overflow: "hidden", textDecoration: "none" }}>
           <div style={{ position: "relative" }}>
-            {r.thumb_url ? <img src={`${r.thumb_url}/preview`} alt="" style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover" }} loading="lazy" /> : <div className="thumb" />}
+            {r.thumb_url ? <img src={r.source === "themealdb" ? `${r.thumb_url}/preview` : r.thumb_url} alt="" style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover" }} loading="lazy" /> : <div className="thumb" />}
             {r.youtube_id && <span className="chip" style={{ position: "absolute", left: 10, bottom: 10 }}>▶ video</span>}
+            {r.kcal_per_serving ? <span className="chip fresh" style={{ position: "absolute", right: 10, bottom: 10 }}>{r.kcal_per_serving} kcal</span> : null}
           </div>
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 6 }}>
             <span style={{ fontWeight: 600 }}>{r.title}</span>
             <span className="muted">
-              {[r.category, r.area, r.est_minutes ? `~${r.est_minutes} min` : null, r.est_difficulty].filter(Boolean).join(" · ") || "Tap for ingredients & video"}
+              {[r.category, r.area, r.est_minutes ? `${r.source === "bank" ? "" : "~"}${r.est_minutes} min` : null, r.est_difficulty].filter(Boolean).join(" · ") || "Tap for ingredients & video"}
             </span>
           </div>
         </Link>
@@ -72,10 +75,11 @@ function RecipeGrid({ list }: { list: Card[] }) {
   );
 }
 
-function Discover({ initial }: { initial: { query: string; category: string; area: string; ingredient: string } }) {
+function Discover({ initial }: { initial: { query: string; category: string } }) {
   const [q, setQ] = useState({ ...initial, maxMinutes: "", difficulty: "" });
-  const [meta, setMeta] = useState<{ categories: string[]; areas: string[] }>({ categories: [], areas: [] });
+  const [meta, setMeta] = useState<{ categories: string[] }>({ categories: [] });
   const [list, setList] = useState<Card[]>([]);
+  const [partial, setPartial] = useState(false);
   const [state, setState] = useState<"loading" | "ok" | "error">("loading");
 
   useEffect(() => {
@@ -94,9 +98,10 @@ function Discover({ initial }: { initial: { query: string; category: string; are
     const t = setTimeout(() => {
       fetch(`/api/recipes?${params}`)
         .then((r) => r.json())
-        .then((d: { recipes?: Card[]; error?: string }) => {
+        .then((d: { recipes?: Card[]; error?: string; partial?: boolean }) => {
           if (!alive) return;
           setList(d.recipes ?? []);
+          setPartial(!!d.partial);
           setState(d.error ? "error" : "ok");
         })
         .catch(() => alive && setState("error"));
@@ -122,17 +127,6 @@ function Discover({ initial }: { initial: { query: string; category: string; are
           </select>
         </label>
         <label className="field">
-          Cuisine
-          <select className="input" value={q.area} onChange={set("area")}>
-            <option value="">Any</option>
-            {meta.areas.map((a) => <option key={a}>{a}</option>)}
-          </select>
-        </label>
-        <label className="field">
-          Main ingredient
-          <input className="input" placeholder="e.g. tofu" value={q.ingredient} onChange={set("ingredient")} />
-        </label>
-        <label className="field">
           Cooking time
           <select className="input" value={q.maxMinutes} onChange={set("maxMinutes")}>
             <option value="">Any</option>
@@ -152,8 +146,9 @@ function Discover({ initial }: { initial: { query: string; category: string; are
         </label>
       </div>
       <div className="muted">
-        {state === "loading" ? "Loading recipes…" : state === "error" ? "Couldn't reach the recipe service. Try again." : `${list.length} recipes`}
-        {(q.maxMinutes || q.difficulty) && " · time and difficulty are estimates"}
+        {state === "loading" ? "Searching the recipe bank…" : state === "error" ? "Couldn't reach the recipe bank. Try again." : `${list.length} recipes`}
+        {state === "ok" && partial && " · one source didn't answer, showing the rest"}
+        {(q.maxMinutes || q.difficulty) && " · times are exact where a recipe states them, otherwise estimated"}
       </div>
       {state !== "loading" && <RecipeGrid list={list} />}
     </section>

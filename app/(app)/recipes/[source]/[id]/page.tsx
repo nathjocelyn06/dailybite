@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { webDb } from "@/lib/services/db";
-import { getMeal, youtubeEmbed, youtubeId, splitSteps } from "@/lib/mealdb";
+import { youtubeEmbed, youtubeId, splitSteps } from "@/lib/mealdb";
+import { getBankRecipe } from "@/lib/recipe-bank";
 import { findSavedByExternal, getSaved, matchFridge } from "@/lib/services/recipes";
 import { RecipeActions } from "./RecipeActions";
 import { Ingredients } from "./Ingredients";
@@ -31,17 +32,19 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
   let savedId: string | null = null;
   let externalId: string | null = null;
 
-  if (source === "themealdb") {
-    const m = await getMeal(id);
+  if (source === "themealdb" || source === "bank") {
+    const m = await getBankRecipe(source, id);
     if (!m) notFound();
-    const saved = await findSavedByExternal(db, id);
+    const saved = await findSavedByExternal(db, id, source);
     savedId = saved?.id ?? null;
     externalId = id;
     r = {
       title: m.title, thumb_url: m.thumb_url, category: m.category, area: m.area, ingredients: m.ingredients,
       steps: m.step_list, video_url: m.video_url, source_url: m.source_url, minutes: m.est_minutes,
-      difficulty: m.est_difficulty, kcal: saved?.kcal_per_serving ?? null, estimated: true,
-      servings: saved?.servings ?? null
+      difficulty: m.est_difficulty, estimated: m.times_estimated,
+      // the bank states calories per serving; TheMealDB has none until the user saves one
+      kcal: m.kcal_per_serving ?? saved?.kcal_per_serving ?? null,
+      servings: m.servings ?? saved?.servings ?? null
     };
   } else {
     const s = await getSaved(db, id);
@@ -88,12 +91,12 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
           </div>
           <h1 className="h1">{r.title}</h1>
           <div className="grid" style={{ gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 8 }}>
-            <div className="card" style={{ padding: 12 }}><div className="lbl">Time</div><strong>{r.minutes ? `~${r.minutes} min` : "—"}</strong></div>
+            <div className="card" style={{ padding: 12 }}><div className="lbl">Time</div><strong>{r.minutes ? `${r.estimated ? "~" : ""}${r.minutes} min` : "—"}</strong></div>
             <div className="card" style={{ padding: 12 }}><div className="lbl">Calories</div><strong>{r.kcal ? `${r.kcal} kcal` : "ask Claude"}</strong></div>
             <div className="card" style={{ padding: 12 }}><div className="lbl">In fridge</div><strong>{r.ingredients.length - missing}/{r.ingredients.length}</strong></div>
           </div>
-          <RecipeActions externalId={externalId} savedId={savedId} missing={missing} />
-          {source !== "themealdb" && savedId && (
+          <RecipeActions source={source === "bank" ? "bank" : "themealdb"} externalId={externalId} savedId={savedId} missing={missing} />
+          {source !== "themealdb" && source !== "bank" && savedId && (
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <Link className="btn pri" href={`/recipes/edit?id=${savedId}`}>Edit recipe</Link>
               <Link className="btn" href="/recipes?tab=collection">All my recipes</Link>

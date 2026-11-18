@@ -381,11 +381,6 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .handle-hit.hit-main { top: 35%; height: 7.5%; }
 .handle-hit:focus-visible { outline: 2px solid var(--ink); }
 
-.status-magnet {
-  position: absolute; right: 8%; bottom: 6%; background: var(--apricot); color: var(--ink);
-  border-radius: 10px; padding: 8px 10px; font-size: 11px; line-height: 1.35; text-align: center;
-  box-shadow: 0 2px 6px rgba(46, 42, 38, 0.25); transform: rotate(-3deg); z-index: 3;
-}
 
 .sticker { position: absolute; touch-action: none; user-select: none; z-index: 4; }
 .sticker img { width: 100%; display: block; filter: drop-shadow(0 2px 4px rgba(46, 42, 38, 0.25)); }

@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.9 · 2026-11-18 — The recipe bank
+- **Find now searches a bank, not one API.** `lib/recipe-bank.ts` browses TheMealDB **and** a second free, keyless source (`lib/freebank.ts`). Nothing is scraped and no key is needed. Each source is awaited separately, so one being down shows the other's results with a note rather than an empty page.
+- **The second source is the one that pays for itself**: its recipes state a real prep + cook time, a difficulty and **calories per serving**, which TheMealDB has none of. Those cards carry a kcal badge, their time has no `~`, and the servings stepper on the detail page works off real numbers.
+- **Saving a bank recipe copies it in whole** as one of your own, keyed `bank:<id>`. It keeps its calories and times even if the source goes away, it stays editable, and it needs no migration — the schema's `source` check only allows `mine` and `themealdb`.
+- **Cuisine and main ingredient are gone from the browser.** Find is Search · Meal type/diet · Cooking time · Difficulty. *Cook from my fridge* still searches by ingredient through its own path, so nothing was lost there; `listAreas` went with the filter.
+- **The fridge's "use soon / low" magnet is gone** from the door.
+- MCP: `search_recipes` takes `max_minutes` and `difficulty` instead of `area`/`ingredient` and returns a `source` per result; `get_recipe`, `save_recipe` and `add_missing_to_shopping` take that `source`.
+
 ## v4.8 · 2026-11-18 — My Kitchen is two doors
 - **My Kitchen is the Figma frame**: *What's In My Kitchen?* over two tall grey cards — the illustrated icon, the name, a line of description and an **Open** button. Nothing else.
 - Each card keeps a live count under its description (`7 items · 0 to buy`, `1 saved · 6 you could cook tonight`), so the doors still say what is behind them.

@@ -89,9 +89,6 @@ export function Fridge({
   const drag = useRef<{ index: number; mode: "move" | "size"; dx: number; dy: number } | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const useSoon = items.filter((i) => i.expiry === "use_soon" || i.expiry === "expired").length;
-  const lowStock = items.filter((i) => i.low).length;
-
   const persist = useCallback((next: DecorPiece[], nextColor: string) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
@@ -233,11 +230,6 @@ export function Fridge({
           >
             <MainDoorArt color={finish} idPrefix="fridge" />
 
-            <span className="status-magnet" aria-label={`${useSoon} to use soon, ${lowStock} running low`}>
-              <strong>{useSoon}</strong> use soon
-              <br />
-              <strong>{lowStock}</strong> low
-            </span>
 
             {decor.map((d, i) => {
               const url = d.photo_path ? urls[d.photo_path] : null;
