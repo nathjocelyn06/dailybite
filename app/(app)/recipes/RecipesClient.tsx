@@ -38,8 +38,8 @@ export function RecipesClient(props: {
       <nav className="tabs" aria-label="Recipe areas">
         {([
           ["discover", "Find", false],
-          ["collection", "Saved", true],
-          ["scanner", "Cook from my fridge", false]
+          ["scanner", "Cook from my fridge", false],
+          ["collection", "Saved", true]
         ] as const).map(([k, label, asIcon]) => (
           <a
             key={k}
@@ -68,13 +68,12 @@ function RecipeGrid({ list }: { list: Card[] }) {
         <Link key={`${r.source}-${r.external_id}`} href={`/recipes/${r.source}/${r.external_id}`} className="card" style={{ padding: 0, overflow: "hidden", textDecoration: "none" }}>
           <div style={{ position: "relative" }}>
             {r.thumb_url ? <img src={`${r.thumb_url}/preview`} alt="" style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover" }} loading="lazy" /> : <div className="thumb" />}
-            {r.youtube_id && <span className="chip" style={{ position: "absolute", left: 10, bottom: 10 }}>▶ video</span>}
             {r.kcal_per_serving ? <span className="chip fresh" style={{ position: "absolute", right: 10, bottom: 10 }}>{r.kcal_per_serving} kcal</span> : null}
           </div>
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 6 }}>
             <span style={{ fontWeight: 600 }}>{r.title}</span>
             <span className="muted">
-              {[r.category, r.area, r.est_minutes ? `~${r.est_minutes} min` : null, r.est_difficulty].filter(Boolean).join(" · ") || "Tap for ingredients & video"}
+              {[r.category, r.area, r.est_minutes ? `~${r.est_minutes} min` : null, r.est_difficulty].filter(Boolean).join(" · ") || "Tap for ingredients and method"}
             </span>
           </div>
         </Link>
@@ -192,7 +191,7 @@ function Collection({ saved }: { saved: Saved[] }) {
             {r.thumb_url ? <img src={`${r.thumb_url}/preview`} alt="" style={{ width: 64, height: 64, borderRadius: 10, objectFit: "cover" }} /> : <div className="ph" style={{ width: 64, height: 64 }} />}
             <Link href={r.source === "themealdb" ? `/recipes/themealdb/${r.external_id}` : `/recipes/mine/${r.id}`} style={{ flex: 1, textDecoration: "none" }}>
               <div style={{ fontWeight: 600 }}>{r.title}</div>
-              <div className="muted">{r.folder}{r.video ? " · video" : ""}{r.minutes ? ` · ~${r.minutes} min` : ""}</div>
+              <div className="muted">{r.folder}{r.minutes ? ` · ~${r.minutes} min` : ""}</div>
             </Link>
             {r.source === "mine" && <Link className="btn sm" href={`/recipes/edit?id=${r.id}`} aria-label={`Edit ${r.title}`}>Edit</Link>}
             <button className="btn sm" disabled={pending} onClick={() => start(() => deleteRecipeAction(r.id))} aria-label={`Remove ${r.title}`}>×</button>

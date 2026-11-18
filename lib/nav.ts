@@ -42,7 +42,7 @@ export const SERVICES: Service[] = [
   { section: "home", href: "/budget", label: "Budget", short: "Budget", icon: "budget", tone: "periwinkle", description: "Food spending this month" },
   { section: "home", href: "/notifications", label: "Notifications", short: "Notifications", icon: "notifications", tone: "coral", description: "Expiry, low stock, meal plan and budget alerts" },
   { section: "kitchen", group: "fridge", href: "/fridge", label: "Fridge", short: "Fridge", icon: "fridge", tone: "emerald", description: "What you have and what expires soon" },
-  { section: "kitchen", group: "fridge", href: "/fridge?tab=list", label: "To buy", short: "To buy", icon: "grocery", tone: "amber", description: "Your grocery list, inside Fridge" },
+  { section: "kitchen", group: "fridge", href: "/to-buy", label: "To buy", short: "To buy", icon: "grocery", tone: "amber", description: "A little list for your next grocery trip" },
   { section: "kitchen", group: "fridge", href: "/snap?mode=receipt", label: "Scan groceries", short: "Scan groceries", icon: "receipt", tone: "ocean", description: "Receipt or items → fridge (you confirm first)" },
   { section: "kitchen", group: "recipes", href: "/recipes", label: "Recipes", short: "Recipes", icon: "recipes", tone: "vermilion", description: "Find recipes with videos" },
   { section: "kitchen", group: "recipes", href: "/recipes?tab=collection", label: "Saved recipes", short: "Saved", icon: "saved", tone: "blush", description: "Your recipe collection" },
@@ -58,7 +58,7 @@ export const SERVICES: Service[] = [
  * how Journal, Budget, Calendar and Notifications are reached from Home on a phone,
  * where there is no sidebar.
  */
-export const HOME_GRID = ["/fridge", "/fridge?tab=list", "/recipes", "/progress"];
+export const HOME_GRID = ["/fridge", "/to-buy", "/recipes", "/progress"];
 
 export const KITCHEN_SERVICES = SERVICES.filter((s) => s.section === "kitchen");
 
@@ -72,7 +72,7 @@ export const SECTION_LABEL: Record<Service["section"], string> = {
 
 /** Which main tab a path belongs to. Settings and the camera highlight none. */
 const SECTION_OF: [prefix: string, tab: TabKey | null][] = [
-  ["/kitchen", "kitchen"], ["/recipes", "kitchen"], ["/fridge", "kitchen"],
+  ["/kitchen", "kitchen"], ["/recipes", "kitchen"], ["/fridge", "kitchen"], ["/to-buy", "kitchen"],
   ["/journal", "journal"],
   ["/archive", "archive"], ["/calendar", "archive"],
   ["/progress", "home"], ["/budget", "home"], ["/notifications", "home"], ["/messages", "home"], ["/insights", "home"],

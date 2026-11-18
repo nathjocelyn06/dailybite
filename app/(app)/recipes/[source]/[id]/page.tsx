@@ -2,12 +2,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { webDb } from "@/lib/services/db";
-import { youtubeEmbed, youtubeId, splitSteps } from "@/lib/mealdb";
+import { splitSteps } from "@/lib/mealdb";
 import { getRecipeDetail } from "@/lib/recipe-bank";
 import { findSavedByExternal, getSaved, matchFridge } from "@/lib/services/recipes";
 import { RecipeActions } from "./RecipeActions";
 import { Ingredients } from "./Ingredients";
-import { MoreVideos } from "./MoreVideos";
 
 type R = {
   title: string;
@@ -60,24 +59,13 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
 
   const have = await matchFridge(db, r.ingredients);
   const missing = have.filter((h) => !h.have).length;
-  const yt = youtubeId(r.video_url);
 
   return (
     <>
       <Link href="/recipes" className="muted" style={{ minHeight: 32, display: "inline-flex", alignItems: "center" }}>‹ Back to recipes</Link>
       <div className="split">
         <div className="grow" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {yt ? (
-            <div className="video">
-              <iframe
-                src={youtubeEmbed(yt)}
-                title={`${r.title} video`}
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            </div>
-          ) : r.thumb_url ? (
+          {r.thumb_url ? (
             <img src={r.thumb_url} alt={r.title} style={{ width: "100%", borderRadius: 16, aspectRatio: "16/10", objectFit: "cover" }} />
           ) : (
             <div className="thumb" />
@@ -102,7 +90,12 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
               <Link className="btn" href="/recipes?tab=collection">All my recipes</Link>
             </div>
           )}
-          {r.source_url && <a className="muted" href={r.source_url} target="_blank" rel="noreferrer">Original source ↗</a>}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {r.source_url && <a className="muted" href={r.source_url} target="_blank" rel="noreferrer">Original source ↗</a>}
+            <a className="muted" href={`https://www.allrecipes.com/search?q=${encodeURIComponent(r.title)}`} target="_blank" rel="noreferrer">
+              More versions on Allrecipes ↗
+            </a>
+          </div>
         </div>
       </div>
 
@@ -123,7 +116,6 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ s
         </section>
       </div>
 
-      <MoreVideos query={r.title} />
     </>
   );
 }

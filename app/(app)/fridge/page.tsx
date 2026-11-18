@@ -2,24 +2,21 @@ import Link from "next/link";
 import { webDb } from "@/lib/services/db";
 import { CATEGORY_LABEL, getDecor, listFridge, type FridgeItemView } from "@/lib/services/fridge";
 import { signedUrls } from "@/lib/services/photos";
-import { listShopping } from "@/lib/services/shopping";
 import { getSettings } from "@/lib/services/settings";
 import { ActionButton } from "@/components/ActionButton";
-import { confirmPendingAction, fridgeQtyAction, fridgeRemoveAction, boughtAction, deleteShoppingAction, moveBoughtAction } from "../actions";
-import { AddFridgeForm, AddShoppingForm } from "./forms";
+import { confirmPendingAction, fridgeRemoveAction } from "../actions";
+import { AddFridgeForm } from "./forms";
 import { Fridge } from "@/components/fridge/Fridge";
 
 /**
- * Stock as the interactive fridge (Phase 4, design/wireframes/D06-Fridge): a door you
- * decorate, handles that swing it open, shelves you tap. Plus the To buy list.
+ * The fridge, and only the fridge: a door you decorate, handles that swing it open,
+ * shelves you tap, the pantry cupboard beside it. To buy is its own page now.
  */
-export default async function FridgePage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
-  const { tab = "fridge" } = await searchParams;
+export default async function FridgePage() {
   const db = await webDb();
-  const [stock, pending, shopping, settings, decor] = await Promise.all([
+  const [stock, pending, settings, decor] = await Promise.all([
     listFridge(db),
     listFridge(db, { status: ["pending"] }),
-    listShopping(db),
     getSettings(db),
     getDecor(db)
   ]);
@@ -35,13 +32,9 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
       <header className="head">
         <div className="titles">
           <span className="lbl">Fridge</span>
-          <h1 className="h1">{tab === "list" ? "To buy" : "What I have"}</h1>
+          <h1 className="h1">What I have</h1>
         </div>
       </header>
-      <nav className="tabs" aria-label="Fridge sections">
-        <Link href="/fridge" aria-current={tab === "fridge" ? "page" : undefined}>Stock</Link>
-        <Link href="/fridge?tab=list" aria-current={tab === "list" ? "page" : undefined}>To buy ({shopping.filter((s) => !s.bought).length})</Link>
-      </nav>
 
       {pending.length > 0 && (
         <section className="card paper" style={{ borderStyle: "dashed" }} aria-label="Waiting for confirmation">
@@ -62,7 +55,6 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
         </section>
       )}
 
-      {tab === "fridge" ? (
         <div className="fridge-columns">
           <section aria-label="Stock" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {stock.length === 0 && <p className="muted">Your fridge is empty. Add items, scan groceries or a receipt — then open the door.</p>}
@@ -89,33 +81,6 @@ export default async function FridgePage({ searchParams }: { searchParams: Promi
             <Link className="btn" href="/recipes?tab=scanner" style={{ justifyContent: "center" }}>Cook from my fridge</Link>
           </div>
         </div>
-      ) : (
-        <div className="split">
-          <section className="card grow" aria-label="Shopping list">
-            <div className="head" style={{ marginBottom: 6 }}>
-              <h2 className="h2" style={{ flex: 1 }}>To buy</h2>
-              <span className="muted">Est. {shopping.filter((s) => !s.bought).reduce((a, s) => a + (s.est_price ?? 0), 0).toLocaleString()}</span>
-            </div>
-            {shopping.length === 0 && <p className="muted">Nothing to buy.</p>}
-            {shopping.map((s) => (
-              <div className="row" key={s.id}>
-                <ActionButton action={boughtAction} args={[s.id, !s.bought]} className="btn sm" label={s.bought ? "Mark not bought" : "Mark bought"}>{s.bought ? "✓" : "○"}</ActionButton>
-                <span style={{ flex: 2, textDecoration: s.bought ? "line-through" : "none" }}>{s.name}</span>
-                <span style={{ flex: 1 }}>{s.qty} {s.unit}</span>
-                <span style={{ flex: 1 }} className="muted">{s.reason}</span>
-                <ActionButton action={deleteShoppingAction} args={[s.id]} label={`Delete ${s.name}`}>×</ActionButton>
-              </div>
-            ))}
-            {shopping.some((s) => s.bought) && (
-              <div style={{ paddingTop: 12 }}><ActionButton action={moveBoughtAction} args={[]} className="btn pri">Move bought items to fridge</ActionButton></div>
-            )}
-          </section>
-          <aside className="side-col">
-            <section className="card"><h2 className="h2" style={{ marginBottom: 10 }}>Add to list</h2><AddShoppingForm /></section>
-            <p className="muted">Store price comparison is a later phase. It should only show prices with a source and update date.</p>
-          </aside>
-        </div>
-      )}
     </>
   );
 }

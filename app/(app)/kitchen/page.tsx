@@ -5,8 +5,9 @@ import { ServiceArt } from "@/components/ServiceArt";
 
 /**
  * My Kitchen (tab 2): food at home, nothing else — two doors, from the Figma.
- *   Fridge  → /fridge   (Stock · To buy)
- *   Recipes → /recipes  (Find · Saved · Cook from my fridge)
+ *   Fridge  → /fridge   (the door, the shelves, the pantry)
+ *   Recipes → /recipes  (Find · Cook from my fridge · Saved)
+ *   To Buy  → /to-buy   (the grocery list)
  * Everything that used to be stacked under them lives on those pages: what can I cook
  * tonight is Cook from my fridge, use-soon and low stock are on the fridge door itself,
  * and the shopping list is the fridge's To buy tab. The live counts stay here so the
@@ -19,17 +20,27 @@ export default async function KitchenPage() {
   const doors = [
     {
       title: "Fridge",
-      desc: "What you have and what to buy",
-      count: `${k.fridge.total} item${k.fridge.total === 1 ? "" : "s"} · ${k.to_buy.open} to buy`,
+      desc: "See what's inside",
+      count: `${k.fridge.total} item${k.fridge.total === 1 ? "" : "s"}${k.fridge.use_soon.length ? ` · ${k.fridge.use_soon.length} to use soon` : ""}`,
       href: "/fridge",
+      cta: "Open",
       icon: "fridge" as const
     },
     {
       title: "Recipes",
-      desc: "Find and cook",
+      desc: "Find and cook your next favorite meal.",
       count: `${k.recipes.saved} saved · ${k.cook_tonight.length} you could cook tonight`,
       href: "/recipes",
+      cta: "Browse",
       icon: "recipes" as const
+    },
+    {
+      title: "To Buy",
+      desc: "A little list for your next grocery trip.",
+      count: `${k.to_buy.open} item${k.to_buy.open === 1 ? "" : "s"} on the list`,
+      href: "/to-buy",
+      cta: "Write",
+      icon: "grocery" as const
     }
   ];
 
@@ -51,7 +62,7 @@ export default async function KitchenPage() {
               <p>{d.desc}</p>
               <span className="muted">{d.count}</span>
             </div>
-            <Link className="btn kitchen-open" href={d.href}>Open</Link>
+            <Link className="btn kitchen-open" href={d.href}>{d.cta}</Link>
           </section>
         ))}
       </div>

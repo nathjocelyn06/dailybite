@@ -322,7 +322,7 @@ export function registerTools(server: McpServer) {
       const r = await getRecipeDetail("themealdb", external_id);
       if (!r) throw new Error("Recipe not found");
       const res = await addMissingToShopping(db, r);
-      return { text: `Missing: ${res.missing.join(", ") || "nothing"}. Added ${res.added} to the shopping list.`, data: res, link: "/fridge?tab=list" };
+      return { text: `Missing: ${res.missing.join(", ") || "nothing"}. Added ${res.added} to the shopping list.`, data: res, link: "/to-buy" };
     })
   );
 
@@ -420,7 +420,7 @@ export function registerTools(server: McpServer) {
     async ({ include_bought }) => run(async (db) => {
       const list = await listShopping(db, include_bought);
       const est = list.filter((i) => !i.bought).reduce((a, i) => a + (i.est_price ?? 0), 0);
-      return { text: `${list.filter((i) => !i.bought).length} to buy, est. ${est.toLocaleString()}.`, data: list, link: "/fridge?tab=list" };
+      return { text: `${list.filter((i) => !i.bought).length} to buy, est. ${est.toLocaleString()}.`, data: list, link: "/to-buy" };
     })
   );
 

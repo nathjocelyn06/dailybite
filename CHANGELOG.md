@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.11 · 2026-11-18 — Three doors, no video
+- **To Buy is its own page** (`/to-buy`) and the third card on My Kitchen. It was a tab inside Fridge, which made that screen two screens under one title; the fridge is now just the fridge, the door, the shelves and the pantry.
+- **My Kitchen reads like the frame**: Fridge / *See what's inside* / **Open**, Recipes / *Find and cook your next favorite meal.* / **Browse**, To Buy / *A little list for your next grocery trip.* / **Write**, each with a live count under it.
+- **Saved sits last** in the recipe tabs, after *Cook from my fridge*, as a bookmark.
+- **No YouTube anywhere in recipes**: the detail page leads with the photo, the player and the More-videos section are gone, and the video chip is off the cards.
+- Recipe pages link out to **Allrecipes search** for other versions of the same dish — a link, not a copy. See the note below.
+
 ## v4.10 · 2026-11-18 — Recipes you can actually cook from
 - **The second recipe source is gone.** It was demo data: ingredients listed as bare names with no quantities and a five-line method. You cannot cook from that, so it has no place in a cooking app. Every recipe now comes from TheMealDB, which carries real measures (`3/4 cup soy sauce`), a full method, a photo, a YouTube video and a link to the original. The `source` field stays on every card and tool so a genuine second source can join without touching the pages.
 - **The method is split into steps you can follow while cooking.** Paragraphs first, then any paragraph over 200 characters is broken again at sentence ends — one action per line, not a word rewritten. The Teriyaki Chicken Casserole goes from 6 dense paragraphs to 10 steps, and "350° F" and "½ cup" are left intact rather than split down the middle.
