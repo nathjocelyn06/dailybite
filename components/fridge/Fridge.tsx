@@ -30,14 +30,14 @@ const SHELVES: { key: FridgeItemView["category"]; label: string; door: Exclude<D
 ];
 
 const TRAY: { kind: DecorPiece["kind"]; label: string; text: string; color: string }[] = [
-  { kind: "postit", label: "Post-it", text: "buy milk", color: "#F9D312" },
-  { kind: "note", label: "Note", text: "eat me first", color: "#F3A9C8" },
-  { kind: "badge", label: "Badge", text: "★", color: "#E8401C" },
-  { kind: "magnet", label: "Magnet", text: "●", color: "#0A73B8" },
-  { kind: "strip", label: "Tape", text: "", color: "#9A80BD" }
+  { kind: "postit", label: "Post-it", text: "buy milk", color: "#FFDBA7" },
+  { kind: "note", label: "Note", text: "eat me first", color: "#FFCAD4" },
+  { kind: "badge", label: "Badge", text: "★", color: "#FF877E" },
+  { kind: "magnet", label: "Magnet", text: "●", color: "#D9EFFD" }
 ];
 
-const COLOURS = ["#CFE0EA", "#EDEDEB", "#FDF1B8", "#D6EDE1", "#F3A9C8", "#4F6FB5", "#231F1C"];
+/** The six brand colours — the only fridge colours offered. */
+const COLOURS = ["#FFCAD4", "#D9EFFD", "#C2FFE5", "#FF877E", "#FFDBA7", "#EDD4FF"];
 const clamp = (v: number, lo = 2, hi = 98) => Math.min(hi, Math.max(lo, v));
 
 /**

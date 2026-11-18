@@ -464,3 +464,152 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   background: #1a1917; touch-action: none; cursor: grab; border: 1px solid var(--line);
 }
 .crop-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: center; user-select: none; }
+
+
+/* ====================================================================
+   DailyBite design system — Headspace Apercu + the six-colour palette.
+   Appended last on purpose: redefining the tokens here re-skins every
+   page, card, button and chip at once instead of editing each file.
+   ==================================================================== */
+
+@font-face {
+  font-family: "Headspace Apercu";
+  src: url("/fonts/HeadspaceApercu-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Headspace Apercu";
+  src: url("/fonts/HeadspaceApercu-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Headspace Apercu";
+  src: url("/fonts/HeadspaceApercu-ExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---- the six brand colours ---- */
+  --blush-pink: #FFCAD4;
+  --sky: #D9EFFD;
+  --mint: #C2FFE5;
+  --coral: #FF877E;   /* primary accent — replaces the old red everywhere */
+  --apricot: #FFDBA7;
+  --lilac-soft: #EDD4FF;
+
+  /* ---- neutrals: warm cream, not grey paper ---- */
+  --paper-bg: #FFF8F0;
+  --bg: var(--paper-bg);
+  --paper: #FFFDF9;
+  --surface: #ffffff;
+  --side: #FFFDF9;
+  --line: #EFE2D6;
+  --line-soft: #F5EBE1;
+  --grid: #E3D5C7;
+  --ink-black: #2E2A26;
+  --ink: var(--ink-black);
+  --ink-2: #5A524B;
+  --muted: #837A72;
+
+  /* ---- purpose tokens, remapped onto the palette ---- */
+  --accent: var(--coral);
+  --accent-soft: var(--sky);
+  --accent-line: #F2655A;
+  --sage: var(--coral);
+  --sage-ink: #B4453C;        /* coral dark enough for text on light (>= 4.5:1) */
+  --deep: #4A6572;
+  --hero: var(--apricot);
+  --tip: var(--apricot);
+  --tip-label: #7A5520;
+  --overview-label: var(--apricot);
+
+  --warn-bg: #FFE4E1;
+  --warn-line: var(--coral);
+  --warn-ink: #A33F38;
+  --fresh-bg: var(--mint);
+  --fresh-ink: #0B6B4A;
+
+  /* meal colours, from the palette */
+  --meal-breakfast: var(--apricot);
+  --meal-lunch: var(--coral);
+  --meal-dinner: var(--lilac-soft);
+  --meal-snack: var(--blush-pink);
+
+  --radius: 14px;
+  --radius-lg: 20px;
+
+  /* ---- type ---- */
+  --font: "Headspace Apercu", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hand: "Headspace Apercu", system-ui, sans-serif;
+  --w-title: 800;
+  --w-subtitle: 500;
+  --w-body: 300;
+
+  /* responsive scale: comfortable on a phone, prominent on a desktop */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+  --text-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.9vw, 2.75rem);
+}
+
+body {
+  font-family: var(--font);
+  font-weight: var(--w-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* titles: ExtraBold */
+.h1, h1 { font-weight: var(--w-title); font-size: var(--text-2xl); line-height: 1.15; letter-spacing: -0.02em; }
+.hero .h1, .titles .h1 { font-size: var(--text-2xl); }
+h1.page-title { font-size: var(--text-3xl); }
+
+/* subtitles, cards, navigation, buttons: Medium */
+.h2, h2, h3 { font-weight: var(--w-subtitle); font-size: var(--text-lg); line-height: 1.3; letter-spacing: -0.01em; }
+.btn, .chip, .nav a, .tabbar a, .tabs a, .seg-links a, .seg-links button, .lbl, .brand-name, .nav-label, th {
+  font-weight: var(--w-subtitle);
+}
+.lbl { font-size: var(--text-xs); letter-spacing: 0.08em; }
+
+/* body copy: Light */
+p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-body); }
+.muted { font-size: var(--text-sm); color: var(--muted); }
+.input, input, select, textarea { font-family: var(--font); font-size: var(--text-base); }
+
+/* the handwriting accent now uses Light Apercu rather than a Google face */
+.hand { font-family: var(--hand); font-weight: var(--w-body); letter-spacing: 0.01em; }
+
+/* primary action: coral with ink text (7:1), never white-on-coral which fails contrast */
+.btn.pri { background: var(--coral); color: var(--ink); border-color: var(--accent-line); }
+.btn.pri:hover { background: #FF9A92; }
+
+/* softer, warmer surfaces to match the palette */
+.card { border-radius: var(--radius-lg); }
+.chip.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
+
+/* The v3 Chroma names are still referenced in places. Point them at the new palette
+   so nothing can render the old red, and delete them once no rule uses them. */
+:root {
+  --vermilion: var(--coral);
+  --signal-red: var(--accent-line);
+  --amber: var(--apricot);
+  --sun: var(--apricot);
+  --blush: var(--blush-pink);
+  --lilac: var(--lilac-soft);
+  --periwinkle: #8FB8D6;
+  --cobalt: #6FA8CF;
+  --ocean: #4A6572;
+  --emerald: #5BC9A0;
+}

@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.2 · 2026-11-18 — New design system: Headspace Apercu + the six-colour palette
+- **Headspace Apercu, properly loaded.** The three `.otf` files are served from `public/fonts` through `@font-face` at weights 300 / 500 / 800, and the Google Fonts link (Inter + Caveat) is gone — no network font requests remain. ExtraBold for titles, Medium for subtitles, cards, nav and buttons, Light for body copy. The journal handwriting accent now uses Apercu Light rather than Caveat.
+- **A responsive type scale** on `clamp()`: titles stay prominent on a desktop without overwhelming a phone, body text never drops below ~15 px.
+- **The six brand colours** — `#FFCAD4` `#D9EFFD` `#C2FFE5` `#FF877E` `#FFDBA7` `#EDD4FF` — drive the interface, with **`#FF877E` as the primary accent replacing every red**. Backgrounds moved from grey paper to warm cream (`#FFF8F0`).
+- Applied by **redefining the design tokens**, so every page, card, chip and button re-skins at once rather than each file drifting. The old Chroma names are aliased onto the new palette so nothing can still render the old red.
+- Coral buttons use ink text, not white: `#FF877E` with white fails contrast at 2.3:1, with ink it passes at ~7:1.
+- Fridge colours are now exactly the six brand colours, and tape is gone from its tray.
+
 ## v4.1 · 2026-11-17 — Phase 4: the scrapbook journal page
 `app/(app)/journal/Scrapbook.tsx`, from `D05-Journal`. The day page is now something you make rather than fill in.
 - **Decorate page** turns the page into a canvas: six food stickers, mood stamps, washi tape, handwriting text and freehand doodles.
