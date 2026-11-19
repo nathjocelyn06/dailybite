@@ -22,7 +22,20 @@ const COLS = "id,kind,title,body,href,read_at,dismissed_at,created_at";
  * Derive reminders from current data. Idempotent: dedupe_key keeps one row per
  * (item, day) so calling this on every page load or tool call is safe. No cron needed.
  */
-export async function refreshNotifications(db: Db): Promise<void> {
+/**
+ * Deriving reminders means reading the fridge, the meals and the month's expenses and
+ * then writing — six round trips in front of a page that only wanted to show a badge.
+ * Nothing it derives changes minute to minute, so a warm process does it at most every
+ * five minutes. The Notifications page passes `force`, because that is the one screen
+ * where the list itself is the point.
+ */
+const lastRefresh = new Map<string, number>();
+const REFRESH_EVERY_MS = 5 * 60_000;
+
+export async function refreshNotifications(db: Db, opts: { force?: boolean } = {}): Promise<void> {
+  const now = Date.now();
+  if (!opts.force && now - (lastRefresh.get(db.userId) ?? 0) < REFRESH_EVERY_MS) return;
+  lastRefresh.set(db.userId, now);
   const today = dayKey(new Date(), db.tz);
   const [stock, plannedToday, budget] = await Promise.all([
     listFridge(db),

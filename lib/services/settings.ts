@@ -1,5 +1,6 @@
 import "server-only";
-import { type Db, must, clean } from "./db";
+import { cache } from "react";
+import { type Db, must, clean, forgetTimezone } from "./db";
 import { DEFAULT_TZ } from "../env";
 
 export type Settings = {
@@ -26,7 +27,14 @@ export type Settings = {
  * "duplicate key value violates unique constraint settings_pkey" and take the whole
  * page down. Insert-or-ignore, then read back whoever won.
  */
-export async function getSettings(db: Db): Promise<Settings> {
+/**
+ * Three services read the settings row on a single page load (the daily summary, the
+ * expense summary, progress). `cache` collapses those into one query for the length
+ * of one request; outside a request it is a plain call, which is what MCP tools get.
+ */
+export const getSettings = cache(readSettings);
+
+async function readSettings(db: Db): Promise<Settings> {
   const found = must(await db.sb.from("settings").select("*").eq("user_id", db.userId).maybeSingle<Settings>(), "load settings");
   if (found) return normalise(found);
 
@@ -44,6 +52,7 @@ export async function getSettings(db: Db): Promise<Settings> {
 
 export async function updateSettings(db: Db, patch: Partial<Omit<Settings, "user_id">>): Promise<Settings> {
   await getSettings(db);
+  if (patch.timezone) forgetTimezone();
   const row = must(
     await db.sb.from("settings").update(clean(patch)).eq("user_id", db.userId).select("*").single<Settings>(),
     "update settings"

@@ -28,9 +28,31 @@ export async function ownerDb(): Promise<Db> {
   return { sb, userId, tz: await loadTz(sb, userId) };
 }
 
+/**
+ * The time zone, remembered for a minute.
+ *
+ * Every page, every server action and every MCP tool starts with a Db, and the Db
+ * needs the time zone before it can work out what "today" is. Read fresh, that is a
+ * database round trip in front of everything else the request does — and the database
+ * is in Seoul, so it is not a cheap one. The value changes about once in the life of
+ * the app, so a warm process keeps it for 60 seconds: a time-zone change in Settings
+ * is live within a minute, and nothing else ever notices.
+ */
+let tzCache: { userId: string; tz: string; at: number } | null = null;
+const TZ_TTL_MS = 60_000;
+
+/** Called by updateSettings so a time-zone change is not held for the minute. */
+export function forgetTimezone(): void {
+  tzCache = null;
+}
+
 async function loadTz(sb: SupabaseClient, userId: string): Promise<string> {
+  const now = Date.now();
+  if (tzCache && tzCache.userId === userId && now - tzCache.at < TZ_TTL_MS) return tzCache.tz;
   const { data } = await sb.from("settings").select("timezone").eq("user_id", userId).maybeSingle();
-  return (data?.timezone as string | undefined) ?? DEFAULT_TZ;
+  const tz = (data?.timezone as string | undefined) ?? DEFAULT_TZ;
+  tzCache = { userId, tz, at: now };
+  return tz;
 }
 
 type Res<T> = { data: T | null; error: { message: string } | null };

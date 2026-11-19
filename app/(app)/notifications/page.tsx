@@ -16,7 +16,7 @@ const KINDS: { k: Notification["kind"] | "all"; label: string }[] = [
 export default async function NotificationsPage({ searchParams }: { searchParams: Promise<{ kind?: string }> }) {
   const { kind = "all" } = await searchParams;
   const db = await webDb();
-  await refreshNotifications(db).catch(() => undefined);
+  await refreshNotifications(db, { force: true }).catch(() => undefined);
   const list = await listNotifications(db, { kind: kind === "all" ? undefined : (kind as Notification["kind"]) });
   return (
     <>

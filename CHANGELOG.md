@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.26 · 2026-11-19 — The waiting was geography
+- **The app was running on the wrong side of the world.** Requests entered Vercel in Seoul and were then handed to a function in Virginia, which talked to a database back in Seoul — so every single query crossed the Pacific twice. `vercel.json` pins the functions to `icn1`, next to the database.
+- **Fewer trips to make a page.** The time zone (read before anything else can start, on every page, action and MCP call) is held for a minute; the settings row is read once per request instead of three times; and reminders are re-derived at most every five minutes instead of on every page load — six round trips that used to sit in front of Home. The Notifications page still forces a fresh pass, because there the list is the point.
+- **The journal is a book again, not a book on a pink mat.** The cover is a thin frame round the paper and the spread takes the full width and most of the window's height.
+
 ## v4.25 · 2026-11-19 — Phase 6: DailyBite draws itself inside Claude
 - **Three MCP Apps views.** Ask Claude for your day, your fridge or a meal and it can now render the real thing — the calorie bar and macros, the shelves with their use-soon flags, the meal with its items — instead of a wall of JSON.
 - **They do things.** Confirm a pending meal from the day view, use one of something from the fridge view (the shelf re-reads itself), confirm or delete from the meal view.

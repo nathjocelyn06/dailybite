@@ -906,11 +906,14 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .day-kcal { font-size: var(--text-2xl); font-weight: var(--w-title); margin: 6px 0 0; }
 
 /* the cover the book rests on */
+/* The pink is the cover showing round the edge of the paper, so it is a frame a
+   few pixels wide, not a mat the book sits in the middle of. */
 .book-stage {
-  border-radius: 22px; padding: clamp(14px, 2.6vw, 34px);
+  border-radius: 18px; padding: 10px;
   background: linear-gradient(135deg, #F2B9C2 0%, #FBA3BE 100%);
 }
-.book { max-width: 1180px; margin: 0 auto; position: relative; }
+/* the book takes the whole column */
+.book { width: 100%; position: relative; }
 /* the block of pages underneath, peeking out at the edges */
 .book::before,
 .book::after {
@@ -921,7 +924,7 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .book::after { top: 9px; bottom: -9px; left: 18px; right: 18px; opacity: 0.6; }
 
 .book-spread {
-  position: relative; z-index: 1; min-height: 520px; border-radius: 8px;
+  position: relative; z-index: 1; min-height: min(72vh, 680px); border-radius: 8px;
   padding: clamp(18px, 2vw, 30px);
   /* warm paper, with the gutter darkening where the sheet curves into the fold */
   background:
