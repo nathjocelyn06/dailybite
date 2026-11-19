@@ -137,8 +137,23 @@ The owner has ruled these out. My progress keeps exactly the features it has tod
 - Water tracking (table + service kept; UI and `add_water` removed).
 - Supermarket price comparison: only prices with a source and last-updated date.
 
-## Phase 6 — Optional: MCP Apps widgets 🔲
-Show the dashboard / fridge / meal-confirm as interactive widgets inside Claude. Use the official MCP Apps extension (`@modelcontextprotocol/ext-apps`): register `ui://nutrigo/<name>.html` resources and point tools at them via `_meta.ui.resourceUri`. Follow that package's current quickstart; don't guess the API. Keep every tool's text result as the fallback, because not every Claude surface renders widgets (test on the phone app). Until then, each tool result already includes an "Open in DailyBite" link.
+## Phase 6 — MCP Apps widgets ✅ 19 Nov 2026
+Three views render inline in hosts that support MCP Apps (SEP-1865); everywhere else the tools answer in text exactly as before.
+
+| view | resource | attached to |
+| --- | --- | --- |
+| the day | `ui://dailybite/day.html` | `get_daily_summary` |
+| the fridge | `ui://dailybite/fridge.html` | `list_fridge` |
+| one meal | `ui://dailybite/meal.html` | `log_meal`, `confirm_meal` |
+
+- **How it is wired.** `lib/mcp/ui/register.ts` registers each view as a resource with mime type `text/html;profile=mcp-app`, and puts `_meta.ui.resourceUri` **and** the deprecated flat `_meta["ui/resourceUri"]` on the tool — both, because that is what `@modelcontextprotocol/ext-apps/server` itself writes.
+- **Why not the package.** `@modelcontextprotocol/ext-apps/server` is two one-line wrappers over `registerTool` / `registerResource`, but its peers are the v2 SDK packages and zod 4 while this app is on SDK 1.26 and zod 3. The wrappers are reimplemented in `register.ts` with the constants read off the published package, not guessed.
+- **The browser half** (`App`, the handshake, `callServerTool`) is vendored as `lib/mcp/ui/bridge.js` from `@modelcontextprotocol/ext-apps` 2.0.4 (MIT) and inlined into every view, because the default CSP for an app iframe allows inline script and nothing external. The package exports `App` under a minified local name, so `widgets.ts` parses the export clause and rewrites it into a `const App` binding instead of hard-coding the name.
+- **Data.** `run()` attaches the tool's JSON to the result as `_meta["dailybite/data"]`. `_meta` is not shown to the model, so a view draws from real records without spending context; a view also falls back to parsing the ```json block out of the text.
+- **Interaction.** The day view confirms a pending meal, the fridge view uses one of an item and re-reads the shelf, the meal view confirms or deletes — all through `app.callServerTool`.
+- `outputFileTracingIncludes` in `next.config.mjs` ships `bridge.js` into the serverless function; without it `/api/mcp` would throw ENOENT in production.
+- 🧪 Verified against the running server with an SDK client: 53 tools, 4 carrying a `ui://` resource, 3 resources reading back as self-contained documents (~518 KB each), and `get_daily_summary` / `list_fridge` returning their data in `_meta`. Each view was then driven with those real payloads in a browser and drew the day, the shelves and the meal correctly.
+- 🔲 Not yet seen rendered by a host: claude.ai has to be asked to re-read the connector before the views appear.
 
 ## Requirement 6 — daily date change checklist 🧪
 - [ ] Dashboard shows the device's local date (Settings time zone) and greets by local time.

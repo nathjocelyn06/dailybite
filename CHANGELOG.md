@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.25 · 2026-11-19 — Phase 6: DailyBite draws itself inside Claude
+- **Three MCP Apps views.** Ask Claude for your day, your fridge or a meal and it can now render the real thing — the calorie bar and macros, the shelves with their use-soon flags, the meal with its items — instead of a wall of JSON.
+- **They do things.** Confirm a pending meal from the day view, use one of something from the fridge view (the shelf re-reads itself), confirm or delete from the meal view.
+- **Nothing is lost where views are not supported.** Every tool still answers in words with its “Open in DailyBite” link; the view is extra.
+- Built on SEP-1865 with the browser half of `@modelcontextprotocol/ext-apps` vendored and inlined, because its server half wants the v2 SDK and zod 4 and this app is on neither.
+
 ## v4.24 · 2026-11-19 — One red, a real week, and a tidier archive
 - **Archive: no month rail, and every row can be deleted.** The results take the whole width, and the × on a row removes the original record — the meal, the expense, the journal page, the fridge entry, the saved recipe — behind a confirm that says so.
 - **The weekly budget works as a week.** Switching to Weekly lands on the week you are actually in instead of the week the month starts in, and Daily spend draws all seven days (Mon–Sun, today banded, days with nothing as a flat line) with the daily figure that keeps you inside the week's share.

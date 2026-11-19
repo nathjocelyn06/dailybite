@@ -29,8 +29,10 @@ import { searchArchive } from "../services/archive";
 import { getKitchenOverview } from "../services/kitchen";
 import { getProgressOverview } from "../services/overview";
 import { TABS, SERVICES } from "../nav";
+import { registerAppResource, uiMeta } from "./ui/register";
+import { UI, WIDGETS } from "./ui/widgets";
 
-type ToolOut = { content: { type: "text"; text: string }[]; isError?: boolean };
+type ToolOut = { content: { type: "text"; text: string }[]; isError?: boolean; _meta?: Record<string, unknown> };
 type Result = { text: string; data?: unknown; link?: string };
 
 /** Every tool runs as the owner, returns a short human line + JSON + a deep link to the web app. */
@@ -41,7 +43,12 @@ async function run(fn: (db: Db) => Promise<Result>): Promise<ToolOut> {
     const parts = [r.text];
     if (r.link) parts.push(`Open in DailyBite: ${appUrl(r.link)}`);
     if (r.data !== undefined) parts.push("```json\n" + JSON.stringify(r.data, null, 2) + "\n```");
-    return { content: [{ type: "text", text: parts.join("\n\n") }] };
+    return {
+      content: [{ type: "text", text: parts.join("\n\n") }],
+      // For MCP Apps views. _meta is not shown to the model, so a view can be
+      // drawn from real data without spending any of the conversation on it.
+      ...(r.data !== undefined ? { _meta: { "dailybite/data": r.data } } : {})
+    };
   } catch (e) {
     return { isError: true, content: [{ type: "text", text: `Error: ${e instanceof Error ? e.message : String(e)}` }] };
   }
@@ -64,13 +71,18 @@ Rules:
   get_progress_overview for "how am I doing?".`;
 
 export function registerTools(server: McpServer) {
+  // The three inline views. A host without MCP Apps ignores all of this and keeps
+  // the text answer, which is why every tool still replies in words.
+  for (const w of WIDGETS) registerAppResource(server, w.name, w.uri, w.html);
+
   // ---------------- dashboard ----------------
   server.registerTool(
     "get_daily_summary",
     {
       title: "Daily summary",
       description: "Today's (or a given day's) calories eaten vs goal, macros, meals by slot, pending AI estimates, planned meals, food spend, budget and reminders.",
-      inputSchema: { date: Day.optional() }
+      inputSchema: { date: Day.optional() },
+      _meta: uiMeta(UI.day)
     },
     async ({ date }) =>
       run(async (db) => {
@@ -89,7 +101,8 @@ export function registerTools(server: McpServer) {
     {
       title: "Log a meal",
       description: "Create a meal record. Use status pending_confirm for photo estimates (user must confirm), eaten for meals the user confirmed, planned for meal plans.",
-      inputSchema: logMealShape
+      inputSchema: logMealShape,
+      _meta: uiMeta(UI.meal)
     },
     async (args) =>
       run(async (db) => {
@@ -110,7 +123,12 @@ export function registerTools(server: McpServer) {
 
   server.registerTool(
     "confirm_meal",
-    { title: "Confirm meal eaten", description: "Mark a planned or pending_confirm meal as eaten so it counts toward today's calories.", inputSchema: { id: z.string().uuid() } },
+    {
+      title: "Confirm meal eaten",
+      description: "Mark a planned or pending_confirm meal as eaten so it counts toward today's calories.",
+      inputSchema: { id: z.string().uuid() },
+      _meta: uiMeta(UI.meal)
+    },
     async ({ id }) => run(async (db) => {
       const m = await confirmMeal(db, id);
       return { text: `Confirmed: ${m.name} now counts (${m.kcal ?? 0} kcal).`, data: m };
@@ -332,7 +350,8 @@ export function registerTools(server: McpServer) {
     {
       title: "Fridge stock",
       description: "Items in the fridge/pantry with qty, unit, expiry state and low-stock flag. include_pending shows scanned items waiting for confirmation.",
-      inputSchema: { category: FridgeCategory.optional(), include_pending: z.boolean().default(false) }
+      inputSchema: { category: FridgeCategory.optional(), include_pending: z.boolean().default(false) },
+      _meta: uiMeta(UI.fridge)
     },
     async ({ category, include_pending }) => run(async (db) => {
       const list = await listFridge(db, { category, status: include_pending ? ["stocked", "pending"] : ["stocked"] });
