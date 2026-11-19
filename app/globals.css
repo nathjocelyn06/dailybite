@@ -885,8 +885,8 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .magnet-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* ---------- the journal: a book lying open and flat ---------- */
-.day-summary { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
-.day-add { margin-top: 14px; }
+.day-summary { display: flex; flex-direction: column; gap: 2px; }
+.day-summary .head { margin-bottom: 4px; }
 .day-kcal { font-size: var(--text-2xl); font-weight: var(--w-title); margin: 6px 0 0; }
 
 /* the cover the book rests on */

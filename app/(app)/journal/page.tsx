@@ -46,10 +46,12 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
       )}
 
       <section className="card day-summary" aria-label="Day summary">
-        <h2 className="h2">Day summary</h2>
+        <div className="head">
+          <h2 className="h2" style={{ flex: 1 }}>Day summary</h2>
+          <Link className="btn pri" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
+        </div>
         <p className="day-kcal">{t.kcal} <span className="muted">kcal</span></p>
         <p className="muted">{t.meals} meals eaten · P {t.protein_g} g · C {t.carbs_g} g · F {t.fat_g} g</p>
-        <Link className="btn pri day-add" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </section>
 
       <Scrapbook
