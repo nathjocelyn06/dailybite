@@ -128,7 +128,8 @@ Claude connectors now point at `https://dailybite-ten.vercel.app/api/mcp?key=…
   - 🔲 Mood and habit stickers do not yet count toward Progress habits.
   - 🔲 A week-plan page kind (`journal_pages.kind = 'week_plan'`) is still unbuilt.
 
-## Phase 5 — Later (cut from v3, keep out unless asked) 🔲
+## Phase 5 — Dropped (decided 2026-11-19: do not build) ❌
+The owner has ruled these out. My progress keeps exactly the features it has today.
 - Body photo journal (tables + services still exist; UI removed; never exposed via MCP).
 - Health articles / workout videos (`/insights` currently redirects to `/progress`).
 - Water tracking (table + service kept; UI and `add_water` removed).
