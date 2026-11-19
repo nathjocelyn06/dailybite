@@ -885,7 +885,8 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .magnet-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* ---------- the journal: a book lying open and flat ---------- */
-.day-summary { display: flex; flex-direction: column; gap: 2px; }
+.day-summary { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.day-add { margin-top: 14px; }
 .day-kcal { font-size: var(--text-2xl); font-weight: var(--w-title); margin: 6px 0 0; }
 
 /* the cover the book rests on */
@@ -956,6 +957,7 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 
 /* two wide actions under the book */
 .book-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+.book-actions.one { grid-template-columns: 1fr; }
 .book-actions .btn { min-height: 56px; justify-content: center; font-size: var(--text-base); border-radius: 14px; }
 
 /* ---------- meals as polaroids, placed like anything else ---------- */
@@ -1017,3 +1019,18 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 /* the tray of things you can add, its own card above the book */
 .elements-tray { display: flex; flex-direction: column; gap: 12px; }
 .elements-tray .scrap-toolbar { align-items: center; }
+
+/* the sticker sheet: artwork, not emoji */
+.sticker-pick {
+  all: unset; cursor: pointer; width: 46px; height: 46px; padding: 5px; border-radius: 12px;
+  background: var(--paper); border: 1px solid var(--line); box-sizing: border-box;
+  display: grid; place-items: center;
+}
+.sticker-pick:hover { background: #fff; border-color: var(--grid); }
+.sticker-pick:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* A tall sticker has to shrink to the swatch. A percentage height is no use here: the
+   grid track sizes to the image, so 100% resolves against the image itself and the
+   bottles spill out. A definite size with object-fit keeps the shape. */
+.sticker-pick img { width: 36px; height: 36px; object-fit: contain; display: block; }
+.scrap-sticker { display: block; }
+.sticker-art { display: block; width: 100%; height: auto; filter: drop-shadow(0 2px 3px rgba(46, 42, 38, 0.22)); }

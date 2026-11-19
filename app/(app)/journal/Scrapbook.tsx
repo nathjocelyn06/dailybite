@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { addElementAction, deleteElementAction, deleteMealAction, updateElementAction } from "../actions";
-import Link from "next/link";
 import { Book } from "@/components/journal/Book";
 import { MealPhoto } from "@/components/journal/MealPhoto";
 
@@ -23,7 +22,22 @@ export type Element = {
   meal_id?: string | null;
 };
 
-const STICKERS = ["🍓", "🥑", "☕", "🍞", "🌶️", "🥕", "⭐", "♥"];
+/** The sticker sheet, cut into `public/stickers/`. The name is what an element stores. */
+const STICKERS = [
+  "ketchup", "mayo", "soy-sauce",
+  "berry-good", "fresh", "good-menu",
+  "dailybite",
+  "star-blue", "star-green", "star-pink",
+  "flower-blue", "flower-yellow", "flower-pink"
+] as const;
+const STICKER_LABEL: Record<string, string> = {
+  ketchup: "Ketchup", mayo: "Mayo", "soy-sauce": "Soy sauce",
+  "berry-good": "Berry Good", fresh: "Fresh", "good-menu": "Good menu",
+  dailybite: "DailyBite", "star-blue": "Blue star", "star-green": "Green star",
+  "star-pink": "Pink star", "flower-blue": "Blue flower", "flower-yellow": "Yellow flower",
+  "flower-pink": "Pink flower"
+};
+const isSticker = (t: string | null | undefined): t is string => !!t && (STICKERS as readonly string[]).includes(t);
 /** Post-it papers and the pin that holds each one up. */
 const POSTITS: { paper: string; pin: string; label: string }[] = [
   { paper: "#FFD84A", pin: "#C9960B", label: "Yellow" },
@@ -61,15 +75,13 @@ export function Scrapbook({
   initial,
   photoUrls,
   meals,
-  title,
-  addMealHref
+  title
 }: {
   date: string;
   initial: Element[];
   photoUrls: Record<string, string>;
   meals: Meal[];
   title?: string | null;
-  addMealHref: string;
 }) {
   const [els, setEls] = useState<Element[]>(initial);
   const [selected, setSelected] = useState<string | null>(null);
@@ -248,8 +260,12 @@ export function Scrapbook({
 
   return (
     <div className="scrapbook">
+      {editing && (
       <section className="card elements-tray" aria-label="Add to the page">
-        <h2 className="h2">Add to the page</h2>
+        <div className="head">
+          <h2 className="h2" style={{ flex: 1 }}>Add to the page</h2>
+          <button className="btn sm" onClick={() => { setEditing(false); setSelected(null); }}>Close</button>
+        </div>
         <div className="scrap-toolbar">
           <button className="btn sm" onClick={() => void addEl("text", { text: "", w: 30 })}>Text box</button>
           <span className="scrap-sep" aria-hidden="true" />
@@ -265,7 +281,16 @@ export function Scrapbook({
           ))}
           <span className="scrap-sep" aria-hidden="true" />
           {STICKERS.map((st) => (
-            <button key={st} className="btn sm" onClick={() => void addEl("sticker", { text: st })} aria-label={`Add sticker ${st}`}>{st}</button>
+            <button
+              key={st}
+              className="sticker-pick"
+              onClick={() => void addEl("sticker", { text: st, w: st === "dailybite" || st === "fresh" ? 22 : 14 })}
+              aria-label={`Add the ${STICKER_LABEL[st].toLowerCase()} sticker`}
+              title={STICKER_LABEL[st]}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/stickers/${st}.png`} alt="" draggable={false} />
+            </button>
           ))}
           <span className="muted" role="status" style={{ fontSize: 12 }}>{status}</span>
         </div>
@@ -273,6 +298,7 @@ export function Scrapbook({
           Drag anything on the page to move it, the corner to resize, the top dot to turn it, × to remove.
         </p>
       </section>
+      )}
 
       <Book>
         <div className={`journal-sheet ${editing ? "is-editing" : ""}`}>
@@ -350,7 +376,10 @@ export function Scrapbook({
                   onPointerDown={(e) => { if (isSel) e.stopPropagation(); }}
                   aria-label="Text box"
                 />
-              ) : el.kind === "meal_card" ? null : (
+              ) : el.kind === "meal_card" ? null : el.kind === "sticker" && isSticker(el.text) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img className="sticker-art" src={`/stickers/${el.text}.png`} alt="" draggable={false} />
+              ) : (
                 <span>{el.text}</span>
               )}
 
@@ -388,11 +417,10 @@ export function Scrapbook({
         </div>
       </Book>
 
-      <div className="book-actions">
+      <div className="book-actions one">
         <button className="btn pri" onClick={() => { setEditing(!editing); setSelected(null); }} aria-pressed={editing}>
           {editing ? "Done editing" : "Edit Journal"}
         </button>
-        <Link className="btn pri" href={addMealHref}>Add meal</Link>
       </div>
 
       {sel?.kind === "photo" && meals.length > 0 && (

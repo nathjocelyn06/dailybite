@@ -30,7 +30,6 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         <Link className="btn" href={`/journal?date=${addDays(date, -1)}`} aria-label="Previous day">‹</Link>
         <div className="titles"><span className="lbl">Food journal{date === today ? " · today" : ""}</span><h1 className="h1">{prettyDay(date)}</h1></div>
         <Link className="btn" href={`/journal?date=${addDays(date, 1)}`} aria-label="Next day">›</Link>
-        <Link className="btn pri" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </header>
       {editingId && j.meals.some((m) => m.id === editingId) && (
         <section className="card" aria-label="Edit meal">
@@ -50,6 +49,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         <h2 className="h2">Day summary</h2>
         <p className="day-kcal">{t.kcal} <span className="muted">kcal</span></p>
         <p className="muted">{t.meals} meals eaten · P {t.protein_g} g · C {t.carbs_g} g · F {t.fat_g} g</p>
+        <Link className="btn pri day-add" href={`/snap?mode=calorie&date=${date}`}>+ Add meal</Link>
       </section>
 
       <Scrapbook
@@ -57,7 +57,6 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
         initial={j.elements}
         photoUrls={urls}
         title={j.page?.title}
-        addMealHref={`/snap?mode=calorie&date=${date}`}
         meals={j.meals.map((m) => ({
           id: m.id,
           slot: m.slot,

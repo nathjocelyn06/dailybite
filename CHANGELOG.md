@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.20 · 2026-11-19 — Your sticker sheet, and a quieter journal
+- **The stickers are yours now.** `Sticket Vector Asset.png` cut into 13 transparent PNGs in `public/stickers/` — ketchup, mayo, soy sauce, Berry Good, Fresh, Good Menu, the DailyBite mark, three stars and three flowers — by the same blob trace as the magnets, so each is trimmed to its own artwork. The emoji set is gone.
+- **Add to the page only appears when you ask for it.** Edit Journal opens it as a panel with a **Close** on it; the journal opens clean, with just the day summary and the book.
+- **+ Add meal sits in Day summary.** The button under the book is gone and so is the one in the header — there is one Add meal on the page now, and the row under the book is just Edit Journal.
+- 🐛 A tall sticker spilled out of its swatch in the tray: the grid track sizes to the image, so a percentage height resolved against the image itself. Fixed with a definite size and `object-fit`.
+- `PhotoDrop` is gone, unused since the photo tool was removed.
+
 ## v4.19 · 2026-11-18 — The tray comes out of the book
 - 🐛 **You could not delete anything.** The × on a selected element sat inside the element, so its pointerdown started a drag and the browser dropped the click that followed. It stops the event now, and delete works on post-its, text, stickers and meal cards alike.
 - 🐛 **Meals were getting two polaroids.** Effects run twice in development and the card is filed asynchronously, so the second pass saw the same empty page and filed again. A ref holds the meals already being placed, and duplicates already saved are cleared on load.
