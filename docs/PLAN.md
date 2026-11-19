@@ -98,6 +98,8 @@ Tokens in `app/globals.css`. Neutrals: paper `#EDEDEB`, ink `#231F1C`, grid gray
 
 **Live: https://dailybite-ten.vercel.app** · repo: **github.com/nathjocelyn06/dailybite** (private)
 
+**Last deploy: 19 Nov 2026 (v4.24, commit `e723dd7`).** Pushed to `main`, Vercel built it, and all ten app routes answer 200; `/api/mcp` answers 401 without a key, as it should. A vision provider is configured in production, so the AI camera works on the live site.
+
 1. ✅ Pushed to GitHub, imported into Vercel (project `dailybite`, Next.js auto-detected, Node 26.x).
 2. ✅ Env vars in Vercel: `DAILYBITE_SUPABASE_URL`, `DAILYBITE_SUPABASE_SERVICE_KEY`, `OWNER_USER_ID`, `MCP_ACCESS_KEY`, `APP_URL`, `DEFAULT_TIMEZONE`, `MEALDB_API_KEY`. Optional AI/YouTube keys still unset.
    - 🐛 **The trap that cost an hour:** a Supabase connection added through Vercel provisions its *own* Supabase project and injects `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` at deploy time, overwriting whatever you set in the dashboard. Every page 500s with "Could not find the table 'public.settings' in the schema cache" while `/api/mcp` still answers. Fix: `supabaseTarget()` reads `DAILYBITE_*` first (`lib/supabase/admin.ts`).
