@@ -6,7 +6,7 @@
 - **The journal camera stopped asking what you ate.** It recognises the food, estimates the nutrition, and leaves you the portion and the grams. No food name field, no food search.
 - **Meal categories are a row of buttons**, not a dropdown: Breakfast, Lunch, Dinner, Snack, with the one your clock suggests marked "now" and the photo's own guess selected.
 - **The same photo is one meal.** Saving a scan that was already saved opens the meal it made.
-- **Reminders are real now.** A service worker (`public/sw.js`) shows them, `/api/reminders` decides what is due from your own records, and `notifications` dedupes it, so a reminder is delivered once — on any device — and lands in the in-app list too. Meal, journal and budget reminders each switch on and off with their own times and threshold on **Notifications**, with a test button and a permission flow that explains a block.
+- **Alerts are real now.** Two of them, both about a number crossing a line you drew yourself: the day's calories going past your goal, and the month's food spend passing your threshold. A service worker (`public/sw.js`) shows them, `/api/reminders` decides from your own records, and the `notifications` table's dedupe key makes delivery exactly-once — once a day for calories, once a month for the budget, on any device — with each one landing in the in-app list too. Both switch on and off on **Notifications**, with a test button and a permission flow that explains a block. No meal or journal nagging on a timer.
 - My progress: the overview card is a soft purple-to-white gradient.
 
 ## v4.21 · 2026-11-19 — A pastel My progress, and turning that holds still

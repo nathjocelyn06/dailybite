@@ -1,19 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  DEFAULT_PREFS,
-  parsePrefs,
-  serialisePrefs,
-  REMINDER_COOKIE,
-  type ReminderPrefs,
-  type Slot
-} from "@/lib/reminders";
-
-const MEALS: { k: Slot; label: string }[] = [
-  { k: "breakfast", label: "Breakfast" },
-  { k: "lunch", label: "Lunch" },
-  { k: "dinner", label: "Dinner" }
-];
+import { DEFAULT_PREFS, parsePrefs, serialisePrefs, REMINDER_COOKIE, type ReminderPrefs } from "@/lib/reminders";
 
 function readCookie(): string | undefined {
   return document.cookie
@@ -28,9 +15,9 @@ function writeCookie(p: ReminderPrefs) {
 }
 
 /**
- * Reminder settings. They live in a cookie, not a table: the reminders are shown by
- * this browser's service worker, and the server route that decides what is due reads
- * the same cookie on the worker's own request.
+ * Alert settings. They live in a cookie, not a table: the alerts are shown by this
+ * browser's service worker, and the server route that decides what is due reads the
+ * same cookie on the worker's own request.
  */
 export function ReminderSettings() {
   const [prefs, setPrefs] = useState<ReminderPrefs>(DEFAULT_PREFS);
@@ -64,8 +51,8 @@ export function ReminderSettings() {
   async function test() {
     if (typeof Notification === "undefined" || Notification.permission !== "granted") return setStatus("Turn notifications on first.");
     const reg = await navigator.serviceWorker.ready;
-    await reg.showNotification("DailyBite test reminder", {
-      body: "If you can see this, reminders will reach you. Tap to open your journal.",
+    await reg.showNotification("DailyBite test alert", {
+      body: "If you can see this, alerts will reach you. Tap to open your journal.",
       tag: "dailybite-test",
       icon: "/icons/icon-192.png",
       data: { href: "/journal" }
@@ -76,17 +63,17 @@ export function ReminderSettings() {
   /** Ask the server what is due right now and show whatever has not been shown yet. */
   async function checkNow() {
     const reg = await navigator.serviceWorker.ready.catch(() => null);
-    if (!reg?.active) return setStatus("The reminder worker is not running yet — reload the page.");
+    if (!reg?.active) return setStatus("The alert worker is not running yet — reload the page.");
     reg.active.postMessage({ type: "check" });
-    setStatus("Checked. Anything due will appear now and in the list below.");
+    setStatus("Checked. Anything over the line will appear now and in the list below.");
   }
 
   const denied = permission === "denied";
 
   return (
-    <section className="card" aria-label="Reminder settings" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+    <section className="card" aria-label="Alert settings" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <div className="head">
-        <h2 className="h2" style={{ flex: 1 }}>Reminders</h2>
+        <h2 className="h2" style={{ flex: 1 }}>Alerts</h2>
         {permission === "granted"
           ? <span className="chip">on for this browser</span>
           : <button className="btn pri sm" onClick={() => void enable()} disabled={permission === "unsupported" || denied}>Turn on notifications</button>}
@@ -100,41 +87,13 @@ export function ReminderSettings() {
       )}
 
       <label className="switch">
-        <input type="checkbox" checked={prefs.meals} onChange={(e) => save({ ...prefs, meals: e.target.checked })} />
-        <span><strong>Meal reminders</strong><br /><span className="muted">If a meal has not been logged by its time.</span></span>
+        <input type="checkbox" checked={prefs.calories} onChange={(e) => save({ ...prefs, calories: e.target.checked })} />
+        <span><strong>Calorie alert</strong><br /><span className="muted">When the day&apos;s logged calories go past your goal.</span></span>
       </label>
-      {prefs.meals && (
-        <div className="receipt-fields" style={{ paddingLeft: 30 }}>
-          {MEALS.map((m) => (
-            <label className="field" key={m.k} style={{ flex: "1 1 120px" }}>
-              {m.label}
-              <input
-                className="input"
-                type="time"
-                value={prefs.meal_times[m.k]}
-                onChange={(e) => save({ ...prefs, meal_times: { ...prefs.meal_times, [m.k]: e.target.value } })}
-              />
-            </label>
-          ))}
-        </div>
-      )}
-
-      <label className="switch">
-        <input type="checkbox" checked={prefs.journal} onChange={(e) => save({ ...prefs, journal: e.target.checked })} />
-        <span><strong>Journal reminder</strong><br /><span className="muted">If today&apos;s page is still empty in the evening.</span></span>
-      </label>
-      {prefs.journal && (
-        <div style={{ paddingLeft: 30 }}>
-          <label className="field" style={{ maxWidth: 160 }}>
-            Time
-            <input className="input" type="time" value={prefs.journal_time} onChange={(e) => save({ ...prefs, journal_time: e.target.value })} />
-          </label>
-        </div>
-      )}
 
       <label className="switch">
         <input type="checkbox" checked={prefs.budget} onChange={(e) => save({ ...prefs, budget: e.target.checked })} />
-        <span><strong>Budget alerts</strong><br /><span className="muted">When this month&apos;s food spend passes your threshold.</span></span>
+        <span><strong>Budget alert</strong><br /><span className="muted">When this month&apos;s food spend passes your threshold.</span></span>
       </label>
       {prefs.budget && (
         <div style={{ paddingLeft: 30, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
@@ -153,13 +112,13 @@ export function ReminderSettings() {
       )}
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-        <button className="btn sm" onClick={() => void test()}>Send a test reminder</button>
-        <button className="btn sm" onClick={() => void checkNow()}>Check for reminders now</button>
+        <button className="btn sm" onClick={() => void test()}>Send a test alert</button>
+        <button className="btn sm" onClick={() => void checkNow()}>Check now</button>
         <span className="muted" role="status" style={{ fontSize: 13 }}>{status}</span>
       </div>
       <p className="muted" style={{ fontSize: 12 }}>
-        Reminders use your device&apos;s own clock. They are delivered while DailyBite is open, and in
-        the background when it is installed to the home screen.
+        Alerts are checked while DailyBite is open, and in the background when it is installed to
+        the home screen. Each one is sent once — once a day for calories, once a month for the budget.
       </p>
     </section>
   );
