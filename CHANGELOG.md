@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.23 · 2026-11-19 — Stickers on top
+- Polaroids are what you stick things on, so stickers, post-its and text now sit above them whatever order they were added in. Each kind keeps its own stacking within its layer.
+
 ## v4.22 · 2026-11-19 — The camera does the typing, and reminders actually arrive
 - **Receipt scan reads the whole receipt.** Store, date, time, every line with its quantity and price, subtotal, tax, discount, payment method and the total — all editable, all pre-filled. Then a preview of what is about to be filed, with **Confirm and save**, **Edit details** and **Retake photo**; the expense is dated by the receipt, not by the day you scanned it, and the small print is written into its note.
 - **A receipt cannot be filed twice.** The same shop, day and amount opens the expense that is already there with a line saying so, instead of charging the budget again.

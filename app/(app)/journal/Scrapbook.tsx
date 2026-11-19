@@ -341,6 +341,9 @@ export function Scrapbook({
         )}
 
         {els.filter((el) => el.kind !== "tape" && el.kind !== "mood" && el.kind !== "doodle").map((el) => {
+          // Polaroids are what you stick things ON. Whatever their own z says, a
+          // sticker, a post-it or a line of writing sits on top of the photo.
+          const layer = el.kind === "meal_card" ? el.z : 1000 + el.z;
           const isSel = el.id === selected;
           const url = el.photo_path ? urls[el.photo_path] : null;
           const note = isPostit(el);
@@ -353,7 +356,7 @@ export function Scrapbook({
                 top: `${el.y}px`,
                 width: `${el.w}%`,
                 transform: `rotate(${el.rot}deg)`,
-                zIndex: el.z,
+                zIndex: layer,
                 background: note ? ((el.data?.paper as string) ?? POSTITS[0].paper) : undefined,
                 cursor: "grab"
               }}
