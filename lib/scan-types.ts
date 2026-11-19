@@ -26,7 +26,14 @@ export type ScanDraft = {
   slot?: "breakfast" | "lunch" | "dinner" | "snack";
   merchant?: string;
   date?: string;
+  /** Receipt only: the clock time printed on it, "HH:MM". */
+  time?: string;
   total?: number;
+  subtotal?: number;
+  tax?: number;
+  discount?: number;
+  /** Receipt only: "card", "cash", "Kakao Pay" — whatever the receipt says. */
+  payment_method?: string;
   category?: "daily_food" | "groceries" | "snacks_drinks" | "other";
   rows: ScanRow[];
   note?: string;

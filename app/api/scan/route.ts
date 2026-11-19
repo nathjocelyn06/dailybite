@@ -23,11 +23,21 @@ const PROMPTS: Record<ScanMode, string> = {
     '"protein_g": number, "carbs_g": number, "fat_g": number, "ingredients": [visible ingredients], "unsure": bool}], ' +
     '"note": one short sentence on anything you could not judge}',
   receipt:
-    'Read this food receipt. JSON: {"merchant","date":"YYYY-MM-DD"|null,"total":number,"category":"groceries"|"daily_food"|"snacks_drinks"|"other","rows":[{"name","qty","unit","price","fridge_category":"veg_fruit"|"protein"|"dairy_eggs"|"frozen"|"pantry"|"other"|null,"expires_in_days":number|null,"unsure":bool}]}',
+    'Read this receipt end to end, including the small print. Keep prices in the receipt\'s own currency, as numbers only — no symbols, no thousands separators. ' +
+    'Choose the category from the shop and what was bought: "groceries" for a supermarket run, "daily_food" for a restaurant or canteen meal, ' +
+    '"snacks_drinks" for a cafe, convenience-store snack or drinks run, "other" for anything else. ' +
+    'JSON: {"merchant": shop or restaurant name, "date":"YYYY-MM-DD"|null, "time":"HH:MM"|null, ' +
+    '"subtotal":number|null, "tax":number|null, "discount":number|null (a positive number for the amount taken off), ' +
+    '"total":number, "payment_method": string|null (card, cash, the wallet name — whatever is printed), ' +
+    '"category":"groceries"|"daily_food"|"snacks_drinks"|"other", ' +
+    '"rows":[{"name","qty","unit","price": the line total for that item,"fridge_category":"veg_fruit"|"protein"|"dairy_eggs"|"frozen"|"pantry"|"other"|null,"expires_in_days":number|null,"unsure":bool}], ' +
+    '"note": one short sentence on anything you could not read}',
   ingredient:
     'List the groceries/ingredients visible. JSON: {"rows":[{"name","qty","unit","fridge_category":"veg_fruit"|"protein"|"dairy_eggs"|"frozen"|"pantry"|"other","expires_in_days":number,"unsure":bool}]}',
   recipe_finder: 'List the ingredients visible so recipes can be suggested. JSON: {"rows":[{"name","unsure":bool}]}',
-  journal: 'Describe the meal in a few words for a journal caption. JSON: {"title": string, "rows": [], "note": string}',
+  // The journal camera is a food scan too: the model names the food and estimates the
+  // nutrition, and the only things left for the person are the portion and the grams.
+  journal: "",
   grocery:
     'Identify the purchased grocery items. JSON: {"rows":[{"name","qty","unit","fridge_category":"veg_fruit"|"protein"|"dairy_eggs"|"frozen"|"pantry"|"other","expires_in_days":number,"unsure":bool}]}'
 };
@@ -101,7 +111,7 @@ export async function POST(req: Request) {
     const text = await provider.analyse({
       image: { base64: img.base64, mediaType: img.mediaType },
       system: SYSTEM,
-      prompt: PROMPTS[mode]
+      prompt: PROMPTS[mode] || PROMPTS.calorie
     });
     const json = extractJson<Partial<ScanDraft> & { rows?: unknown[] }>(text);
     if (!json) {
@@ -113,7 +123,7 @@ export async function POST(req: Request) {
     // The model names the food and judges the portion; a nutrition database knows the
     // numbers. Where a lookup succeeds its values win; where it fails we keep the model
     // estimate, so a database outage never costs us a scan.
-    if (mode === "calorie" && rows.length && nutritionixConfigured()) {
+    if ((mode === "calorie" || mode === "journal") && rows.length && nutritionixConfigured()) {
       const found = await lookupNutrition(rows.map((x) => ({ name: x.name, portion: x.portion, grams: x.grams })));
       rows = rows.map((row, i) => {
         const hit = found.find((f) => f.index === i);
@@ -130,6 +140,9 @@ export async function POST(req: Request) {
       });
     }
     const slot = SLOTS.includes(json.slot as never) ? (json.slot as ScanDraft["slot"]) : undefined;
+    // A model will happily invent a date; only an ISO day is worth keeping.
+    const date = typeof json.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(json.date) ? json.date : undefined;
+    const time = typeof json.time === "string" && /^\d{1,2}:\d{2}/.test(json.time) ? json.time.slice(0, 5).padStart(5, "0") : undefined;
 
     return NextResponse.json({
       ...empty,
@@ -137,6 +150,13 @@ export async function POST(req: Request) {
       mode,
       rows,
       slot,
+      date,
+      time,
+      subtotal: num(json.subtotal),
+      tax: num(json.tax),
+      discount: num(json.discount),
+      total: num(json.total),
+      payment_method: typeof json.payment_method === "string" ? json.payment_method.slice(0, 40) : undefined,
       ai: true,
       note: typeof json.note === "string" ? json.note : undefined
     } satisfies ScanDraft);

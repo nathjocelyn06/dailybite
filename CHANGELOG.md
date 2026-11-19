@@ -1,5 +1,14 @@
 # Changelog
 
+## v4.22 · 2026-11-19 — The camera does the typing, and reminders actually arrive
+- **Receipt scan reads the whole receipt.** Store, date, time, every line with its quantity and price, subtotal, tax, discount, payment method and the total — all editable, all pre-filled. Then a preview of what is about to be filed, with **Confirm and save**, **Edit details** and **Retake photo**; the expense is dated by the receipt, not by the day you scanned it, and the small print is written into its note.
+- **A receipt cannot be filed twice.** The same shop, day and amount opens the expense that is already there with a line saying so, instead of charging the budget again.
+- **The journal camera stopped asking what you ate.** It recognises the food, estimates the nutrition, and leaves you the portion and the grams. No food name field, no food search.
+- **Meal categories are a row of buttons**, not a dropdown: Breakfast, Lunch, Dinner, Snack, with the one your clock suggests marked "now" and the photo's own guess selected.
+- **The same photo is one meal.** Saving a scan that was already saved opens the meal it made.
+- **Reminders are real now.** A service worker (`public/sw.js`) shows them, `/api/reminders` decides what is due from your own records, and `notifications` dedupes it, so a reminder is delivered once — on any device — and lands in the in-app list too. Meal, journal and budget reminders each switch on and off with their own times and threshold on **Notifications**, with a test button and a permission flow that explains a block.
+- My progress: the overview card is a soft purple-to-white gradient.
+
 ## v4.21 · 2026-11-19 — A pastel My progress, and turning that holds still
 - **My progress leads with a pastel card.** The AI overview is a lilac→sky gradient with ink text instead of the deep ocean block, and its mark is the My progress icon (the rising chart from `NavIcon`) on white, not a star. The period switch, the boxes and Refresh overview are reworked for a light ground.
 - **A text box is a box.** The dashed rule under journal text is gone — nothing is printed on the page but what you write.

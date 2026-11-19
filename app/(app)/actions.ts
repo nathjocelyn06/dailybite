@@ -8,9 +8,9 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { webDb } from "@/lib/services/db";
 import { AddExpenseInput, DecorInput, FridgeItemInput, LogMealInput, MyRecipeInput, ShoppingItemInput, Slot, UpdateMealInput } from "@/lib/schemas";
-import { confirmMeal, deleteMeal, logMeal, updateMeal } from "@/lib/services/meals";
+import { confirmMeal, deleteMeal, findMealByPhoto, logMeal, updateMeal } from "@/lib/services/meals";
 import { addWater } from "@/lib/services/water";
-import { addExpense, deleteExpense, updateExpense } from "@/lib/services/expenses";
+import { addExpense, deleteExpense, findExpense, updateExpense } from "@/lib/services/expenses";
 import { addFridgeItems, adjustQty, confirmPending, removeFridgeItem, saveDecor, updateFridgeItem } from "@/lib/services/fridge";
 import { updateSettings } from "@/lib/services/settings";
 import { addShopping, deleteShopping, moveBoughtToFridge, setBought } from "@/lib/services/shopping";
@@ -220,6 +220,11 @@ export async function confirmScanAction(input: {
   merchant?: string;
   total?: number;
   category?: string;
+  time?: string;
+  subtotal?: number;
+  tax?: number;
+  discount?: number;
+  payment_method?: string;
   rows: {
     name: string; portion?: string; grams?: number; ingredients?: string[];
     qty?: number; unit?: string; kcal?: number; protein_g?: number; carbs_g?: number; fat_g?: number;
@@ -231,6 +236,12 @@ export async function confirmScanAction(input: {
   const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
   switch (input.mode) {
     case "calorie": {
+      // The same photo scanned twice is the same meal. Nothing else identifies a meal
+      // reliably, and a double tap on Save should not double your calories.
+      if (input.photo_path) {
+        const twin = await findMealByPhoto(db, input.photo_path);
+        if (twin) return { redirect: `/journal?date=${twin.date}&meal=${twin.id}` };
+      }
       const m = await logMeal(db, LogMealInput.parse({
         date: input.date || undefined,
         slot: input.slot ?? "lunch",
@@ -253,12 +264,29 @@ export async function confirmScanAction(input: {
       return { redirect: `/journal?date=${m.date}&meal=${m.id}` };
     }
     case "receipt": {
+      const amount = num(input.total) ?? rows.reduce((a, x) => a + (num(x.price) ?? 0), 0);
+      const merchant = input.merchant?.trim() || "Receipt";
+      const { dayKey } = await import("@/lib/dates");
+      const on = input.date || dayKey(new Date(), db.tz);
+      // Scanning the same receipt twice must not charge the budget twice.
+      const twin = await findExpense(db, { date: on, merchant, amount });
+      if (twin) return { redirect: `/budget?expense=${twin.id}&duplicate=1` };
+      // The receipt's small print has no columns of its own, so it is written into the
+      // note where it stays readable and editable on the expense.
+      const note = [
+        input.time ? `at ${input.time}` : null,
+        input.payment_method ? `paid by ${input.payment_method}` : null,
+        num(input.subtotal) !== undefined ? `subtotal ${input.subtotal}` : null,
+        num(input.tax) !== undefined ? `tax ${input.tax}` : null,
+        num(input.discount) !== undefined ? `discount -${input.discount}` : null
+      ].filter(Boolean).join(" · ");
       const r = await addExpense(db, AddExpenseInput.parse({
-        date: input.date || undefined,
-        merchant: input.merchant?.trim() || "Receipt",
+        date: on,
+        merchant,
         category: input.category ?? "groceries",
-        amount: num(input.total) ?? rows.reduce((a, x) => a + (num(x.price) ?? 0), 0),
+        amount,
         items: rows.map((x) => ({ name: x.name, qty: num(x.qty), unit: x.unit, price: num(x.price), fridge_category: x.fridge_category || undefined, expires_in_days: num(x.expires_in_days) })),
+        note: note || undefined,
         receipt_path: input.photo_path,
         send_items_to_fridge: true
       }));

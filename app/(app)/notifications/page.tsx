@@ -3,6 +3,7 @@ import { webDb } from "@/lib/services/db";
 import { listNotifications, refreshNotifications, type Notification } from "@/lib/services/notifications";
 import { ActionButton } from "@/components/ActionButton";
 import { dismissAction, readAllAction } from "../actions";
+import { ReminderSettings } from "./ReminderSettings";
 
 const KINDS: { k: Notification["kind"] | "all"; label: string }[] = [
   { k: "all", label: "All" },
@@ -26,6 +27,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {KINDS.map((x) => <Link key={x.k} href={x.k === "all" ? "/notifications" : `/notifications?kind=${x.k}`} className={`chip ${kind === x.k ? "on" : ""}`} style={{ minHeight: 36, textDecoration: "none" }}>{x.label}</Link>)}
       </div>
+      <ReminderSettings />
       <section className="card" aria-label="Notifications">
         {list.length === 0 && <p className="muted">You&apos;re all caught up.</p>}
         {list.map((n) => (

@@ -95,3 +95,20 @@ function num(m: Meal): Meal {
     fat_g: m.fat_g === null ? null : Number(m.fat_g)
   };
 }
+
+/**
+ * The meal a photo was already filed as, if any. One photo is one meal: it is what
+ * lets a re-submitted scan land on the meal it created instead of a copy of it.
+ */
+export async function findMealByPhoto(db: Db, photoPath: string): Promise<{ id: string; date: string } | null> {
+  const rows = must(
+    await db.sb
+      .from("meals")
+      .select("id,date")
+      .eq("user_id", db.userId)
+      .eq("photo_path", photoPath)
+      .limit(1),
+    "find meal by photo"
+  ) as { id: string; date: string }[];
+  return rows[0] ?? null;
+}

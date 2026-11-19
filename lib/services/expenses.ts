@@ -158,3 +158,24 @@ export async function spendSummary(db: Db, period: "week" | "month", anchor?: st
     today
   };
 }
+
+/**
+ * An expense already filed for the same shop, day and amount — which is what a receipt
+ * scanned twice looks like. Used to keep one receipt from being charged to the budget twice.
+ */
+export async function findExpense(
+  db: Db,
+  key: { date: string; merchant: string; amount: number }
+): Promise<{ id: string } | null> {
+  const rows = must(
+    await db.sb
+      .from("expenses")
+      .select("id,amount")
+      .eq("user_id", db.userId)
+      .eq("date", key.date)
+      .ilike("merchant", key.merchant)
+      .limit(20),
+    "find expense"
+  ) as { id: string; amount: number | string }[];
+  return rows.find((r) => Math.abs(Number(r.amount) - key.amount) < 0.5) ?? null;
+}

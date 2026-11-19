@@ -11,7 +11,7 @@ type Period = "week" | "month";
 export default async function BudgetPage({
   searchParams
 }: {
-  searchParams: Promise<{ month?: string; date?: string; period?: string; expense?: string }>;
+  searchParams: Promise<{ month?: string; date?: string; period?: string; expense?: string; duplicate?: string }>;
 }) {
   const sp = await searchParams;
   const db = await webDb();
@@ -23,6 +23,9 @@ export default async function BudgetPage({
   const days = Object.entries(s.by_day).sort(([a], [b]) => (a < b ? -1 : 1));
   const max = Math.max(1, ...days.map(([, v]) => v));
   const editing = sp.expense ? s.recent.find((e) => e.id === sp.expense) : undefined;
+  // Set when a receipt that was already filed is scanned again; the expense it points
+  // at is the one that is already here, so nothing was added.
+  const duplicate = sp.duplicate === "1" && !!editing;
 
   const link = (next: { date?: string; period?: Period }) => {
     const p = next.period ?? period;
@@ -46,6 +49,11 @@ export default async function BudgetPage({
         <Link className="btn" href={step(1)} aria-label={`Next ${period}`}>›</Link>
         <Link className="btn pri" href="/snap?mode=receipt">Scan receipt</Link>
       </header>
+      {duplicate && (
+        <p className="banner warn" role="status">
+          You have already filed this receipt — {editing!.merchant} on {editing!.date}. Nothing was added twice.
+        </p>
+      )}
 
       <nav className="seg-links" aria-label="Budget period">
         <Link href={link({ period: "week", date: s.from })} aria-current={period === "week" ? "page" : undefined}>Weekly</Link>

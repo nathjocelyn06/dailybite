@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { TABS, isActive, breadcrumbFor } from "@/lib/nav";
 import { NavIcon } from "./NavIcon";
 import { LiveSync } from "./LiveSync";
+import { Reminders } from "./Reminders";
 
 /**
  * Four destinations only: Home, My Kitchen, Journal, Archive.
@@ -67,6 +68,7 @@ export function AppShell({ children, unread, tz }: { children: React.ReactNode; 
         ))}
       </nav>
 
+      <Reminders />
       <LiveSync tz={tz} />
     </div>
   );
