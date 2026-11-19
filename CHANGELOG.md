@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.27 · 2026-11-19 — Magnets beside the door
+- **Decorate your fridge opens in the empty third column**, under *Cook from my fridge*, instead of pushing everything down below the unit. The door is right next to it, so a magnet goes from the tray onto the door without scrolling. The panel keeps all its state in the fridge; it is only drawn through a portal into the slot the page leaves for it, and falls back to its old place if that slot is not there.
+
 ## v4.26 · 2026-11-19 — The waiting was geography
 - **The app was running on the wrong side of the world.** Requests entered Vercel in Seoul and were then handed to a function in Virginia, which talked to a database back in Seoul — so every single query crossed the Pacific twice. `vercel.json` pins the functions to `icn1`, next to the database.
 - **Fewer trips to make a page.** The time zone (read before anything else can start, on every page, action and MCP call) is held for a minute; the settings row is read once per request instead of three times; and reminders are re-derived at most every five minutes instead of on every page load — six round trips that used to sit in front of Home. The Notifications page still forces a fresh pass, because there the list is the point.

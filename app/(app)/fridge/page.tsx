@@ -77,6 +77,8 @@ export default async function FridgePage() {
               <AddFridgeForm />
             </section>
             <Link className="btn" href="/recipes?tab=scanner" style={{ justifyContent: "center" }}>Cook from my fridge</Link>
+            {/* Decorate your fridge fills the space under here, beside the door. */}
+            <div id="fridge-decor-slot" />
           </div>
         </div>
     </>

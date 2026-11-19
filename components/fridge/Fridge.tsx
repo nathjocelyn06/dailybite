@@ -1,6 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import type { FridgeItemView } from "@/lib/services/fridge";
 import { FreezerDoorArt, MainDoorArt } from "./FridgeArt";
 import { MagnetArt, MAGNETS, MAGNET_LABEL, isMagnet, type MagnetKey } from "./MagnetArt";
@@ -74,6 +75,17 @@ export function Fridge({
 }) {
   const [open, setOpen] = useState<Door>("none");
   const [decorating, setDecorating] = useState(false);
+  /**
+   * The magnets and the colours belong beside the fridge, not under it — the third
+   * column of /fridge is empty below "Cook from my fridge" and the door is right there
+   * to drop a magnet on. The page leaves an element for them; if it is not there (any
+   * other page that mounts a fridge) they fall back to sitting under the unit.
+   */
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const portal = (node: React.ReactNode) => (slot ? createPortal(node, slot) : node);
+  useEffect(() => {
+    setSlot(document.getElementById("fridge-decor-slot"));
+  }, []);
   // Magnets are the only decoration now: uploaded stickers, post-its and tape are gone,
   // so leftover rows from the old tray are ignored and fall away on the next save.
   const [decor, setDecor] = useState<DecorPiece[]>(initialDecor.filter((d) => isMagnet(d.color)));
@@ -279,7 +291,7 @@ export function Fridge({
         {(status || pending) && <span className="muted" role="status">{pending ? "Saving…" : status}</span>}
       </div>
 
-      {decorating && (
+      {decorating && portal(
         <section className="card" aria-label="Decorate the fridge" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <span className="lbl">Magnets</span>
           <div className="magnet-tray">
