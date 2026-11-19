@@ -205,16 +205,32 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .seg-links { display: inline-flex; gap: 4px; padding: 4px; background: #e2e2df; border-radius: 12px; align-self: flex-start; }
 .seg-links a { min-height: 38px; padding: 0 16px; border-radius: 9px; display: flex; align-items: center; font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: none; }
 .seg-links a[aria-current="page"] { background: #fff; color: var(--ink); }
-.seg-links.on-dark { background: rgba(255, 255, 255, 0.14); }
-.seg-links.on-dark a { color: #fff; }
-.seg-links.on-dark a[aria-current="page"] { background: #fff; color: var(--ocean); }
+.seg-links.on-dark { background: rgba(255, 255, 255, 0.5); }
+.seg-links.on-dark a { color: var(--ink-2); }
+.seg-links.on-dark a[aria-current="page"] { background: #fff; color: var(--ink); }
 
 /* ---------- My progress: AI overview ---------- */
-.overview { background: var(--ocean); color: #fff; border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
-.overview-mark { width: 40px; height: 40px; border-radius: 12px; background: var(--sun); color: var(--ink); display: grid; place-items: center; font-size: 20px; flex: none; }
-.overview-box { background: rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
-.overview-next { background: var(--sun); color: var(--ink); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; font-size: 14px; }
-.btn.on-dark { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.45); }
+.overview {
+  background: linear-gradient(135deg, #EFDBFF 0%, #E3DDFF 46%, #D7ECFD 100%);
+  color: var(--ink); border: 1px solid #E7DCF6; border-radius: 20px; padding: 22px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  box-shadow: 0 10px 26px rgba(118, 100, 166, 0.16);
+}
+.overview-mark {
+  width: 40px; height: 40px; border-radius: 12px; background: #fff; color: var(--overview-label);
+  display: grid; place-items: center; flex: none; box-shadow: 0 2px 5px rgba(94, 79, 148, 0.18);
+}
+.overview-box {
+  background: rgba(255, 255, 255, 0.62); border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px;
+}
+.overview-next {
+  background: #fff; color: var(--ink); border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 14px;
+  padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; font-size: 14px;
+  box-shadow: 0 4px 12px rgba(118, 100, 166, 0.14);
+}
+.btn.on-dark { background: rgba(255, 255, 255, 0.72); color: var(--ink); border-color: rgba(255, 255, 255, 0.95); }
+.btn.on-dark:hover { background: #fff; }
 
 /* ---------- logo opening (no sign-in: the app opens on Home) ---------- */
 /* Pure CSS so it cannot get stuck: pointer-events are off from the first frame and
@@ -456,8 +472,7 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
 .scrap-doodle { width: 100%; height: 120px; overflow: visible; }
 .scrap-live { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .scrap-input {
-  all: unset; box-sizing: border-box; width: 100%; min-height: 48px; resize: none; white-space: pre-wrap;
-  border-bottom: 1px dashed var(--grid); min-height: 28px;
+  all: unset; box-sizing: border-box; width: 100%; min-height: 28px; resize: none; white-space: pre-wrap;
 }
 .scrap-handle {
   position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--ink);
@@ -546,7 +561,7 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   --hero: var(--apricot);
   --tip: var(--apricot);
   --tip-label: #7A5520;
-  --overview-label: var(--apricot);
+  --overview-label: #5E4F94;  /* labels on the pastel overview card */
 
   --warn-bg: #FFE4E1;
   --warn-line: var(--coral);

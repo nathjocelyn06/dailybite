@@ -5,6 +5,7 @@ import { getProgressOverview } from "@/lib/services/overview";
 import { getSettings } from "@/lib/services/settings";
 import { prettyDay } from "@/lib/dates";
 import { ActionButton } from "@/components/ActionButton";
+import { NavIcon } from "@/components/NavIcon";
 import { refreshOverviewAction } from "../actions";
 import { ProgressForms } from "./ProgressForms";
 
@@ -36,7 +37,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
 
       <section className="overview" aria-label="AI progress overview">
         <div className="head">
-          <span className="overview-mark" aria-hidden="true">✦</span>
+          <span className="overview-mark" aria-hidden="true"><NavIcon name="progress" size={22} /></span>
           <div className="titles" style={{ gap: 2 }}>
             <span className="lbl" style={{ color: "var(--overview-label)" }}>{o.source === "ai" ? "AI progress overview" : "Progress overview"}</span>
             <h2 style={{ fontSize: 20, fontWeight: 700 }}>{o.headline}</h2>

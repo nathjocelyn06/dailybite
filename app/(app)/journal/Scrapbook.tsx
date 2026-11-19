@@ -92,7 +92,16 @@ export function Scrapbook({
   const [, start] = useTransition();
 
   const pageRef = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ id: string; mode: "move" | "resize" | "rotate"; dx: number; dy: number } | null>(null);
+  const drag = useRef<{
+    id: string;
+    mode: "move" | "resize" | "rotate";
+    dx: number;
+    dy: number;
+    /** rotation: the element's centre in client pixels, and the angle already "used up" at grab time */
+    cx: number;
+    cy: number;
+    a0: number;
+  } | null>(null);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
@@ -224,7 +233,21 @@ export function Scrapbook({
     if (!pos) return;
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     setSelected(el.id);
-    drag.current = { id: el.id, mode, dx: pos.xPct - el.x, dy: pos.yPx - el.y };
+
+    // Turning has to be measured in real pixels around the element's own centre, and
+    // against the angle it was grabbed at — otherwise it snaps to the pointer and jitters.
+    let cx = 0;
+    let cy = 0;
+    let a0 = 0;
+    if (mode === "rotate") {
+      const box = (e.currentTarget as HTMLElement).closest(".scrap-el")?.getBoundingClientRect();
+      if (box) {
+        cx = box.left + box.width / 2;
+        cy = box.top + box.height / 2;
+        a0 = (Math.atan2(e.clientY - cy, e.clientX - cx) * 180) / Math.PI - el.rot;
+      }
+    }
+    drag.current = { id: el.id, mode, dx: pos.xPct - el.x, dy: pos.yPx - el.y, cx, cy, a0 };
   }
 
   function onPageMove(e: React.PointerEvent) {
@@ -242,8 +265,10 @@ export function Scrapbook({
     } else if (d.mode === "resize") {
       patch(el.id, { w: Math.min(90, Math.max(6, pos.xPct - el.x)) });
     } else {
-      const cx = el.x + el.w / 2;
-      const deg = (Math.atan2(pos.yPx - el.y, pos.xPct - cx) * 180) / Math.PI;
+      if (!d.cx && !d.cy) return;
+      let deg = (Math.atan2(e.clientY - d.cy, e.clientX - d.cx) * 180) / Math.PI - d.a0;
+      deg = (((deg + 180) % 360) + 360) % 360 - 180;       // keep it in -180..180
+      if (Math.abs(deg) < 3) deg = 0;                       // a light snap back to straight
       patch(el.id, { rot: Math.round(deg) });
     }
   }
