@@ -20,7 +20,9 @@ const PATHS: Record<IconKey, React.ReactNode> = {
   budget: (<><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M3 10h18" /><circle cx="16" cy="14.5" r="1.2" /></>),
   progress: (<><path d="M4 19h16" /><path d="M5 15l4-4 3 3 6-6" /><path d="M15 8h3v3" /></>),
   notifications: (<><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" /><path d="M10 20a2 2 0 0 0 4 0" /></>),
-  settings: (<><circle cx="12" cy="12" r="3" /><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8" /></>),
+  // A solid cog rather than a line one: filled, with the hole cut out by the even-odd
+  // rule, and stroked in the same colour so the teeth keep the set's rounded corners.
+  settings: <path d="M9.93 1.81 A10.4 10.4 0 0 1 14.07 1.81 L13.4 5.14 A7 7 0 0 1 15.86 6.16 L17.74 3.33 A10.4 10.4 0 0 1 20.67 6.26 L17.84 8.14 A7 7 0 0 1 18.86 10.6 L22.19 9.93 A10.4 10.4 0 0 1 22.19 14.07 L18.86 13.4 A7 7 0 0 1 17.84 15.86 L20.67 17.74 A10.4 10.4 0 0 1 17.74 20.67 L15.86 17.84 A7 7 0 0 1 13.4 18.86 L14.07 22.19 A10.4 10.4 0 0 1 9.93 22.19 L10.6 18.86 A7 7 0 0 1 8.14 17.84 L6.26 20.67 A10.4 10.4 0 0 1 3.33 17.74 L6.16 15.86 A7 7 0 0 1 5.14 13.4 L1.81 14.07 A10.4 10.4 0 0 1 1.81 9.93 L5.14 10.6 A7 7 0 0 1 6.16 8.14 L3.33 6.26 A10.4 10.4 0 0 1 6.26 3.33 L8.14 6.16 A7 7 0 0 1 10.6 5.14 Z M12 7.7A4.3 4.3 0 1 0 12 16.3A4.3 4.3 0 1 0 12 7.7Z" fill="currentColor" fillRule="evenodd" strokeWidth={1.4} />,
   more: (<><circle cx="8" cy="8" r="2" /><circle cx="16" cy="8" r="2" /><circle cx="8" cy="16" r="2" /><circle cx="16" cy="16" r="2" /></>),
   camera: (<><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></>)
 };

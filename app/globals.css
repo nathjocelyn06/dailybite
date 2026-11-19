@@ -242,7 +242,7 @@ textarea.input { padding: 10px 12px; min-height: 80px; }
   animation: splash-fade 1500ms ease forwards;
 }
 .splash-logo {
-  width: min(320px, 66vw); height: auto;
+  width: min(620px, 82vw); height: auto;
   animation: splash-pop 720ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
 }
 @keyframes splash-fade {
@@ -722,7 +722,8 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 
 :root {
   --ring-rest: #EAE6DF;        /* the unspent part of the ring and of every bar */
-  --accent-strong: #F2655A;    /* the deeper coral the Figma uses for progress */
+  --chart-red: #E72025;        /* the one red every chart is drawn in */
+  --accent-strong: var(--chart-red);
   --title-ink: #000000;        /* titles are black, not the warm ink of body copy */
 }
 
@@ -732,12 +733,12 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 /* ---------- sidebar: the pale cream swatch, with room around the logo ---------- */
 .side {
   background: linear-gradient(150deg, #FFFEFA 0%, #FFFCF4 55%, #FEF9EA 100%);
-  border-right-color: var(--side-line); padding: 26px 14px 20px; gap: 26px;
+  border-right-color: var(--side-line); padding: 24px 14px 20px; gap: 38px;
 }
 .tabbar { background: linear-gradient(20deg, #FFFEFA 0%, #FFFCF4 55%, #FEF9EA 100%); }
 /* on a white page a hairline is not enough to hold a card together */
 .card { box-shadow: 0 1px 2px rgba(46, 42, 38, 0.05); }
-.brand { padding: 2px 8px 0; }
+.brand { padding: 4px 8px 0; }
 .brand-logo { display: block; width: 100%; max-width: 142px; height: auto; }
 .nav { gap: 6px; }
 .nav a { min-height: 46px; }
@@ -751,7 +752,7 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .tabbar a[aria-current="page"] .tab-icon { background: var(--btn-yellow); }
 @media (min-width: 861px) and (max-width: 1100px) {
   /* the icon rail: the logo needs its own breathing room above the items */
-  .side { padding: 22px 8px 18px; gap: 20px; }
+  .side { padding: 20px 8px 18px; gap: 30px; }
   .brand { padding: 0; }
   .brand-logo { max-width: 72px; }
 }
@@ -793,7 +794,7 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 /* ---------- meal plan + spend ---------- */
 .home-two { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: stretch; }
 .home-card { display: flex; flex-direction: column; gap: 12px; border-radius: 22px; }
-.card-meal { background: linear-gradient(180deg, #FFFFFF 0%, #FDF0F3 54%, #F7D3DC 100%); border-color: #F2DDE2; }
+.card-meal { background: linear-gradient(180deg, #FFFFFF 0%, #FFD7E4 48%, #FF8FB8 100%); border-color: #FFC2D6; }
 .card-spend { background: linear-gradient(180deg, #FFFFFF 0%, #F5FBE2 54%, #E3F5A8 100%); border-color: #E4EDC8; }
 
 .slots { display: flex; flex-direction: column; gap: 8px; }
@@ -1089,3 +1090,16 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .switch input { width: 18px; height: 18px; margin: 2px 0 0; flex: none; accent-color: var(--sage); }
 /* `hidden` has to beat the layout rule, or the journal camera shows macro fields */
 .item-macros[hidden] { display: none; }
+
+/* ---------- budget: the week as seven days ---------- */
+.day-chart { display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--line); }
+.day-chart .col { flex: 1; min-width: 4px; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+.day-chart .col > i { display: block; background: var(--chart-red); border-radius: 4px 4px 0 0; min-height: 2px; }
+.day-chart .col.zero > i { background: var(--ring-rest); }
+.day-chart .col.today { background: rgba(231, 32, 37, 0.07); border-radius: 6px 6px 0 0; }
+.day-axis { display: flex; gap: 4px; margin-top: 6px; }
+.day-axis span {
+  flex: 1; min-width: 4px; text-align: center; font-size: 11px; color: var(--muted);
+  overflow: hidden; white-space: nowrap;
+}
+.day-axis span.today { color: var(--ink); font-weight: var(--w-subtitle); }

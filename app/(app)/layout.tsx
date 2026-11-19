@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           and plays once per page load (soft navigation between tabs keeps it mounted
           and finished). There is no sign-in screen; the app opens on Home. */}
       <div className="splash" aria-hidden="true">
-        <Image className="splash-logo" src="/logo-dailybite.png" alt="" width={1199} height={463} priority />
+        <Image className="splash-logo" src="/logo-dailybite-splash.png" alt="" width={1207} height={471} quality={100} priority />
       </div>
       <AppShell unread={unread} tz={db.tz}>
         {children}

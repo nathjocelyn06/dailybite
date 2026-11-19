@@ -322,6 +322,17 @@ export async function confirmScanAction(input: {
   }
 }
 
+// ---------- Archive ----------
+/** Delete the original record an archive row points at. */
+export async function deleteArchiveAction(type: string, id: string) {
+  const { deleteArchiveRecord } = await import("@/lib/services/archive");
+  const kinds = ["journal", "meal", "expense", "fridge", "recipe", "photo", "receipt"] as const;
+  const t = kinds.find((k) => k === type);
+  if (!t) throw new Error("Unknown record type");
+  await deleteArchiveRecord(await webDb(), t, id);
+  all();
+}
+
 // ---------- My progress: AI overview ----------
 export async function refreshOverviewAction(period: "week" | "month") {
   const { getProgressOverview } = await import("@/lib/services/overview");

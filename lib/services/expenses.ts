@@ -138,7 +138,10 @@ export async function spendSummary(db: Db, period: "week" | "month", anchor?: st
     label: EXPENSE_LABEL[c],
     total: sumAmounts(list.filter((e) => e.category === c))
   }));
+  // Every day in the range, spent or not: a week with one bar in it is a bar chart of
+  // nothing. Days with no expenses are zeros so the chart has a shape to read.
   const byDay: Record<string, number> = {};
+  for (let d = from; d <= to; d = addDays(d, 1)) byDay[d] = 0;
   for (const e of list) byDay[e.date] = round2((byDay[e.date] ?? 0) + e.amount);
 
   return {

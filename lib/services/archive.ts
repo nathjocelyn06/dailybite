@@ -151,3 +151,21 @@ export async function archiveMonths(db: Db): Promise<ArchiveMonth[]> {
     .map(([month, count]) => ({ month, year: month.slice(0, 4), count }))
     .sort((a, b) => (a.month < b.month ? 1 : -1));
 }
+
+/**
+ * Delete the record behind an archive row.
+ *
+ * The archive never holds copies, so this reaches into whichever table the row came
+ * from and removes the original. Each kind says what else goes with it, because a
+ * journal page takes its stickers and a meal takes its photo reference.
+ */
+export async function deleteArchiveRecord(db: Db, type: ArchiveHit["type"], id: string): Promise<void> {
+  const table =
+    type === "meal" || type === "photo" ? "meals"
+    : type === "expense" || type === "receipt" ? "expenses"
+    : type === "journal" ? "journal_pages"
+    : type === "fridge" ? "fridge_events"
+    : "recipes";
+  must(await db.sb.from(table).delete().eq("user_id", db.userId).eq("id", id), `delete ${type}`);
+}
+

@@ -1,12 +1,16 @@
 import { webDb } from "@/lib/services/db";
 import { EXPENSE_LABEL, spendSummary } from "@/lib/services/expenses";
-import { addDays, addMonths, isDayKey, isMonthKey, prettyDay } from "@/lib/dates";
+import { addDays, addMonths, isDayKey, isMonthKey, prettyDay, weekdayIndex } from "@/lib/dates";
 import Link from "next/link";
 import { ActionButton } from "@/components/ActionButton";
 import { deleteExpenseAction } from "../actions";
 import { ExpenseForm } from "./ExpenseForm";
 
 type Period = "week" | "month";
+
+/** Monday first, matching weekdayIndex. */
+const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const round = (n: number) => Math.round(n);
 
 export default async function BudgetPage({
   searchParams
@@ -56,7 +60,7 @@ export default async function BudgetPage({
       )}
 
       <nav className="seg-links" aria-label="Budget period">
-        <Link href={link({ period: "week", date: s.from })} aria-current={period === "week" ? "page" : undefined}>Weekly</Link>
+        <Link href={link({ period: "week", date: s.today >= s.from && s.today <= s.to ? s.today : s.from })} aria-current={period === "week" ? "page" : undefined}>Weekly</Link>
         <Link href={link({ period: "month", date: `${s.month}-01` })} aria-current={period === "month" ? "page" : undefined}>Monthly</Link>
       </nav>
 
@@ -85,12 +89,23 @@ export default async function BudgetPage({
             ))}
           </div>
           <span className="lbl">Daily spend</span>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 140, borderBottom: "1px solid var(--line)" }} role="img" aria-label="Daily spending chart">
-            {days.length === 0 && <span className="muted">No expenses in this {period}.</span>}
+          <div className="day-chart" role="img" aria-label={`Spending for each day of this ${period}`}>
             {days.map(([d, v]) => (
-              <div key={d} title={`${d}: ${w(v)}`} style={{ flex: 1, height: `${(v / max) * 100}%`, background: "var(--sage)", borderRadius: "4px 4px 0 0", minWidth: 4 }} />
+              <div key={d} className={`col ${v === 0 ? "zero" : ""} ${d === s.today ? "today" : ""}`} title={`${prettyDay(d)}: ${w(v)}`}>
+                <i style={{ height: `${v === 0 ? 1.5 : Math.max(3, (v / max) * 100)}%` }} />
+              </div>
             ))}
           </div>
+          <div className="day-axis" aria-hidden="true">
+            {days.map(([d]) => (
+              <span key={d} className={d === s.today ? "today" : ""}>{period === "week" ? DOW[weekdayIndex(d)] : d.slice(8)}</span>
+            ))}
+          </div>
+          {period === "week" && (
+            <p className="muted" style={{ fontSize: 12 }}>
+              {w(round(s.budget / 7))} a day keeps you inside the week&apos;s share.
+            </p>
+          )}
         </section>
         <aside className="side-col">
           <section className="card">

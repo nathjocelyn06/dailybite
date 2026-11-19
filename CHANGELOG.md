@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.24 · 2026-11-19 — One red, a real week, and a tidier archive
+- **Archive: no month rail, and every row can be deleted.** The results take the whole width, and the × on a row removes the original record — the meal, the expense, the journal page, the fridge entry, the saved recipe — behind a confirm that says so.
+- **The weekly budget works as a week.** Switching to Weekly lands on the week you are actually in instead of the week the month starts in, and Daily spend draws all seven days (Mon–Sun, today banded, days with nothing as a flat line) with the daily figure that keeps you inside the week's share.
+- **One red for charts: `#E72025`.** The calorie ring, the macro bars, the spend bar and the daily-spend chart all use it.
+- **Today's Meal Plan is bright pink.**
+- **The opening logo is nearly twice the size and sharp.** The splash was pointing at a 3072² file whose wordmark filled only a third of the width, declared at the wrong ratio — so it drew small and slightly squashed. It now uses a tight full-resolution crop at its own ratio.
+- Settings is a solid cog, the sidebar has more air between the logo and the first item, and the water goal is gone from Settings.
+
 ## v4.23 · 2026-11-19 — Stickers on top
 - Polaroids are what you stick things on, so stickers, post-its and text now sit above them whatever order they were added in. Each kind keeps its own stacking within its layer.
 
