@@ -1095,11 +1095,15 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .item-macros[hidden] { display: none; }
 
 /* ---------- budget: the week as seven days ---------- */
-.day-chart { display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--line); }
+.day-chart { position: relative; display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--line); }
 .day-chart .col { flex: 1; min-width: 4px; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
 .day-chart .col > i { display: block; background: var(--chart-red); border-radius: 4px 4px 0 0; min-height: 2px; }
-.day-chart .col.zero > i { background: var(--ring-rest); }
-.day-chart .col.today { background: rgba(231, 32, 37, 0.07); border-radius: 6px 6px 0 0; }
+.chart-empty { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; color: var(--muted); font-size: 13px; }
+.day-chart .col.today { position: relative; }
+.day-chart .col.today::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: var(--ink); border-radius: 2px;
+}
 .day-axis { display: flex; gap: 4px; margin-top: 6px; }
 .day-axis span {
   flex: 1; min-width: 4px; text-align: center; font-size: 11px; color: var(--muted);

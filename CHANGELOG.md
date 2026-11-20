@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.28 · 2026-11-20 — A day you spent nothing on looks like it
+- **Daily spend draws nothing where nothing was spent.** The grey stub that stood on every empty day is gone, and a whole period with no spending is an empty chart that says so, with the days still labelled underneath.
+- Today is marked with a tick on the baseline instead of a tinted column, which used to make a day with no spending look like a spent one.
+
 ## v4.27 · 2026-11-19 — Magnets beside the door
 - **Decorate your fridge opens in the empty third column**, under *Cook from my fridge*, instead of pushing everything down below the unit. The door is right next to it, so a magnet goes from the tray onto the door without scrolling. The panel keeps all its state in the fridge; it is only drawn through a portal into the slot the page leaves for it, and falls back to its old place if that slot is not there.
 

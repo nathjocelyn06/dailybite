@@ -26,6 +26,7 @@ export default async function BudgetPage({
   const w = (n: number) => `₩${Math.round(n).toLocaleString()}`;
   const days = Object.entries(s.by_day).sort(([a], [b]) => (a < b ? -1 : 1));
   const max = Math.max(1, ...days.map(([, v]) => v));
+  const spentAny = days.some(([, v]) => v > 0);
   const editing = sp.expense ? s.recent.find((e) => e.id === sp.expense) : undefined;
   // Set when a receipt that was already filed is scanned again; the expense it points
   // at is the one that is already here, so nothing was added.
@@ -90,9 +91,11 @@ export default async function BudgetPage({
           </div>
           <span className="lbl">Daily spend</span>
           <div className="day-chart" role="img" aria-label={`Spending for each day of this ${period}`}>
+            {!spentAny && <p className="chart-empty">Nothing spent this {period}.</p>}
             {days.map(([d, v]) => (
-              <div key={d} className={`col ${v === 0 ? "zero" : ""} ${d === s.today ? "today" : ""}`} title={`${prettyDay(d)}: ${w(v)}`}>
-                <i style={{ height: `${v === 0 ? 1.5 : Math.max(3, (v / max) * 100)}%` }} />
+              <div key={d} className={`col ${d === s.today ? "today" : ""}`} title={`${prettyDay(d)}: ${w(v)}`}>
+                {/* A day with no spending draws nothing at all — an empty day should look empty. */}
+                {v > 0 && <i style={{ height: `${Math.max(3, (v / max) * 100)}%` }} />}
               </div>
             ))}
           </div>
