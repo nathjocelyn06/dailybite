@@ -61,8 +61,12 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
             <Link className="btn sm" href={h.href}>Open original</Link>
             <ActionButton
               action={deleteArchiveAction}
-              args={[h.type, h.id]}
-              confirm={`Delete ${h.title}? This removes the original record, not just this row.`}
+              args={[h.type, h.id, h.item_id ?? null]}
+              confirm={
+                h.type === "fridge" && h.item_id
+                  ? `Delete ${h.title}? This takes the item out of your fridge as well.`
+                  : `Delete ${h.title}? This removes the original record, not just this row.`
+              }
               label={`Delete ${h.title}`}
             >
               ×

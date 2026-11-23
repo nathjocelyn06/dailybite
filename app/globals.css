@@ -1131,3 +1131,17 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .copy-field .input { flex: 1; min-width: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
 .login-alt { display: flex; gap: 10px; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
 .login-alt .link-btn { font-size: 13px; }
+
+/* a shelf item and the x that takes it off the shelf */
+.item-chip-wrap { display: inline-flex; align-items: stretch; }
+.item-chip-wrap.is-going { opacity: 0.5; }
+.item-chip-wrap .item-chip { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0; }
+.item-x {
+  all: unset; cursor: pointer; display: grid; place-items: center; width: 26px; flex: none;
+  border: 1px solid var(--line); border-left: 1px solid var(--line-soft);
+  border-radius: 0 8px 8px 0; background: #fff; color: var(--muted);
+  font-size: 14px; line-height: 1; box-sizing: border-box;
+}
+.item-x:hover { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
+.item-x:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.item-chip-wrap.warn .item-x { border-color: var(--warn-line); }

@@ -324,12 +324,12 @@ export async function confirmScanAction(input: {
 
 // ---------- Archive ----------
 /** Delete the original record an archive row points at. */
-export async function deleteArchiveAction(type: string, id: string) {
+export async function deleteArchiveAction(type: string, id: string, itemId?: string | null) {
   const { deleteArchiveRecord } = await import("@/lib/services/archive");
   const kinds = ["journal", "meal", "expense", "fridge", "recipe", "photo", "receipt"] as const;
   const t = kinds.find((k) => k === type);
   if (!t) throw new Error("Unknown record type");
-  await deleteArchiveRecord(await webDb(), t, id);
+  await deleteArchiveRecord(await webDb(), t, id, itemId);
   all();
 }
 

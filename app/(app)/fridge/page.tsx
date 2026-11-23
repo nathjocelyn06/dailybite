@@ -67,6 +67,9 @@ export default async function FridgePage() {
                 <span style={{ flex: 1 }}>{i.name}</span>
                 <span className="muted">{i.qty} {i.unit}</span>
                 {i.low && <span className="chip warn">low</span>}
+                <ActionButton action={fridgeRemoveAction} args={[i.id]} confirm={`Remove ${i.name} from the cupboard?`} label={`Remove ${i.name}`}>
+                  \u00d7
+                </ActionButton>
               </div>
             ))}
           </section>

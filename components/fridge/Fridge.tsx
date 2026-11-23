@@ -344,13 +344,33 @@ function Shelf({ label, items, onPick }: { label: string; items: FridgeItemView[
   );
 }
 
+/**
+ * A thing on a shelf. Tapping it opens what you can do with it; the x takes it off the
+ * shelf there and then, for when it is finished and there is nothing to decide. The two
+ * are separate elements because a button cannot live inside a button.
+ */
 function ItemChip({ item, onPick }: { item: FridgeItemView; onPick: (i: FridgeItemView) => void }) {
   const warn = item.expiry === "use_soon" || item.expiry === "expired" || item.low;
+  const [pending, start] = useTransition();
   return (
-    <button className={`item-chip ${warn ? "warn" : ""}`} onClick={() => onPick(item)} title={item.name}>
-      <span className="item-name">{item.name}</span>
-      <span className="item-qty">{item.qty}{item.unit === "pcs" ? "" : ` ${item.unit}`}</span>
-    </button>
+    <span className={`item-chip-wrap ${warn ? "warn" : ""} ${pending ? "is-going" : ""}`}>
+      <button className={`item-chip ${warn ? "warn" : ""}`} onClick={() => onPick(item)} title={item.name}>
+        <span className="item-name">{item.name}</span>
+        <span className="item-qty">{item.qty}{item.unit === "pcs" ? "" : ` ${item.unit}`}</span>
+      </button>
+      <button
+        className="item-x"
+        aria-label={`Remove ${item.name} from the fridge`}
+        title={`Remove ${item.name}`}
+        disabled={pending}
+        onClick={() => {
+          if (!window.confirm(`Remove ${item.name} from your fridge?`)) return;
+          start(async () => { await fridgeRemoveAction(item.id); });
+        }}
+      >
+        \u00d7
+      </button>
+    </span>
   );
 }
 
