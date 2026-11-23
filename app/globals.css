@@ -1129,3 +1129,5 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 /* a key you hand to something else */
 .copy-field { display: flex; gap: 6px; align-items: center; }
 .copy-field .input { flex: 1; min-width: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+.login-alt { display: flex; gap: 10px; align-items: center; justify-content: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.login-alt .link-btn { font-size: 13px; }

@@ -37,7 +37,12 @@ export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const open = PUBLIC.some((p) => path === p || path.startsWith(`${p}/`));
 
-  if (!data.user && !open) {
+  // The app is open by default: a visitor without a session gets the owner's
+  // DailyBite, exactly as it worked before sign-in existed. Set REQUIRE_SIGN_IN=1
+  // to turn the gate on once email is dependable.
+  const gated = process.env.REQUIRE_SIGN_IN === "1";
+
+  if (gated && !data.user && !open) {
     const to = req.nextUrl.clone();
     to.pathname = "/login";
     // Come back to where they were trying to go once they are in.
