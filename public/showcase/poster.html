@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite — A3 Exhibition Poster</title>
+<link rel="icon" href="data:,">
+<style>
+@font-face { font-family:"Apercu"; src:url("/fonts/HeadspaceApercu-ExtraBold.otf") format("opentype"); font-weight:800; font-display:block; }
+@font-face { font-family:"Apercu"; src:url("/fonts/HeadspaceApercu-Medium.otf") format("opentype"); font-weight:500; font-display:block; }
+@font-face { font-family:"Apercu"; src:url("/fonts/HeadspaceApercu-Light.otf") format("opentype"); font-weight:300; font-display:block; }
+
+:root{
+  --paper:#F4F3F0;
+  --ink:#141210;
+  --ink-2:#55504b;
+  --muted:#8a847e;
+  --rule:#d5d2cc;
+  --accent:#D1431C;       /* display word / arrows */
+  --sun:#F9D312;
+  --cobalt:#0a73b8;
+  --ocean:#0f5c85;
+  --emerald:#038248;
+  --lilac:#9a80bd;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{ background:#2a2a2a; font-family:"Apercu", system-ui, "Segoe UI", sans-serif; -webkit-font-smoothing:antialiased; }
+
+/* A3 portrait, 1240 x 1754 (= 297 x 420 mm) */
+.poster{
+  position:relative; width:1240px; height:1754px; overflow:hidden;
+  background:var(--paper); color:var(--ink);
+  padding:44px 52px 38px; display:flex; flex-direction:column;
+}
+
+/* ---------- running heads ---------- */
+.meta{ display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:500; letter-spacing:.01em; }
+.meta .left{ display:flex; align-items:center; gap:9px; }
+.meta .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); flex:none; }
+.meta .left span{ color:var(--accent); }
+
+/* ---------- title block ---------- */
+.titleblock{ text-align:center; margin-top:34px; position:relative; z-index:3; }
+.caption{ font-size:17px; font-weight:800; color:var(--accent); letter-spacing:.005em; }
+.titleblock h1{ margin-top:16px; font-size:70px; font-weight:800; line-height:.98; letter-spacing:-.035em; }
+.huge{
+  margin-top:2px; font-size:176px; font-weight:800; line-height:.86; letter-spacing:-.045em;
+  color:var(--accent); margin-bottom:-74px; position:relative; z-index:4;
+}
+
+/* ---------- device band (full bleed) ---------- */
+.band{
+  position:relative; margin:0 -52px; height:608px; overflow:hidden;
+  background:
+    radial-gradient(70% 90% at 18% 10%, rgba(255,250,214,.95) 0%, rgba(255,250,214,0) 60%),
+    radial-gradient(80% 90% at 88% 16%, rgba(255,232,240,.9) 0%, rgba(255,232,240,0) 62%),
+    linear-gradient(158deg, #F7EFFF 0%, #EADFF8 38%, #CFC0EC 68%, #AC95DC 100%);
+}
+.band::after{ /* soft vignette so devices sit in light */
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(90% 80% at 50% 42%, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 62%),
+             linear-gradient(0deg, rgba(60,36,104,.2), rgba(255,255,255,0) 42%);
+}
+.band-inner{ position:absolute; inset:0; z-index:2; }
+
+/* small square feature cards */
+.sq{
+  position:absolute; width:140px; height:146px; border-radius:24px; z-index:7;
+  background:#FFFFFF; border:1px solid rgba(255,255,255,.92);
+  box-shadow:0 22px 40px rgba(40,22,78,.27), 0 6px 14px rgba(40,22,78,.16);
+  padding:14px 15px 14px; display:flex; flex-direction:column;
+}
+.sq.sq-sun{ background:#FBDE55; border-color:rgba(255,255,255,.7); }
+.sq .ico{ width:34px; height:34px; border-radius:11px; display:grid; place-items:center; }
+.sq .ico img{ width:24px; display:block; }
+.sq .l{ margin-top:12px; font-size:8.5px; font-weight:800; letter-spacing:.14em;
+  text-transform:uppercase; color:#6b6560; }
+.sq.sq-sun .l{ color:#6b5600; }
+.sq .v{ margin-top:4px; font-size:19px; font-weight:800; letter-spacing:-.025em; line-height:1; white-space:nowrap; }
+.sq .c{ margin-top:7px; font-size:9.5px; font-weight:500; line-height:1.34; color:#4a4542; }
+.sq.sq-sun .c{ color:#5c4a00; }
+
+/* square app icon */
+.appicon{
+  position:absolute; left:36px; top:40px; width:112px; height:112px; border-radius:26px;
+  background:linear-gradient(160deg,#FFFFFF 0%,#FFF8D8 52%,#FDEDA2 100%);
+  box-shadow:0 18px 32px rgba(52,30,96,.34), inset 0 2px 0 rgba(255,255,255,.9);
+  display:grid; place-items:center; z-index:6;
+}
+.appicon img{ width:84px; display:block; }
+.appicon-label{
+  position:absolute; left:36px; top:164px; width:112px; text-align:center;
+  font-size:11px; font-weight:500; color:#3f3357; letter-spacing:.06em; z-index:6;
+}
+
+/* laptop */
+.laptop{ position:absolute; left:196px; top:84px; width:672px; z-index:3; }
+.lid{
+  border-radius:20px; padding:12px 12px 14px;
+  background:linear-gradient(168deg,#f5f6f9 0%,#d0d4dc 26%,#9aa0ad 62%,#dcdfe6 100%);
+  box-shadow:0 42px 66px rgba(40,22,78,.42), 0 12px 24px rgba(40,22,78,.3),
+             inset 0 2px 2px rgba(255,255,255,.95), inset 0 -2px 4px rgba(0,0,0,.22);
+}
+.bezel{ position:relative; border-radius:9px; background:#0c0c0f; padding:11px 8px 8px;
+  box-shadow:inset 0 0 0 1.5px #2b2b31; }
+.cam{ position:absolute; top:4px; left:50%; transform:translateX(-50%); width:6px; height:6px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #4d5560, #15171c 70%); }
+.screen{ position:relative; width:632px; height:418px; overflow:hidden; border-radius:3px; background:#fff; }
+.screen img{ width:100%; display:block; }
+.screen::after{ content:""; position:absolute; inset:0;
+  background:linear-gradient(118deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.06) 24%, rgba(255,255,255,0) 46%); }
+.base{ position:relative; width:742px; margin:0 0 0 -35px; height:16px; border-radius:0 0 10px 10px;
+  background:linear-gradient(180deg,#e8ebf0 0%,#bec3cd 32%,#888f9d 78%,#5c6271 100%);
+  box-shadow:0 22px 34px rgba(30,16,62,.42); }
+.base::after{ content:""; position:absolute; left:50%; top:0; transform:translateX(-50%);
+  width:98px; height:7px; border-radius:0 0 7px 7px; background:linear-gradient(180deg,#99a0ad,#737a89); }
+
+/* phone */
+.phone{
+  position:absolute; left:838px; top:118px; width:200px; height:416px; z-index:5;
+  border-radius:34px; padding:7px; transform:rotate(-2deg);
+  background:linear-gradient(150deg,#60656f 0%,#23262d 22%,#0f1115 50%,#2e323a 78%,#6d7384 100%);
+  box-shadow:0 44px 66px rgba(32,16,70,.5), 0 14px 26px rgba(32,16,70,.42), inset 0 2px 2px rgba(255,255,255,.45);
+}
+.phone-screen{ position:relative; width:100%; height:100%; border-radius:28px; overflow:hidden; background:#fff; }
+.phone-screen img{ width:100%; display:block; }
+.phone-screen::after{ content:""; position:absolute; inset:0; border-radius:28px;
+  background:linear-gradient(130deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,.04) 30%, rgba(255,255,255,0) 54%); }
+.island{ position:absolute; top:8px; left:50%; transform:translateX(-50%); width:56px; height:17px; border-radius:10px;
+  background:#07080a; z-index:12; }
+
+/* ---------- rules & sections ---------- */
+.rule{ height:1px; background:var(--rule); }
+.says{ display:grid; grid-template-columns:1fr 1fr; gap:36px; padding:22px 0 26px; }
+.kicker{ font-size:12px; font-weight:800; color:var(--accent); letter-spacing:.02em; margin-bottom:12px; }
+.says .quote{ font-size:27px; font-weight:500; line-height:1.24; color:#3c3732; letter-spacing:-.015em; }
+.says .does{ display:flex; gap:13px; }
+.says .arrow{ font-size:24px; color:var(--accent); line-height:1.1; flex:none; }
+.says .does p{ font-size:25px; font-weight:800; line-height:1.24; letter-spacing:-.02em; }
+
+.about{ display:grid; grid-template-columns:232px 1fr; gap:36px; padding:24px 0 26px; align-items:start; }
+.lbl{ font-size:12px; font-weight:500; color:var(--muted); margin-bottom:9px; }
+.about .name{ font-size:24px; font-weight:800; letter-spacing:-.02em; }
+.about .role{ font-size:13px; font-weight:500; color:var(--ink-2); margin-top:5px; line-height:1.4; }
+.qs{ margin-bottom:11px; }
+.qs .lead{ font-size:15px; font-weight:800; color:var(--ink); }
+.qs ul{ list-style:none; margin-top:5px; }
+.qs li{ font-size:15px; font-weight:800; color:var(--accent); line-height:1.5; }
+.body-copy{ font-size:13.2px; font-weight:500; line-height:1.62; color:var(--ink-2); }
+
+/* ---------- how it works ---------- */
+.how{
+  flex:1; margin-top:4px; background:#fff; border-radius:20px; padding:24px 28px 26px;
+  box-shadow:0 2px 0 rgba(20,18,16,.04); display:flex; flex-direction:column;
+}
+.how-head{ display:flex; align-items:baseline; gap:14px; }
+.how-head .lbl{ margin:0; }
+.how-head h3{ font-size:19px; font-weight:800; letter-spacing:-.02em; }
+.how-head .note{ margin-left:auto; font-size:11.5px; font-weight:500; color:var(--muted); }
+
+.flow{ display:flex; align-items:stretch; gap:0; margin-top:20px; }
+.step{ flex:1; display:flex; flex-direction:column; gap:7px; padding:0 4px; }
+.step .chip{
+  width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
+  font-size:12px; font-weight:800; color:#fff; background:var(--ink);
+}
+.step .box{
+  border:1.4px solid var(--ink); border-radius:13px; padding:11px 12px 12px; min-height:112px;
+  display:flex; flex-direction:column; gap:5px; background:#fff;
+}
+.step .box.fill-sun{ background:#FEF6C9; border-color:#E3C40C; }
+.step .box.fill-pink{ background:#FFE6EF; border-color:#F3A9C8; }
+.step .box.fill-green{ background:#E6F4EA; border-color:#8DC6A6; }
+.step .box.fill-blue{ background:#E1EFF8; border-color:#8DBDDC; }
+.step .box.fill-lilac{ background:#EDE7F6; border-color:#B3A0D2; }
+.step .box strong{ font-size:13.5px; font-weight:800; line-height:1.22; letter-spacing:-.01em; }
+.step .box span{ font-size:11.4px; font-weight:500; line-height:1.4; color:var(--ink-2); }
+.arrowcell{ width:30px; flex:none; display:grid; place-items:center; color:var(--accent); font-size:19px; padding-top:40px; }
+
+.lanes{ margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.lane{ border:1.4px dashed var(--rule); border-radius:13px; padding:11px 14px; display:flex; align-items:center; gap:11px; }
+.lane .tag{ font-size:10.5px; font-weight:800; letter-spacing:.07em; text-transform:uppercase;
+  padding:5px 9px; border-radius:999px; flex:none; }
+.lane .tag.app{ background:var(--sun); color:#231f1c; }
+.lane .tag.mcp{ background:var(--ocean); color:#fff; }
+.lane p{ font-size:11.8px; font-weight:500; line-height:1.4; color:var(--ink-2); }
+.lane p b{ font-weight:800; color:var(--ink); }
+
+.stack{ margin-top:14px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+.stack span{ font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-2); border:1.2px solid var(--rule); border-radius:999px; padding:5px 11px; }
+.stack .k{ border:0; padding:0; color:var(--muted); letter-spacing:.08em; }
+
+/* ---------- footer ---------- */
+.foot{ display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:500; margin-top:22px; }
+</style>
+</head>
+<body>
+<div class="poster" id="poster">
+
+  <div class="meta">
+    <span class="left"><i class="dot"></i><span>Tool Using AI Agents</span></span>
+    <span>End of Semester Exhibition 2026</span>
+  </div>
+
+  <div class="titleblock">
+    <div class="caption">A food journal with its own MCP server</div>
+    <h1>all in one food companion</h1>
+    <div class="huge">Daily Bite</div>
+  </div>
+
+  <div class="band">
+    <div class="band-inner">
+
+      <div class="appicon"><img src="/logo-dailybite-wordmark.png" alt="DailyBite"></div>
+      <div class="appicon-label">DAILYBITE · PWA</div>
+
+      <div class="laptop">
+        <div class="lid">
+          <div class="bezel">
+            <div class="cam"></div>
+            <div class="screen"><img src="/showcase/shot-home.png" alt="DailyBite Home dashboard"></div>
+          </div>
+        </div>
+        <div class="base"></div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="island"></div>
+          <img src="/showcase/shot-fridge.png" alt="DailyBite fridge on a phone">
+        </div>
+      </div>
+
+      <div class="sq" style="left:36px; top:196px;">
+        <span class="ico" style="background:#FFEAB8"><img src="/magnets/toast.png" alt=""></span>
+        <span class="l">Meal logged</span>
+        <span class="v">534 kcal</span>
+        <span class="c">read straight from one photo</span>
+      </div>
+      <div class="sq" style="left:36px; top:364px;">
+        <span class="ico" style="background:#DCEFF9"><img src="/magnets/apple.png" alt=""></span>
+        <span class="l">In your fridge</span>
+        <span class="v">12 items</span>
+        <span class="c">tracked, with 4 to use soon</span>
+      </div>
+      <div class="sq sq-sun" style="left:1064px; top:120px;">
+        <span class="ico" style="background:rgba(255,255,255,.8)"><img src="/magnets/cheese.png" alt=""></span>
+        <span class="l">Food budget</span>
+        <span class="v">320,000</span>
+        <span class="c">won left this month</span>
+      </div>
+      <div class="sq" style="left:1064px; top:300px;">
+        <span class="ico" style="background:#FBDCD3"><img src="/magnets/strawberry.png" alt=""></span>
+        <span class="l">Use soon</span>
+        <span class="v">2 days</span>
+        <span class="c">before the green grapes turn</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="says">
+    <div>
+      <div class="kicker">You say</div>
+      <p class="quote">“What can I cook tonight?”</p>
+    </div>
+    <div>
+      <div class="kicker">It does</div>
+      <div class="does">
+        <span class="arrow">→</span>
+        <p>Reads your fridge, ranks recipes by what expires first, and adds what's missing to your shopping list</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="about">
+    <div>
+      <div class="lbl">Made by</div>
+      <div class="name">Nathania Jocelyn</div>
+      <div class="role">Yonsei University<br>Information &amp; Interaction Design</div>
+    </div>
+    <div>
+      <div class="lbl">About the work</div>
+      <div class="qs">
+        <div class="lead">Ever find yourself wondering...</div>
+        <ul>
+          <li>What should I eat today?</li>
+          <li>How many calories am I actually eating?</li>
+          <li>Where did my grocery money go?</li>
+        </ul>
+      </div>
+      <p class="body-copy">DailyBite answers all three in one place. Snap a meal and it reads the dish and its calories straight from the photo; scan a receipt and the groceries land in your fridge with what you spent. It keeps a food journal, tracks your food budget in won, watches what is about to expire, and suggests tonight's dinner from what you already own. Everything is one shared record, so the same day shows up in Home, Journal, Archive and My progress — nothing is entered twice. And because DailyBite runs its own MCP server alongside the app, Claude can do any of it with you in plain language: log the meal, fill the fridge, plan the week, or tell you how the month is going.</p>
+    </div>
+  </div>
+
+  <div class="how">
+    <div class="how-head">
+      <span class="lbl">How it works</span>
+      <h3>From a photo to a full day, in five steps</h3>
+      <span class="note">Nothing is saved until you confirm it</span>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <span class="chip">1</span>
+        <div class="box fill-sun">
+          <strong>Snap or ask</strong>
+          <span>A meal photo, a grocery receipt, or a question in plain language.</span>
+        </div>
+      </div>
+      <div class="arrowcell">→</div>
+      <div class="step">
+        <span class="chip">2</span>
+        <div class="box fill-pink">
+          <strong>AI reads it</strong>
+          <span>Dish, portion and calories from the photo; items and prices from the receipt.</span>
+        </div>
+      </div>
+      <div class="arrowcell">→</div>
+      <div class="step">
+        <span class="chip">3</span>
+        <div class="box fill-blue">
+          <strong>You confirm</strong>
+          <span>The estimate waits as <i>pending</i>. Correct the portion, then say yes.</span>
+        </div>
+      </div>
+      <div class="arrowcell">→</div>
+      <div class="step">
+        <span class="chip">4</span>
+        <div class="box fill-green">
+          <strong>One record updates</strong>
+          <span>Journal, calories, fridge stock and food budget all move together.</span>
+        </div>
+      </div>
+      <div class="arrowcell">→</div>
+      <div class="step">
+        <span class="chip">5</span>
+        <div class="box fill-lilac">
+          <strong>It gives back</strong>
+          <span>What to cook tonight, what expires first, what's left to spend this month.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lanes">
+      <div class="lane">
+        <span class="tag app">Web app</span>
+        <p><b>Home · My Kitchen · Journal · Archive.</b> Four tabs, installable as a PWA, same layout on desktop and phone.</p>
+      </div>
+      <div class="lane">
+        <span class="tag mcp">MCP server</span>
+        <p><b>/api/mcp</b> exposes the same services to Claude, so a sentence does what a screen does.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <span class="k">Built with</span>
+      <span>Next.js</span><span>Supabase</span><span>Model Context Protocol</span><span>Claude</span><span>TheMealDB</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Yonsei University</span>
+    <span>Information &amp; Interaction Design</span>
+  </div>
+
+</div>
+</body>
+</html>

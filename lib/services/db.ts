@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../supabase/admin";
+import { supabaseServer } from "../supabase/server";
 import { DEFAULT_TZ, env } from "../env";
 
 /**
@@ -14,14 +15,43 @@ import { DEFAULT_TZ, env } from "../env";
 export type Db = { sb: SupabaseClient; userId: string; tz: string };
 
 /**
- * The web app's Db. No session, no login: it is the owner, like the MCP server.
- * Kept as a separate name so pages and actions stay readable and so a signed-in
- * mode can come back here without touching every call site.
+ * The signed-in person's Db (v5).
+ *
+ * This client carries their session, so the RLS policies from migration 0001 are
+ * doing the scoping, not just the `.eq("user_id", ...)` in every service. Both are
+ * kept: the filter makes the intent plain in the code, and the policy makes it true
+ * even if a filter is ever forgotten.
+ *
+ * The middleware already turned away anyone without a session, so reaching here
+ * without one means something is wired wrong rather than someone being logged out.
  */
 export async function webDb(): Promise<Db> {
-  return ownerDb();
+  const sb = await supabaseServer();
+  const { data } = await sb.auth.getUser();
+  if (!data.user) throw new Error("Not signed in");
+  return { sb, userId: data.user.id, tz: await loadTz(sb, data.user.id) };
 }
 
+/**
+ * The Db behind a per-account MCP key.
+ *
+ * The MCP server has no cookie, so it cannot be the user the way a page can. It looks
+ * the key up on the service-role client and then acts as that account — which is why
+ * every service still filters by `user_id` explicitly.
+ */
+export async function dbForMcpKey(key: string): Promise<Db | null> {
+  if (!key || key.length < 24) return null;
+  const sb = supabaseAdmin();
+  const { data } = await sb.from("settings").select("user_id,timezone").eq("mcp_key", key).maybeSingle();
+  if (!data) return null;
+  return { sb, userId: data.user_id as string, tz: (data.timezone as string) || DEFAULT_TZ };
+}
+
+/**
+ * The owner's Db on the service-role client. Still here for the MCP server's own
+ * fallback key (`MCP_ACCESS_KEY`), which predates per-account keys and keeps the
+ * connector that is already set up working.
+ */
 export async function ownerDb(): Promise<Db> {
   const sb = supabaseAdmin();
   const userId = env("OWNER_USER_ID");

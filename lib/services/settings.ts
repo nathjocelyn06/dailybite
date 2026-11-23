@@ -16,6 +16,8 @@ export type Settings = {
   fridge_color: string;
   show_insights: boolean;
   personalize_insights: boolean;
+  /** This account's own MCP key (migration 0003). */
+  mcp_key?: string;
 };
 
 /**

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite device mockup</title>
+<style>
+  html, body { margin:0; padding:0; background:transparent; overflow:hidden; }
+  ::-webkit-scrollbar { width:0; height:0; display:none; }
+  body.bg-white { background:#FFFFFF; }
+  body.bg-black { background:#000000; }
+  #scaler { transform-origin:0 0; }
+  iframe { border:0; display:block; background:#fff; }
+
+  /* ---------------- laptop ---------------- */
+  .laptop { position:relative; width:max-content; padding:2px;
+            display:flex; flex-direction:column; align-items:center; }
+  .lid {
+    position:relative; width:fit-content; border-radius:30px; padding:20px 20px 24px;
+    background:linear-gradient(168deg,#F6F7FA 0%,#D2D6DE 26%,#9BA1AE 62%,#DEE1E7 100%);
+    box-shadow:inset 0 2px 2px rgba(255,255,255,.95), inset 0 -3px 6px rgba(0,0,0,.2);
+  }
+  .bezel {
+    position:relative; border-radius:16px; background:#0C0C0F; padding:26px 12px 14px;
+    box-shadow:inset 0 0 0 2px #2B2B31;
+  }
+  .cam { position:absolute; top:11px; left:50%; transform:translateX(-50%);
+    width:9px; height:9px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #4D5560, #15171C 70%); }
+  .screen { position:relative; width:1512px; height:1000px; overflow:hidden; border-radius:4px; background:#fff; }
+  .base {
+    position:relative; width:1756px; height:30px; border-radius:0 0 22px 22px;
+    background:linear-gradient(180deg,#EAEDF2 0%,#C0C5CF 32%,#8A919F 78%,#5E6473 100%);
+  }
+  .base::after { content:""; position:absolute; left:50%; top:0; transform:translateX(-50%);
+    width:200px; height:12px; border-radius:0 0 12px 12px; background:linear-gradient(180deg,#9BA2AF,#757C8B); }
+
+  /* ---------------- phone ---------------- */
+  .phone { position:relative; width:max-content; padding:2px; }
+  .shell {
+    position:relative; width:fit-content; border-radius:58px; padding:13px;
+    background:linear-gradient(150deg,#636874 0%,#24272E 22%,#0F1115 50%,#30343C 78%,#6F7586 100%);
+    box-shadow:inset 0 2px 3px rgba(255,255,255,.45);
+  }
+  .glass { position:relative; width:390px; height:888px; border-radius:46px; overflow:hidden; background:#fff; }
+  /* 44px status strip keeps the Dynamic Island clear of the app's own content */
+  .strip { height:44px; background:#fff; }
+  .island { position:absolute; top:13px; left:50%; transform:translateX(-50%);
+    width:112px; height:30px; border-radius:18px; background:#07080A; z-index:5; }
+  .island::after { content:""; position:absolute; right:10px; top:9px; width:11px; height:11px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #27405C, #07080A 72%); }
+</style>
+</head>
+<body>
+<div id="scaler">
+  <div id="laptop" class="laptop" style="display:none">
+    <div class="lid">
+      <div class="bezel">
+        <div class="cam"></div>
+        <div class="screen"><iframe id="fl" width="1512" height="1000"></iframe></div>
+      </div>
+    </div>
+    <div class="base"></div>
+  </div>
+
+  <div id="phone" class="phone" style="display:none">
+    <div class="shell">
+      <div class="glass">
+        <div class="island"></div>
+        <div class="strip"></div>
+        <iframe id="fp" width="390" height="844"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/showcase/prep.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  const dev = q.get('dev') || 'laptop';
+  const s = parseFloat(q.get('s') || '3');
+  document.getElementById(dev).style.display = (dev === 'laptop' ? 'flex' : 'block');
+  document.getElementById('scaler').style.transform = 'scale(' + s + ')';
+  document.getElementById(dev === 'laptop' ? 'fl' : 'fp').src =
+    dev === 'laptop' ? '/' : '/fridge';
+  window.addEventListener('load', () => {
+    const el = document.getElementById(dev);
+    document.body.style.width  = Math.ceil(el.offsetWidth  * s) + 'px';
+    document.body.style.height = Math.ceil(el.offsetHeight * s) + 'px';
+  });
+</script>
+</body>
+</html>

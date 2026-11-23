@@ -22,7 +22,10 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => ({}))) as { date?: string; dry?: boolean };
-  const db = await webDb();
+  // The service worker calls this with whatever cookies it has; signed out there is
+  // simply nothing due, which is not an error worth logging.
+  const db = await webDb().catch(() => null);
+  if (!db) return NextResponse.json({ show: [] });
 
   const date = /^\d{4}-\d{2}-\d{2}$/.test(body.date ?? "") ? body.date! : dayKey(new Date(), db.tz);
   const prefs = parsePrefs((await cookies()).get(REMINDER_COOKIE)?.value);

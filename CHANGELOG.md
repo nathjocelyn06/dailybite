@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.0 · 2026-11-23 — DailyBite is everyone's now
+- **Sign in with your email.** One field, no password: the link in the email lets you in, and an address nobody has used before makes a new account. There is a six-digit code in the same email for when tapping a link is awkward.
+- **Your records are yours.** Pages and server actions now run on the signed-in person's own Supabase session, so the row-level security written back in migration 0001 — `user_id = auth.uid()` on all fifteen tables, and per-folder rules on the photo bucket — is what separates one account from another, not just the filter in each service. Both are kept.
+- **Claude, per account.** Settings shows your own connector URL. The shared `MCP_ACCESS_KEY` still works and still means the owner's account, so a connector set up before today keeps working.
+- **Installable, and honest when offline.** The service worker now answers a failed page load with DailyBite's own offline page rather than the browser's error, which is also what a browser wants to see before it offers to install the app.
+- Nothing was redesigned. The sign-in screen is the only new page.
+
 ## v4.28 · 2026-11-20 — A day you spent nothing on looks like it
 - **Daily spend draws nothing where nothing was spent.** The grey stub that stood on every empty day is gone, and a whole period with no spending is an empty chart that says so, with the days still labelled underneath.
 - Today is marked with a tick on the baseline instead of a tinted column, which used to make a day with no spending look like a spent one.

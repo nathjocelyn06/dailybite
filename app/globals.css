@@ -1110,3 +1110,22 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
   overflow: hidden; white-space: nowrap;
 }
 .day-axis span.today { color: var(--ink); font-weight: var(--w-subtitle); }
+
+/* ---------- sign in (the only page outside the app shell) ---------- */
+.login { min-height: 100svh; display: grid; place-items: center; padding: 24px 16px; background: linear-gradient(160deg, #FFFEFA 0%, #FFFCF4 45%, #FDF4E2 100%); }
+.login-card {
+  width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 22px; padding: clamp(22px, 5vw, 34px); display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 10px 30px rgba(46, 42, 38, 0.08);
+}
+.login-logo { width: min(220px, 62%); height: auto; margin-bottom: 4px; }
+.login-form { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
+.login-form .btn { justify-content: center; min-height: 50px; }
+.login-sent { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line-soft); padding-top: 14px; }
+.login-sent p { font-size: 14px; }
+.login-code { display: flex; flex-direction: column; gap: 10px; }
+.login-code .btn { justify-content: center; }
+
+/* a key you hand to something else */
+.copy-field { display: flex; gap: 6px; align-items: center; }
+.copy-field .input { flex: 1; min-width: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }

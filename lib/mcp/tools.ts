@@ -1,7 +1,8 @@
 import "server-only";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ownerDb, type Db } from "../services/db";
+import { type Db } from "../services/db";
+import { mcpDb } from "./context";
 import { appUrl } from "../env";
 import { dayKey } from "../dates";
 import {
@@ -38,7 +39,7 @@ type Result = { text: string; data?: unknown; link?: string };
 /** Every tool runs as the owner, returns a short human line + JSON + a deep link to the web app. */
 async function run(fn: (db: Db) => Promise<Result>): Promise<ToolOut> {
   try {
-    const db = await ownerDb();
+    const db = await mcpDb();
     const r = await fn(db);
     const parts = [r.text];
     if (r.link) parts.push(`Open in DailyBite: ${appUrl(r.link)}`);

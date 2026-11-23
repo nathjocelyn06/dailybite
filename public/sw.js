@@ -18,7 +18,27 @@
 
 const DUE_URL = "/api/reminders";
 
-self.addEventListener("install", () => self.skipWaiting());
+const SHELL = "dailybite-shell-v1";
+const OFFLINE = "/offline.html";
+
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(SHELL).then((c) => c.addAll([OFFLINE, "/icons/icon-192.png"])).catch(() => undefined));
+  self.skipWaiting();
+});
+
+/**
+ * Network first, always: this app is a window on a database and stale pages would lie.
+ * The cache exists for one thing — so a page load with no connection says so in
+ * DailyBite's own words instead of the browser's error page. That also gives the
+ * worker the fetch handler a browser wants before it will offer to install the app.
+ */
+self.addEventListener("fetch", (e) => {
+  const req = e.request;
+  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
+  if (req.mode === "navigate") {
+    e.respondWith(fetch(req).catch(() => caches.match(OFFLINE).then((r) => r || Response.error())));
+  }
+});
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 
 /** Local date and clock as the user reads them, which is what the rules are written in. */

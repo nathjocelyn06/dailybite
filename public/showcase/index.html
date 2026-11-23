@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite — Product Showcase</title>
+<link rel="icon" href="data:,">
+<style>
+@font-face { font-family: "Apercu"; src: url("/fonts/HeadspaceApercu-ExtraBold.otf") format("opentype"); font-weight: 800; font-display: block; }
+@font-face { font-family: "Apercu"; src: url("/fonts/HeadspaceApercu-Medium.otf") format("opentype"); font-weight: 500; font-display: block; }
+@font-face { font-family: "Apercu"; src: url("/fonts/HeadspaceApercu-Light.otf") format("opentype"); font-weight: 300; font-display: block; }
+
+:root{
+  --ink:#231f1c; --ink-2:#4a4542; --muted:#6b6560;
+  --sun:#F9D312; --amber:#f29a0f; --vermilion:#e8401c; --lilac:#9a80bd; --blush:#f3a9c8;
+  --cobalt:#0a73b8; --ocean:#0f5c85; --emerald:#038248;
+  --paper:#ededeb; --line:#e2e2df;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{ background:#140f20; font-family:"Apercu", system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing:antialiased; }
+
+/* ============================ STAGE ============================ */
+.stage{
+  position:relative; width:2400px; height:1500px; overflow:hidden; isolation:isolate;
+  background:
+    radial-gradient(105% 85% at 18% 6%,  rgba(255,250,228,.92) 0%, rgba(253,240,178,.45) 18%, rgba(255,255,255,0) 44%),
+    radial-gradient(85% 75% at 88% 18%, rgba(255,255,255,.60) 0%, rgba(229,216,250,0) 56%),
+    radial-gradient(115% 115% at 52% 122%, #7259ac 0%, #3b2b5e 44%, #1c1430 80%),
+    linear-gradient(168deg, #f4edfd 0%, #dccbf4 32%, #b295e1 60%, #5e4690 85%, #281e3c 100%);
+}
+
+/* dramatic light sweeps (reference 1) */
+.beam{ position:absolute; pointer-events:none; mix-blend-mode:screen; }
+.beam-a{ left:-16%; top:-30%; width:62%; height:175%; transform:rotate(15deg);
+  background:linear-gradient(90deg, rgba(255,232,150,0) 0%, rgba(255,236,172,.46) 44%, rgba(255,255,255,.66) 58%, rgba(255,246,206,0) 100%);
+  filter:blur(64px); }
+.beam-b{ right:-12%; top:-36%; width:46%; height:178%; transform:rotate(-13deg);
+  background:linear-gradient(90deg, rgba(214,230,255,0) 0%, rgba(228,238,255,.5) 48%, rgba(255,255,255,.3) 70%, rgba(255,255,255,0) 100%);
+  filter:blur(72px); }
+.beam-c{ left:38%; top:-42%; width:22%; height:184%; transform:rotate(8deg);
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+  filter:blur(52px); opacity:.5; }
+.glow-sun{ position:absolute; left:3%; top:-18%; width:760px; height:760px; border-radius:50%;
+  background:radial-gradient(circle, rgba(249,211,18,.5) 0%, rgba(249,211,18,.14) 44%, rgba(249,211,18,0) 70%); filter:blur(30px); }
+.vignette{ position:absolute; inset:0; pointer-events:none; z-index:70;
+  background:radial-gradient(128% 98% at 50% 42%, rgba(0,0,0,0) 46%, rgba(20,12,36,.40) 86%, rgba(13,7,24,.72) 100%); }
+.grain{ position:absolute; inset:0; opacity:.14; pointer-events:none; mix-blend-mode:overlay; z-index:71;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.5'/></svg>"); }
+
+/* oversized wordmark behind the devices (reference 2) */
+.bigword, .bigsub{
+  position:absolute; font-weight:800; font-size:340px; line-height:.80; letter-spacing:-.05em;
+  white-space:nowrap; z-index:1;
+}
+.bigword{ left:-38px; top:-18px; color:#fff; opacity:.26; text-shadow:0 10px 60px rgba(255,255,255,.2); }
+.bigsub{ left:16px; top:280px; color:transparent; -webkit-text-stroke:4px rgba(255,255,255,.24); }
+
+/* pastel confetti (reference 2) */
+.blob{ position:absolute; border-radius:50%; z-index:2; }
+.ring-deco{ position:absolute; border-radius:50%; z-index:2; }
+
+/* ============================ LEFT COLUMN ============================ */
+.topbar{ position:absolute; left:96px; top:84px; display:flex; align-items:center; gap:20px; z-index:45; }
+.topbar img{ height:62px; filter:drop-shadow(0 14px 26px rgba(40,22,70,.4)); }
+.eyebrow{
+  display:inline-flex; align-items:center; gap:10px; padding:11px 22px; border-radius:999px;
+  background:rgba(255,255,255,.58); border:1px solid rgba(255,255,255,.85);
+  backdrop-filter:blur(18px); font-weight:500; font-size:17px; letter-spacing:.15em;
+  text-transform:uppercase; color:#3b2f58; white-space:nowrap;
+}
+.eyebrow b{ font-weight:800; }
+
+.headline{ position:absolute; left:96px; top:222px; z-index:45; width:600px; }
+.headline h1{ font-weight:800; font-size:78px; line-height:.98; letter-spacing:-.038em; color:#1c1430; white-space:nowrap; }
+.headline p{ width:490px; }
+.headline h1 em{ font-style:normal; display:block; color:#fff; text-shadow:0 10px 36px rgba(48,26,90,.5); }
+.headline p{ margin-top:26px; font-weight:500; font-size:24px; line-height:1.5; color:#3b3056; }
+.cta{ margin-top:34px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.cta .btn{
+  display:inline-flex; align-items:center; padding:19px 36px; border-radius:999px;
+  background:linear-gradient(180deg,#FDE571,#F7C70A); color:#231f1c; font-weight:800; font-size:22px;
+  box-shadow:0 18px 38px rgba(170,126,0,.45), inset 0 2px 0 rgba(255,255,255,.8);
+}
+.cta .ghost{
+  display:inline-flex; align-items:center; padding:19px 28px; border-radius:999px;
+  background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.9); color:#2f2548;
+  font-weight:500; font-size:20px; backdrop-filter:blur(14px);
+}
+.pillrow{ position:absolute; left:96px; top:1152px; z-index:45; display:flex; gap:12px; flex-wrap:wrap; width:470px; }
+.pill{ padding:12px 20px; border-radius:999px; font-size:16px; font-weight:800; color:#2d2448;
+  background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.85); backdrop-filter:blur(14px); white-space:nowrap; }
+.footnote{ position:absolute; left:98px; bottom:52px; z-index:45; font-size:15px; font-weight:500;
+  color:rgba(255,255,255,.66); letter-spacing:.14em; }
+
+/* ============================ DEVICES ============================ */
+.devices{ position:absolute; left:0; top:0; width:2400px; height:1500px; z-index:20; }
+
+/* ---- laptop ---- */
+.laptop{ position:absolute; left:636px; top:244px; width:1300px; transform-origin:0 0; transform:scale(.955); }
+.lid{
+  position:relative; border-radius:28px; padding:18px 18px 22px;
+  background:linear-gradient(168deg,#f4f5f8 0%,#ced2db 26%,#979daa 60%,#dadde4 100%);
+  box-shadow:0 74px 120px rgba(20,11,40,.58), 0 20px 42px rgba(20,11,40,.4),
+             inset 0 2px 2px rgba(255,255,255,.95), inset 0 -3px 6px rgba(0,0,0,.24);
+}
+.bezel{
+  position:relative; border-radius:14px; background:#0c0c0f; padding:15px 11px 11px;
+  box-shadow:inset 0 0 0 2px #2b2b31, inset 0 8px 22px rgba(0,0,0,.82);
+}
+.cam{ position:absolute; top:5px; left:50%; transform:translateX(-50%); width:9px; height:9px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #4d5560, #15171c 70%); box-shadow:0 0 0 2px #1b1d22; }
+.screen{
+  position:relative; width:1242px; height:782px; overflow:hidden; border-radius:5px; background:var(--paper);
+  box-shadow:inset 0 0 70px rgba(10,6,24,.2);
+}
+.screen::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:9;
+  background:linear-gradient(118deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.08) 24%, rgba(255,255,255,0) 46%),
+             linear-gradient(0deg, rgba(40,20,80,.12), rgba(255,255,255,0) 38%);
+}
+.base{
+  position:relative; width:1370px; margin:0 0 0 -35px; height:26px; border-radius:0 0 16px 16px;
+  background:linear-gradient(180deg,#e6e9ee 0%,#bcc1cb 32%,#878e9c 76%,#5b6170 100%);
+  box-shadow:0 36px 64px rgba(18,9,38,.55);
+}
+.base::after{ content:""; position:absolute; left:50%; top:0; transform:translateX(-50%);
+  width:176px; height:11px; border-radius:0 0 11px 11px; background:linear-gradient(180deg,#99a0ad,#737a89); }
+.deskshadow{ position:absolute; left:700px; top:1104px; width:1340px; height:118px; border-radius:50%;
+  background:radial-gradient(ellipse at center, rgba(14,7,30,.68) 0%, rgba(14,7,30,0) 70%); filter:blur(28px); }
+
+/* ---- phone ---- */
+.phone{
+  position:absolute; left:1884px; top:584px; width:404px; height:822px; z-index:36;
+  border-radius:60px; padding:13px; transform:rotate(-2.4deg);
+  background:linear-gradient(150deg,#5e636f 0%,#23262d 22%,#0f1115 50%,#2e323a 78%,#6d7384 100%);
+  box-shadow:0 74px 110px rgba(16,8,36,.68), 0 22px 46px rgba(16,8,36,.52),
+             inset 0 2px 3px rgba(255,255,255,.42);
+}
+.phone-screen{ position:relative; width:100%; height:100%; border-radius:48px; overflow:hidden; background:#fff; }
+.phone-screen::after{ content:""; position:absolute; inset:0; z-index:9; pointer-events:none; border-radius:48px;
+  background:linear-gradient(130deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.05) 28%, rgba(255,255,255,0) 52%); }
+.island{ position:absolute; top:15px; left:50%; transform:translateX(-50%); width:116px; height:33px; border-radius:20px;
+  background:#07080a; z-index:12; }
+.island::after{ content:""; position:absolute; right:11px; top:10px; width:12px; height:12px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #27405c, #07080a 72%); }
+
+/* ============================ APP UI (laptop) ============================ */
+.app{ display:flex; width:100%; height:100%; background:var(--paper); color:var(--ink); font-size:15px; }
+.side{ width:214px; flex:none; background:#f6f6f4; border-right:1px solid var(--line); padding:20px 13px; display:flex; flex-direction:column; gap:18px; }
+.side .logo{ padding:0 6px; }
+.side .logo img{ width:136px; }
+.nav{ display:flex; flex-direction:column; gap:4px; }
+.nav a{ display:flex; align-items:center; gap:11px; height:42px; padding:0 12px; border-radius:11px; font-size:14.5px; color:var(--ink-2); text-decoration:none; font-weight:500; }
+.nav a.on{ background:#FBE98A; color:var(--ink); font-weight:800; }
+.nav .badge{ margin-left:auto; min-width:21px; height:21px; padding:0 6px; border-radius:11px; background:var(--vermilion); color:#fff; font-size:11.5px; font-weight:800; display:grid; place-items:center; }
+.side .foot{ margin-top:auto; border-top:1px solid var(--line); padding-top:12px; display:flex; flex-direction:column; gap:2px; }
+.side .foot a{ display:flex; align-items:center; gap:11px; height:36px; padding:0 12px; border-radius:10px; font-size:13px; color:var(--muted); text-decoration:none; }
+
+.main{ flex:1; min-width:0; padding:22px 26px; display:flex; flex-direction:column; gap:15px; overflow:hidden; }
+
+.hero{ border-radius:24px; padding:21px 24px 22px; display:flex; flex-direction:column; gap:15px;
+  background:linear-gradient(162deg,#FFFCEC 0%,#FDF4BF 42%,#F8E35E 100%); }
+.hero-top{ display:flex; align-items:flex-start; gap:14px; }
+.hero-top h1{ font-size:32px; font-weight:800; letter-spacing:-.02em; }
+.hero-top p{ font-weight:500; font-size:15px; color:var(--ink-2); margin-top:2px; }
+.hero-top .date{ margin-left:auto; font-size:13.5px; color:var(--ink-2); font-weight:500; }
+.cal-card{ background:#fff; border-radius:18px; padding:17px 22px; display:flex; align-items:center; gap:22px; }
+.cal-meta{ flex:1; min-width:0; }
+.cal-left{ font-size:13px; color:var(--muted); font-weight:500; }
+.cal-total{ font-size:37px; font-weight:800; letter-spacing:-.02em; line-height:1.1; display:block; }
+.macros{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:12px; }
+.macro-head{ display:flex; justify-content:space-between; align-items:baseline; font-size:11.5px; font-weight:800; }
+.macro-head em{ font-style:normal; font-weight:500; color:var(--muted); }
+.bar{ height:6px; border-radius:3px; background:#eceae4; margin-top:6px; overflow:hidden; }
+.bar span{ display:block; height:100%; border-radius:3px; background:var(--cobalt); }
+.ring{ width:136px; height:136px; flex:none; position:relative; }
+.ring .pct{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; }
+.ring .pct b{ font-size:24px; font-weight:800; display:block; line-height:1; }
+.ring .pct i{ font-style:normal; font-size:10px; font-weight:500; color:var(--muted); letter-spacing:.09em; text-transform:uppercase; }
+
+.two{ display:grid; grid-template-columns:1.38fr 1fr; gap:15px; }
+.card{ border:1px solid var(--line); border-radius:20px; padding:16px; display:flex; flex-direction:column; gap:9px; }
+.card-meal{ background:linear-gradient(180deg,#FFFFFF 0%,#FFD7E4 48%,#FF8FB8 100%); border-color:#FFC2D6; }
+.card-spend{ background:linear-gradient(180deg,#FFFFFF 0%,#F5FBE2 54%,#E3F5A8 100%); border-color:#E4EDC8; }
+.card .head{ display:flex; align-items:center; gap:10px; }
+.card .head h2{ font-size:17px; font-weight:800; flex:1; }
+.card .head a{ font-size:12.5px; color:var(--muted); text-decoration:none; font-weight:500; }
+.slot{ display:flex; align-items:center; gap:10px; padding:8px 9px; border-radius:13px; background:rgba(255,255,255,.8); border:1px solid rgba(46,42,38,.06); }
+.slot.empty{ background:transparent; border:1px dashed rgba(46,42,38,.2); }
+.dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+.thumb{ width:40px; height:40px; border-radius:11px; flex:none; display:grid; place-items:center; font-size:21px; }
+.slot .t{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.slot .t strong{ font-size:14.5px; font-weight:800; }
+.slot .t span{ font-size:12px; color:var(--muted); font-weight:500; }
+.slot .plus{ font-size:19px; color:var(--muted); padding-right:4px; }
+.spend-today{ font-size:36px; font-weight:800; line-height:1; }
+.card-spend .sub{ font-size:12.5px; color:var(--muted); font-weight:500; margin-top:-3px; }
+.spend-left{ display:flex; align-items:baseline; justify-content:space-between; background:rgba(255,255,255,.82); border-radius:13px; padding:9px 13px; }
+.lbl{ font-size:10.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+.spend-left strong{ font-size:19px; font-weight:800; }
+.btn-w{ background:rgba(255,255,255,.9); border:1px solid rgba(46,42,38,.08); border-radius:12px; padding:10px; text-align:center; font-weight:800; font-size:14px; }
+.svc{ display:flex; gap:8px; }
+.svc-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; font-size:12.5px; font-weight:800; color:var(--ink-2); }
+.svc-item .ico{ width:54px; height:54px; display:grid; place-items:center; font-size:30px; }
+.sec-title{ font-size:16px; font-weight:800; }
+
+/* ============================ APP UI (phone) ============================ */
+.p-app{ width:100%; height:100%; background:#fff; display:flex; flex-direction:column; padding:56px 20px 0; }
+.p-crumb{ font-size:12.5px; color:var(--muted); font-weight:500; }
+.p-crumb b{ color:var(--ink); font-weight:800; }
+.p-lbl{ margin-top:12px; font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.p-title{ font-size:26px; font-weight:800; letter-spacing:-.02em; margin-top:3px; }
+.fridge{ position:relative; margin-top:12px; width:100%; height:348px; border-radius:24px 24px 9px 9px;
+  background:linear-gradient(176deg,#DBF6E7 0%,#C1F0D6 40%,#AAE7C7 78%,#95D8B5 100%);
+  box-shadow:inset 0 -18px 30px rgba(0,80,45,.12), inset 0 10px 22px rgba(255,255,255,.8), 0 16px 28px rgba(20,60,45,.2); }
+.fridge .seam{ position:absolute; left:0; right:0; top:33%; height:6px;
+  background:linear-gradient(180deg, rgba(0,70,40,.15), rgba(255,255,255,.5)); }
+.handle{ position:absolute; left:20px; width:124px; height:10px; border-radius:5px;
+  background:linear-gradient(180deg,#FBFCFC 0%,#DCE1E4 26%,#9BA4AA 54%,#C3CACE 70%,#EDF0F1 90%,#8D969C 100%);
+  box-shadow:0 3px 5px rgba(20,40,30,.3); }
+.handle::before,.handle::after{ content:""; position:absolute; top:-5px; width:14px; height:20px; border-radius:7px;
+  background:linear-gradient(135deg,#EFF2F3,#AEB6BB 55%,#848D93); }
+.handle::before{ left:0; } .handle::after{ right:0; }
+.h1pos{ top:25%; } .h2pos{ top:40%; }
+.fridge .kick{ position:absolute; left:4%; right:4%; bottom:-9px; height:15px; border-radius:5px;
+  background:linear-gradient(180deg,#8a8f93,#5f6468); }
+.magnet{ position:absolute; filter:drop-shadow(0 6px 8px rgba(20,60,45,.38)); }
+.p-chiprow{ display:flex; gap:7px; margin-top:16px; }
+.p-chip{ display:inline-flex; align-items:center; gap:5px; padding:8px 11px; border-radius:999px; font-size:12px; font-weight:800;
+  background:#FBDCD3; border:1px solid #F2A38F; color:#9E2A0E; white-space:nowrap; }
+.p-chip.ok{ background:#D6EDE1; border-color:#9fd3bb; color:#025C33; }
+.p-note{ margin-top:11px; border:1px solid var(--line); border-radius:15px; padding:11px 13px; background:#f9f9f7; }
+.p-note strong{ display:block; font-size:15px; font-weight:800; margin-top:3px; }
+.p-note span{ font-size:12px; color:var(--muted); font-weight:500; }
+.tabbar{ margin-top:auto; margin-left:-20px; margin-right:-20px; display:grid; grid-template-columns:repeat(4,1fr);
+  background:#f6f6f4; border-top:1px solid var(--line); padding:7px 6px 20px; }
+.tabbar div{ display:flex; flex-direction:column; align-items:center; gap:3px; font-size:11px; font-weight:500; color:var(--muted); }
+.tabbar div.on{ color:var(--ocean); font-weight:800; }
+.tabbar .tpill{ width:54px; height:28px; border-radius:14px; display:grid; place-items:center; font-size:17px; }
+.tabbar div.on .tpill{ background:#FBE98A; }
+
+/* ============================ FLOATING CARDS ============================ */
+.fcard{
+  position:absolute; z-index:60; border-radius:24px; padding:19px 22px;
+  background:linear-gradient(150deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.72) 100%);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:0 36px 72px rgba(26,13,54,.36), 0 10px 22px rgba(26,13,54,.2), inset 0 1px 0 rgba(255,255,255,.95);
+  backdrop-filter:blur(22px); color:var(--ink);
+}
+.fcard .ftop{ display:flex; align-items:center; gap:12px; }
+.fcard .fico{ width:44px; height:44px; border-radius:13px; display:grid; place-items:center; font-size:22px; flex:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85); }
+.fcard .flbl{ font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); }
+.fcard .fval{ font-size:25px; font-weight:800; letter-spacing:-.02em; line-height:1.15; }
+.fcard .fsub{ font-size:14px; font-weight:500; color:var(--ink-2); line-height:1.4; }
+.fcard.dark{ background:linear-gradient(150deg, rgba(44,33,66,.95), rgba(25,17,43,.9)); border-color:rgba(255,255,255,.2); color:#fff; }
+.fcard.dark .flbl{ color:#cdbcf0; } .fcard.dark .fsub{ color:#e7defa; }
+.fcard.sun{ background:linear-gradient(150deg,#FFF4B6,#F8D01A); border-color:rgba(255,255,255,.75); }
+
+.mini-bar{ height:9px; border-radius:5px; background:rgba(35,31,28,.14); overflow:hidden; margin-top:12px; }
+.mini-bar span{ display:block; height:100%; border-radius:5px; background:linear-gradient(90deg,#f29a0f,#e8401c); }
+.moods{ display:flex; gap:9px; margin-top:13px; }
+.moods img{ width:44px; filter:drop-shadow(0 5px 8px rgba(40,20,70,.28)); }
+.recipe-thumb{ width:72px; height:72px; border-radius:17px; object-fit:cover; flex:none; box-shadow:0 8px 16px rgba(30,16,60,.3); }
+.spark{ display:flex; gap:6px; margin-top:13px; align-items:flex-end; height:44px; }
+.spark span{ flex:1; border-radius:4px; background:#F9D312; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <div class="glow-sun"></div>
+  <div class="beam beam-a"></div>
+  <div class="beam beam-c"></div>
+  <div class="beam beam-b"></div>
+
+  <div class="bigword">DAILY</div>
+  <div class="bigsub">BITE</div>
+
+  <!-- pastel confetti -->
+  <div class="blob" style="left:520px; top:1216px; width:118px; height:118px; background:linear-gradient(150deg,#CBABF5,#8A68D4); box-shadow:0 22px 42px rgba(40,20,80,.4);"></div>
+  <div class="blob" style="left:470px; top:1124px; width:46px; height:46px; background:linear-gradient(150deg,#FFE792,#F7C70A); box-shadow:0 12px 22px rgba(120,80,0,.32);"></div>
+  <div class="blob" style="left:2286px; top:462px; width:78px; height:78px; background:linear-gradient(150deg,#F7B6D2,#EE6F83); box-shadow:0 16px 30px rgba(90,20,50,.38);"></div>
+  <div class="blob" style="left:614px; top:214px; width:34px; height:34px; background:#FFFFFF; opacity:.75;"></div>
+  <div class="ring-deco" style="left:2256px; top:1000px; width:132px; height:132px; border:22px solid rgba(255,255,255,.42);"></div>
+  <div class="ring-deco" style="left:560px; top:938px; width:80px; height:80px; border:16px solid rgba(249,211,18,.6);"></div>
+
+  <!-- ============ left column ============ -->
+  <div class="topbar">
+    <img src="/logo-dailybite-wordmark.png" alt="DailyBite">
+    <span class="eyebrow">Journal · Fridge · <b>AI</b></span>
+  </div>
+
+  <div class="headline">
+    <h1>Eat well<em>without</em>the guesswork.</h1>
+    <p>Snap a meal and DailyBite logs the calories. Scan a receipt and your fridge fills itself. Ask what's for dinner — it answers from what you already own.</p>
+    <div class="cta">
+      <span class="btn">Open DailyBite</span>
+      <span class="ghost">See how it works →</span>
+    </div>
+  </div>
+
+  <div class="pillrow">
+    <span class="pill">📸 Photo → calories</span>
+    <span class="pill">🧊 Smart fridge</span>
+    <span class="pill">🧾 Receipt scan</span>
+    <span class="pill">📓 Food journal</span>
+  </div>
+  <div class="footnote">DAILYBITE · 2026 · YOUR MCP-POWERED FOOD COMPANION</div>
+
+  <!-- ============ devices ============ -->
+  <div class="devices">
+    <div class="deskshadow"></div>
+
+    <!-- ---------- LAPTOP : Home dashboard ---------- -->
+    <div class="laptop">
+      <div class="lid">
+        <div class="bezel">
+          <div class="cam"></div>
+          <div class="screen">
+            <div class="app">
+
+              <aside class="side">
+                <div class="logo"><img src="/logo-dailybite-wordmark.png" alt="DailyBite"></div>
+                <nav class="nav">
+                  <a class="on"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#231f1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+                  <a><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#66615d" stroke-width="2" stroke-linecap="round"><path d="M4 9h16l-1.4 10.2a2 2 0 0 1-2 1.8H7.4a2 2 0 0 1-2-1.8Z"/><path d="M9 9V6.5a3 3 0 0 1 6 0V9"/></svg>My Kitchen</a>
+                  <a><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#66615d" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3v18"/></svg>Journal</a>
+                  <a><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#66615d" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v10h14V9"/><path d="M10 13h4"/></svg>Archive</a>
+                </nav>
+                <div class="foot">
+                  <a><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#66615d" stroke-width="2" stroke-linecap="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-2 8-2 8h16s-2-1-2-8"/><path d="M10.5 20a2 2 0 0 0 3 0"/></svg>Notifications <span class="badge">14</span></a>
+                  <a><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#66615d" stroke-width="2"><circle cx="12" cy="12" r="3.4"/><circle cx="12" cy="12" r="8.6"/></svg>Settings</a>
+                </div>
+              </aside>
+
+              <main class="main">
+                <section class="hero">
+                  <div class="hero-top">
+                    <div>
+                      <h1>Good morning</h1>
+                      <p>Your daily balance</p>
+                    </div>
+                    <span class="date">Sun 22 Nov</span>
+                  </div>
+                  <div class="cal-card">
+                    <div class="cal-meta">
+                      <span class="cal-left">654 remaining</span>
+                      <strong class="cal-total">846/1,500</strong>
+                      <div class="macros">
+                        <div>
+                          <div class="macro-head">Protein <em>37 / 90 g</em></div>
+                          <div class="bar"><span style="width:41%"></span></div>
+                        </div>
+                        <div>
+                          <div class="macro-head">Carbs <em>118 / 220 g</em></div>
+                          <div class="bar"><span style="width:54%"></span></div>
+                        </div>
+                        <div>
+                          <div class="macro-head">Fat <em>29 / 60 g</em></div>
+                          <div class="bar"><span style="width:48%"></span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ring">
+                      <svg viewBox="0 0 160 160" width="136" height="136">
+                        <circle cx="80" cy="80" r="66" fill="none" stroke="#efece4" stroke-width="17"/>
+                        <circle cx="80" cy="80" r="66" fill="none" stroke="#9a80bd" stroke-width="17" stroke-linecap="round"
+                                stroke-dasharray="414.7" stroke-dashoffset="182" transform="rotate(-90 80 80)"/>
+                        <circle cx="80" cy="80" r="66" fill="none" stroke="#e8401c" stroke-width="17" stroke-linecap="round"
+                                stroke-dasharray="414.7" stroke-dashoffset="265" transform="rotate(-90 80 80)"/>
+                        <circle cx="80" cy="80" r="66" fill="none" stroke="#f29a0f" stroke-width="17" stroke-linecap="round"
+                                stroke-dasharray="414.7" stroke-dashoffset="328" transform="rotate(-90 80 80)"/>
+                      </svg>
+                      <div class="pct"><span><b>56%</b><i>of goal</i></span></div>
+                    </div>
+                  </div>
+                </section>
+
+                <div class="two">
+                  <section class="card card-meal">
+                    <div class="head"><h2>Today's Meal Plan</h2><a>Journal →</a></div>
+                    <div class="slot">
+                      <span class="dot" style="background:#f29a0f"></span>
+                      <span class="thumb" style="background:#FFEAB8">🍳</span>
+                      <span class="t"><strong>Tofu scramble &amp; toast</strong><span>Breakfast · 312 kcal</span></span>
+                    </div>
+                    <div class="slot">
+                      <span class="dot" style="background:#e8401c"></span>
+                      <span class="thumb" style="background:#FFD9CF">🍝</span>
+                      <span class="t"><strong>Spinach &amp; ricotta cannelloni</strong><span>Lunch · 534 kcal · cooked from fridge</span></span>
+                    </div>
+                    <div class="slot empty">
+                      <span class="dot" style="background:#9a80bd"></span>
+                      <span class="t"><strong>Dinner</strong><span>Planned: Chicken ham &amp; leek pie</span></span>
+                      <span class="plus">+</span>
+                    </div>
+                    <div class="slot empty">
+                      <span class="dot" style="background:#f3a9c8"></span>
+                      <span class="t"><strong>Snack</strong><span>Nothing yet</span></span>
+                      <span class="plus">+</span>
+                    </div>
+                  </section>
+
+                  <section class="card card-spend">
+                    <div class="head"><h2>Today Food Spend</h2><a>Budget →</a></div>
+                    <strong class="spend-today">₩12,400</strong>
+                    <span class="sub">spent today</span>
+                    <div>
+                      <div class="bar" style="background:rgba(35,31,28,.1)"><span style="width:20%; background:#0a73b8"></span></div>
+                      <span class="sub" style="display:block; margin-top:7px">₩80,000 of ₩400,000 this month</span>
+                    </div>
+                    <div class="spend-left"><span class="lbl">Left this month</span><strong>₩320,000</strong></div>
+                    <div class="btn-w">Scan a receipt</div>
+                  </section>
+                </div>
+
+                <div class="sec-title">Other Services</div>
+                <div class="svc">
+                  <div class="svc-item"><span class="ico">🧊</span>Fridge</div>
+                  <div class="svc-item"><span class="ico">🧺</span>To buy</div>
+                  <div class="svc-item"><span class="ico">🍲</span>Recipes</div>
+                  <div class="svc-item"><span class="ico">📈</span>My progress</div>
+                  <div class="svc-item"><span class="ico">📓</span>Journal</div>
+                  <div class="svc-item"><span class="ico">📷</span>Snap</div>
+                </div>
+              </main>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="base"></div>
+    </div>
+
+    <!-- ---------- PHONE : My Fridge ---------- -->
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="island"></div>
+        <div class="p-app">
+          <div class="p-crumb">My Kitchen / <b>Fridge</b></div>
+          <div class="p-lbl">Fridge</div>
+          <div class="p-title">What's in My Fridge?</div>
+
+          <div class="fridge">
+            <div class="seam"></div>
+            <div class="handle h1pos"></div>
+            <div class="handle h2pos"></div>
+            <img class="magnet" src="/magnets/lemon.png"      alt="" style="left:28%; top:9%;  width:46px; transform:rotate(13deg)">
+            <img class="magnet" src="/magnets/cheese.png"     alt="" style="left:64%; top:14%; width:52px; transform:rotate(-11deg)">
+            <img class="magnet" src="/magnets/blueberry.png"  alt="" style="left:30%; top:56%; width:60px; transform:rotate(-7deg)">
+            <img class="magnet" src="/magnets/strawberry.png" alt="" style="left:57%; top:60%; width:56px; transform:rotate(9deg)">
+            <img class="magnet" src="/magnets/orange.png"     alt="" style="left:21%; top:71%; width:54px; transform:rotate(4deg)">
+            <div class="kick"></div>
+          </div>
+
+          <div class="p-chiprow">
+            <span class="p-chip">⏳ 4 use soon</span>
+            <span class="p-chip ok">🧊 12 stocked</span>
+            <span class="p-chip ok">🧺 5 to buy</span>
+          </div>
+
+          <div class="p-note">
+            <span class="lbl">Use before Tue</span>
+            <strong>Chilean Green Grapes · 900 g</strong>
+            <span>Tap to cook something with it →</span>
+          </div>
+
+          <div class="tabbar">
+            <div><span class="tpill">🏠</span>Home</div>
+            <div class="on"><span class="tpill">🧺</span>My Kitchen</div>
+            <div><span class="tpill">📓</span>Journal</div>
+            <div><span class="tpill">🗄️</span>Archive</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ floating feature cards ============ -->
+
+  <!-- meal logged : top, over the laptop lid -->
+  <div class="fcard" style="left:700px; top:96px; width:404px; transform:rotate(-2.6deg);">
+    <div class="ftop">
+      <span class="fico" style="background:#FFE9B5">📸</span>
+      <div>
+        <div class="flbl">Meal logged</div>
+        <div class="fval">534 kcal</div>
+      </div>
+    </div>
+    <div class="fsub" style="margin-top:10px">Spinach &amp; ricotta cannelloni — read straight from your photo. No typing.</div>
+  </div>
+
+  <!-- use soon : top right -->
+  <div class="fcard" style="left:1884px; top:170px; width:382px; transform:rotate(2.8deg);">
+    <div class="ftop">
+      <span class="fico" style="background:#FBDCD3">⏳</span>
+      <div>
+        <div class="flbl">Use soon</div>
+        <div class="fval">2 days left</div>
+      </div>
+    </div>
+    <div class="fsub" style="margin-top:10px">Your green grapes are about to turn — DailyBite noticed first.</div>
+  </div>
+
+  <!-- cook tonight : over the phone's top-left shoulder -->
+  <div class="fcard" style="left:96px; top:884px; width:474px; transform:rotate(-1.8deg); display:flex; gap:15px; align-items:center;">
+    <img class="recipe-thumb" src="/showcase/recipe-cannelloni.jpg" alt="">
+    <div>
+      <div class="flbl">Cook tonight</div>
+      <div class="fval" style="font-size:21px; margin-top:3px">Spinach &amp; Ricotta Cannelloni</div>
+      <div class="fsub" style="margin-top:5px">Uses 4 things already in your fridge 🧊</div>
+    </div>
+  </div>
+
+  <!-- budget : bottom left, under the laptop -->
+  <div class="fcard sun" style="left:618px; top:1148px; width:400px; transform:rotate(1.6deg);">
+    <div class="ftop">
+      <span class="fico" style="background:rgba(255,255,255,.8)">🧾</span>
+      <div>
+        <div class="flbl" style="color:#6b5600">Food budget</div>
+        <div class="fval">₩320,000 left</div>
+      </div>
+    </div>
+    <div class="mini-bar"><span style="width:86%"></span></div>
+    <div class="fsub" style="margin-top:9px; color:#5c4a00; font-weight:800">86% of November used · receipts scanned for you</div>
+  </div>
+
+  <!-- this week : bottom centre, dark for depth -->
+  <div class="fcard dark" style="left:1082px; top:1196px; width:436px; transform:rotate(-1.4deg);">
+    <div class="ftop">
+      <span class="fico" style="background:rgba(255,255,255,.14)">📈</span>
+      <div>
+        <div class="flbl">This week</div>
+        <div class="fval">A steady week</div>
+      </div>
+    </div>
+    <div class="fsub" style="margin-top:9px">9 meals on 6 of 7 days · avg 846 kcal · 1 meal cooked from your own fridge.</div>
+    <div class="spark">
+      <span style="height:58%"></span><span style="height:82%"></span>
+      <span style="height:46%; background:#f29a0f"></span><span style="height:96%"></span>
+      <span style="height:70%"></span><span style="height:20%; background:rgba(255,255,255,.26)"></span>
+      <span style="height:60%"></span>
+    </div>
+  </div>
+
+  <!-- journal moods : bottom right over the phone -->
+  <div class="fcard" style="left:1596px; top:1258px; width:416px; transform:rotate(2.4deg);">
+    <div class="flbl">Journal</div>
+    <div class="fval" style="margin-top:4px">How was today's eating?</div>
+    <div class="moods">
+      <img src="/stickers/star-pink.png" alt="">
+      <img src="/stickers/flower-yellow.png" alt="">
+      <img src="/stickers/berry-good.png" alt="">
+      <img src="/stickers/fresh.png" alt="">
+      <img src="/stickers/good-menu.png" alt="">
+    </div>
+  </div>
+
+  <div class="vignette"></div>
+  <div class="grain"></div>
+</div>
+</body>
+</html>
