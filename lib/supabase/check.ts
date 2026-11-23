@@ -26,3 +26,27 @@ export function authConfigProblem(): string | null {
   }
   return null;
 }
+
+/**
+ * Ask the project itself whether the anon key is one of its own.
+ *
+ * Comparing project refs only works for the old JWT-shaped keys; the current
+ * `sb_publishable_…` ones carry nothing to compare, and a wrong one of those is what
+ * turned sign-in into a bare "Invalid API key". One cheap call to the auth endpoint
+ * settles it, and the answer is kept for the life of the process.
+ */
+let verdict: { ok: boolean; at: number } | null = null;
+
+export async function authKeyWorks(): Promise<boolean> {
+  if (verdict && Date.now() - verdict.at < 10 * 60_000) return verdict.ok;
+  const url = optionalEnv("DAILYBITE_SUPABASE_URL") ?? optionalEnv("NEXT_PUBLIC_SUPABASE_URL");
+  const key = optionalEnv("DAILYBITE_SUPABASE_ANON_KEY") ?? optionalEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  if (!url || !key) return false;
+  try {
+    const res = await fetch(`${url}/auth/v1/settings`, { headers: { apikey: key }, cache: "no-store" });
+    verdict = { ok: res.ok, at: Date.now() };
+  } catch {
+    return true; // a network blip is not a misconfiguration; let the form try
+  }
+  return verdict.ok;
+}

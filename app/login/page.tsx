@@ -1,13 +1,13 @@
 import Image from "next/image";
 import { LoginForm } from "./LoginForm";
-import { authConfigProblem } from "@/lib/supabase/check";
+import { authConfigProblem, authKeyWorks } from "@/lib/supabase/check";
 
 export const metadata = { title: "Sign in · DailyBite" };
 
 /** The only page outside the app shell: no sidebar, no tab bar, nothing to click but in. */
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next = "" } = await searchParams;
-  const problem = authConfigProblem();
+  const problem = authConfigProblem() ?? ((await authKeyWorks()) ? null : "The anon key is not valid for this Supabase project. Check DAILYBITE_SUPABASE_ANON_KEY in Vercel.");
   return (
     <main className="login">
       <section className="login-card">
