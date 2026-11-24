@@ -132,6 +132,23 @@ export async function markRead(db: Db, ids?: string[]) {
   must(await q, "mark read");
 }
 
+/**
+ * Clear the list. Everything is dismissed rather than deleted, so a reminder that is
+ * still true (something expiring, the budget) does not simply reappear on the next
+ * refresh: its dedupe key is already taken.
+ */
+export async function dismissAll(db: Db) {
+  const now = new Date().toISOString();
+  must(
+    await db.sb
+      .from("notifications")
+      .update({ dismissed_at: now, read_at: now })
+      .eq("user_id", db.userId)
+      .is("dismissed_at", null),
+    "clear notifications"
+  );
+}
+
 export async function dismiss(db: Db, id: string) {
   must(
     await db.sb.from("notifications").update({ dismissed_at: new Date().toISOString() }).eq("user_id", db.userId).eq("id", id),

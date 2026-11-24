@@ -2,7 +2,7 @@ import Link from "next/link";
 import { webDb } from "@/lib/services/db";
 import { listNotifications, refreshNotifications, type Notification } from "@/lib/services/notifications";
 import { ActionButton } from "@/components/ActionButton";
-import { dismissAction, readAllAction } from "../actions";
+import { clearNotificationsAction, dismissAction, readAllAction } from "../actions";
 import { ReminderSettings } from "./ReminderSettings";
 
 const KINDS: { k: Notification["kind"] | "all"; label: string }[] = [
@@ -23,6 +23,16 @@ export default async function NotificationsPage({ searchParams }: { searchParams
       <header className="head">
         <div className="titles"><span className="lbl">Notifications</span><h1 className="h1">Reminders &amp; alerts</h1></div>
         <ActionButton action={readAllAction} args={[]} className="btn">Mark all as read</ActionButton>
+        {list.length > 0 && (
+          <ActionButton
+            action={clearNotificationsAction}
+            args={[]}
+            className="btn"
+            confirm={`Clear all ${list.length} notifications? They stop showing here, and the ones that are still true will not come back.`}
+          >
+            Clear all
+          </ActionButton>
+        )}
       </header>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         {KINDS.map((x) => <Link key={x.k} href={x.k === "all" ? "/notifications" : `/notifications?kind=${x.k}`} className={`chip ${kind === x.k ? "on" : ""}`} style={{ minHeight: 36, textDecoration: "none" }}>{x.label}</Link>)}

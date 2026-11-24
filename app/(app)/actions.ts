@@ -17,7 +17,7 @@ import { addShopping, deleteShopping, moveBoughtToFridge, setBought } from "@/li
 import { writeReview, addElement, updateElement, deleteElement } from "@/lib/services/journal";
 import { addMissingToShopping, deleteSaved, saveRecipe } from "@/lib/services/recipes";
 import { getRecipeDetail } from "@/lib/recipe-bank";
-import { dismiss, markRead } from "@/lib/services/notifications";
+import { dismiss, dismissAll, markRead } from "@/lib/services/notifications";
 import { addReflection, upsertGoal } from "@/lib/services/progress";
 import { ElementInput } from "@/lib/schemas";
 
@@ -167,6 +167,12 @@ export async function missingToShoppingAction(source: "themealdb", externalId: s
 // ---- messages / progress / settings ----
 export async function dismissAction(id: string) {
   await dismiss(await webDb(), id);
+  all();
+}
+
+/** Empty the notification list in one go. */
+export async function clearNotificationsAction() {
+  await dismissAll(await webDb());
   all();
 }
 export async function readAllAction() {
@@ -320,17 +326,6 @@ export async function confirmScanAction(input: {
       return { redirect: `/journal?date=${date}` };
     }
   }
-}
-
-// ---------- Archive ----------
-/** Delete the original record an archive row points at. */
-export async function deleteArchiveAction(type: string, id: string, itemId?: string | null) {
-  const { deleteArchiveRecord } = await import("@/lib/services/archive");
-  const kinds = ["journal", "meal", "expense", "fridge", "recipe", "photo", "receipt"] as const;
-  const t = kinds.find((k) => k === type);
-  if (!t) throw new Error("Unknown record type");
-  await deleteArchiveRecord(await webDb(), t, id, itemId);
-  all();
 }
 
 // ---------- My progress: AI overview ----------

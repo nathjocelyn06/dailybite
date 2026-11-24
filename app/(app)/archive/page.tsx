@@ -2,8 +2,6 @@ import Link from "next/link";
 import { webDb } from "@/lib/services/db";
 import { searchArchive, type ArchiveHit } from "@/lib/services/archive";
 import { isDayKey } from "@/lib/dates";
-import { ActionButton } from "@/components/ActionButton";
-import { deleteArchiveAction } from "../actions";
 
 const TYPES: { k: ArchiveHit["type"] | "all"; label: string }[] = [
   { k: "all", label: "All" }, { k: "journal", label: "Journal" }, { k: "meal", label: "Meals" }, { k: "expense", label: "Expenses" },
@@ -59,18 +57,6 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
             <span className="muted" style={{ width: 92 }}>{h.date}</span>
             <span style={{ flex: 1 }}><strong>{h.title}</strong>{h.subtitle && <><br /><span className="muted">{h.subtitle}</span></>}</span>
             <Link className="btn sm" href={h.href}>Open original</Link>
-            <ActionButton
-              action={deleteArchiveAction}
-              args={[h.type, h.id, h.item_id ?? null]}
-              confirm={
-                h.type === "fridge" && h.item_id
-                  ? `Delete ${h.title}? This takes the item out of your fridge as well.`
-                  : `Delete ${h.title}? This removes the original record, not just this row.`
-              }
-              label={`Delete ${h.title}`}
-            >
-              ×
-            </ActionButton>
           </div>
         ))}
       </section>

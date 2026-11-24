@@ -8,8 +8,6 @@ export type ArchiveHit = {
   title: string;
   subtitle: string;
   href: string; // opens the ORIGINAL record. The archive never copies data.
-  /** Fridge rows: the stock item the entry is about, when it is still in the fridge. */
-  item_id?: string | null;
 };
 
 type Q = { query?: string; type?: ArchiveHit["type"] | "all"; from?: string; to?: string; limit?: number };
@@ -89,17 +87,16 @@ export async function searchArchive(db: Db, q: Q): Promise<ArchiveHit[]> {
   if (want("fridge")) {
     jobs.push(
       (async () => {
-        let b = db.sb.from("fridge_events").select("id,item_id,item_name,kind,delta,created_at").eq("user_id", db.userId);
+        let b = db.sb.from("fridge_events").select("id,item_name,kind,delta,created_at").eq("user_id", db.userId);
         if (like) b = b.ilike("item_name", like);
         if (q.from) b = b.gte("created_at", `${q.from}T00:00:00`);
         if (q.to) b = b.lte("created_at", `${q.to}T23:59:59`);
         const rows = must(await b.order("created_at", { ascending: false }).limit(limit), "archive fridge") as {
-          id: string; item_id: string | null; item_name: string; kind: string; delta: number | null; created_at: string;
+          id: string; item_name: string; kind: string; delta: number | null; created_at: string;
         }[];
         return rows.map((r) => ({
           type: "fridge" as const,
           id: r.id,
-          item_id: r.item_id,
           date: r.created_at.slice(0, 10),
           title: `${r.item_name}: ${r.kind}`,
           subtitle: r.delta ? `${r.delta > 0 ? "+" : ""}${r.delta}` : "",
@@ -153,30 +150,5 @@ export async function archiveMonths(db: Db): Promise<ArchiveMonth[]> {
   return [...counts.entries()]
     .map(([month, count]) => ({ month, year: month.slice(0, 4), count }))
     .sort((a, b) => (a.month < b.month ? 1 : -1));
-}
-
-/**
- * Delete the record behind an archive row.
- *
- * The archive never holds copies, so this reaches into whichever table the row came
- * from and removes the original. Each kind says what else goes with it, because a
- * journal page takes its stickers and a meal takes its photo reference.
- */
-export async function deleteArchiveRecord(db: Db, type: ArchiveHit["type"], id: string, itemId?: string | null): Promise<void> {
-  // A fridge row in the archive is about a thing in the fridge, so removing it there
-  // takes the thing off the shelf too \u2014 the entry alone would be a receipt for
-  // something that is still sitting in the crisper. Deleting the item cascades to its
-  // own entries; where the item is already gone, only the entry is left to remove.
-  if (type === "fridge" && itemId) {
-    must(await db.sb.from("fridge_items").delete().eq("user_id", db.userId).eq("id", itemId), "delete fridge item");
-    return;
-  }
-  const table =
-    type === "meal" || type === "photo" ? "meals"
-    : type === "expense" || type === "receipt" ? "expenses"
-    : type === "journal" ? "journal_pages"
-    : type === "fridge" ? "fridge_events"
-    : "recipes";
-  must(await db.sb.from(table).delete().eq("user_id", db.userId).eq("id", id), `delete ${type}`);
 }
 

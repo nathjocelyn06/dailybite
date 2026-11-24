@@ -34,10 +34,22 @@ self.addEventListener("install", (e) => {
  */
 self.addEventListener("fetch", (e) => {
   const req = e.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
-  if (req.mode === "navigate") {
-    e.respondWith(fetch(req).catch(() => caches.match(OFFLINE).then((r) => r || Response.error())));
-  }
+  if (req.method !== "GET" || req.mode !== "navigate") return;
+  if (new URL(req.url).origin !== self.location.origin) return;
+  e.respondWith(
+    (async () => {
+      try {
+        return await fetch(req);
+      } catch (err) {
+        // A page load can fail for reasons that have nothing to do with the network --
+        // a server restarting, a stream cut short -- and answering those with "no
+        // connection" is a lie that hides the real problem. The offline page is only
+        // for when the browser itself says there is no connection.
+        if (self.navigator.onLine) throw err;
+        return (await caches.match(OFFLINE)) || Response.error();
+      }
+    })()
+  );
 });
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 
