@@ -28,9 +28,14 @@ export type Db = { sb: SupabaseClient; userId: string; tz: string };
 export async function webDb(): Promise<Db> {
   const sb = await supabaseServer();
   const { data } = await sb.auth.getUser();
-  // Signed in: their own records, with RLS enforcing it. Signed out: the owner's,
-  // which is how DailyBite worked before v5 and how it stays until the gate is on.
-  if (!data.user) return ownerDb();
+  // Signed in: their own records, with RLS enforcing it. Signed out is only
+  // reachable when the gate has been deliberately opened (REQUIRE_SIGN_IN=0), and
+  // then it is the owner's app, as it was before accounts existed. With the gate on,
+  // no session means no data — never a quiet fall back to somebody else's records.
+  if (!data.user) {
+    if (process.env.REQUIRE_SIGN_IN === "0") return ownerDb();
+    throw new Error("Not signed in");
+  }
   return { sb, userId: data.user.id, tz: await loadTz(sb, data.user.id) };
 }
 
