@@ -345,49 +345,61 @@ function Shelf({ label, items, onPick }: { label: string; items: FridgeItemView[
 }
 
 /**
- * A thing on a shelf. Tapping it opens what you can do with it; the x takes it off the
- * shelf there and then, for when it is finished and there is nothing to decide. The two
- * are separate elements because a button cannot live inside a button.
+ * A thing on a shelf: tap it for everything you can do with it, or take one straight
+ * off with Use, which is what actually happens to food most of the time.
  */
 function ItemChip({ item, onPick }: { item: FridgeItemView; onPick: (i: FridgeItemView) => void }) {
   const warn = item.expiry === "use_soon" || item.expiry === "expired" || item.low;
   const [pending, start] = useTransition();
+  const last = item.qty <= 1;
   return (
     <span className={`item-chip-wrap ${warn ? "warn" : ""} ${pending ? "is-going" : ""}`}>
-      <button className={`item-chip ${warn ? "warn" : ""}`} onClick={() => onPick(item)} title={item.name}>
+      <button className={`item-chip ${warn ? "warn" : ""}`} onClick={() => onPick(item)} title={`${item.name} — open`}>
         <span className="item-name">{item.name}</span>
         <span className="item-qty">{item.qty}{item.unit === "pcs" ? "" : ` ${item.unit}`}</span>
       </button>
       <button
-        className="item-x"
-        aria-label={`Remove ${item.name} from the fridge`}
-        title={`Remove ${item.name}`}
+        className="item-use"
+        aria-label={last ? `Use up the last of the ${item.name}` : `Use one ${item.name}`}
+        title={last ? "Use it up" : "Use one"}
         disabled={pending}
-        onClick={() => {
-          if (!window.confirm(`Remove ${item.name} from your fridge?`)) return;
-          start(async () => { await fridgeRemoveAction(item.id); });
-        }}
+        onClick={() => start(async () => { await fridgeQtyAction(item.id, -Math.min(1, item.qty)); })}
       >
-        ×
+        Use
       </button>
     </span>
   );
 }
 
+/**
+ * What you can do with one thing in the fridge.
+ *
+ * Using something is the common case and rarely a round number, so the amount is a
+ * field rather than a fixed step, and "Used it all" is there because reaching zero by
+ * arithmetic is nobody's idea of a good time. At zero the item is marked used up and
+ * leaves the shelves, but its history stays in the archive.
+ */
 function SelectedItem({ item, onClose }: { item: FridgeItemView; onClose: () => void }) {
   const [pending, start] = useTransition();
+  const [amount, setAmount] = useState("1");
   const run = (fn: () => Promise<unknown>) => start(async () => { await fn(); onClose(); });
+
+  const used = Number(amount);
+  const valid = Number.isFinite(used) && used > 0;
+  const leaves = valid && used >= item.qty;
+
   return (
-    <section className="card" aria-label="Selected item" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <section className="card" aria-label="Selected item" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <div className="head" style={{ marginBottom: 0 }}>
         <div className="titles">
-          <span className="lbl">Selected item</span>
+          <span className="lbl">In the fridge</span>
           <h2 className="h2">{item.name}</h2>
         </div>
         <button className="btn" onClick={onClose}>Close</button>
       </div>
+
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <span className="chip">{item.qty} {item.unit}</span>
+        <span className="chip">{item.qty} {item.unit} left</span>
         {item.expires_on && (
           <span className={`chip ${item.expiry === "ok" || item.expiry === "unknown" ? "" : "warn"}`}>
             {item.expiry === "expired" ? "expired" : item.expiry === "use_soon" ? `use within ${item.days_left}d` : "expires"} {item.expires_on}
@@ -395,12 +407,54 @@ function SelectedItem({ item, onClose }: { item: FridgeItemView; onClose: () => 
         )}
         {item.low && <span className="chip warn">running low</span>}
       </div>
+
+      <div className="use-row">
+        <label className="field" style={{ flex: "0 1 120px" }}>
+          How much did you use?
+          <input
+            className="input"
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ""))}
+            aria-label={`Amount of ${item.name} used, in ${item.unit}`}
+          />
+        </label>
+        <span className="muted use-unit">{item.unit}</span>
+        <button
+          className="btn pri"
+          disabled={pending || !valid}
+          onClick={() => run(() => fridgeQtyAction(item.id, -Math.min(used, item.qty)))}
+        >
+          {leaves ? "Use the rest" : `Use ${used || ""}`}
+        </button>
+        <button
+          className="btn"
+          disabled={pending || item.qty <= 0}
+          onClick={() => run(() => fridgeQtyAction(item.id, -item.qty))}
+          title="Sets it to zero and takes it off the shelf"
+        >
+          Used it all
+        </button>
+      </div>
+      <p className="muted" style={{ fontSize: 12, margin: 0 }}>
+        At zero it leaves your shelves and stops counting as stock. You can still find it in the archive.
+      </p>
+
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button className="btn" disabled={pending} onClick={() => run(() => fridgeQtyAction(item.id, -1))}>Use 1</button>
-        <button className="btn" disabled={pending} onClick={() => run(() => fridgeQtyAction(item.id, 1))}>Restock</button>
-        <button className="btn" disabled={pending} onClick={() => run(() => fridgeRemoveAction(item.id))}>Remove</button>
+        <button className="btn" disabled={pending} onClick={() => run(() => fridgeQtyAction(item.id, 1))}>Restock one</button>
+        <button
+          className="btn"
+          disabled={pending}
+          onClick={() => {
+            if (!window.confirm(`Remove ${item.name} from your fridge?`)) return;
+            run(() => fridgeRemoveAction(item.id));
+          }}
+        >
+          Remove
+        </button>
         <a className="btn" href={`/recipes?tab=scanner&ingredients=${encodeURIComponent(item.name)}`}>Recipes using this</a>
       </div>
     </section>
   );
 }
+

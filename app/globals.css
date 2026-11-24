@@ -1145,3 +1145,17 @@ p, li, .muted, .input, input, select, textarea, label { font-weight: var(--w-bod
 .item-x:hover { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
 .item-x:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .item-chip-wrap.warn .item-x { border-color: var(--warn-line); }
+
+/* using something up, which is what mostly happens to food */
+.item-use {
+  all: unset; cursor: pointer; display: grid; place-items: center; padding: 0 9px; flex: none;
+  border: 1px solid var(--line); border-left: 0; border-radius: 0 8px 8px 0;
+  background: var(--btn-yellow); color: var(--ink); font-size: 11px; font-weight: var(--w-subtitle);
+  box-sizing: border-box;
+}
+.item-use:hover { filter: brightness(1.04); }
+.item-use:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.item-use:disabled { opacity: 0.5; cursor: default; }
+.item-chip-wrap.warn .item-use { border-color: var(--warn-line); }
+.use-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.use-unit { padding-bottom: 12px; }

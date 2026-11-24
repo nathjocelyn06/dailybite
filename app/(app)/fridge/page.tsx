@@ -3,7 +3,7 @@ import { webDb } from "@/lib/services/db";
 import { CATEGORY_LABEL, getDecor, listFridge, type FridgeItemView } from "@/lib/services/fridge";
 import { getSettings } from "@/lib/services/settings";
 import { ActionButton } from "@/components/ActionButton";
-import { confirmPendingAction, fridgeRemoveAction } from "../actions";
+import { confirmPendingAction, fridgeQtyAction, fridgeRemoveAction } from "../actions";
 import { AddFridgeForm } from "./forms";
 import { Fridge } from "@/components/fridge/Fridge";
 
@@ -67,6 +67,7 @@ export default async function FridgePage() {
                 <span style={{ flex: 1 }}>{i.name}</span>
                 <span className="muted">{i.qty} {i.unit}</span>
                 {i.low && <span className="chip warn">low</span>}
+                <ActionButton action={fridgeQtyAction} args={[i.id, -1]} label={`Use one ${i.name}`}>Use</ActionButton>
                 <ActionButton action={fridgeRemoveAction} args={[i.id]} confirm={`Remove ${i.name} from the cupboard?`} label={`Remove ${i.name}`}>
                   ×
                 </ActionButton>
