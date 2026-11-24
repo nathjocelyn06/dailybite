@@ -1,6 +1,5 @@
 # DailyBite
 
-_Formerly Nutrigo. See `CHANGELOG.md` for what changed._
 
 Food journal, digital fridge, recipes and food budget in one live app, with an MCP server so Claude can use it too.
 

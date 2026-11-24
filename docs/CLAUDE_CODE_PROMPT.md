@@ -1,10 +1,10 @@
 # Prompt to give Claude Code
 
-Unzip `nutrigo.zip` (the project folder keeps its old name), open the folder in Claude Code, then paste:
+Unzip `dailybite.zip`, open the folder in Claude Code, then paste:
 
 ---
 
-This is my DailyBite project (formerly Nutrigo): a Next.js + Supabase app with a remote MCP server. Read `CLAUDE.md`, `README.md`, `CHANGELOG.md` and `docs/PLAN.md` before changing anything.
+This is my DailyBite project : a Next.js + Supabase app with a remote MCP server. Read `CLAUDE.md`, `README.md`, `CHANGELOG.md` and `docs/PLAN.md` before changing anything.
 
 1. Do **Phase 0** of `docs/PLAN.md`: run `npm install` and `npm run check`, and fix every type, test or build error. The code was written without being able to install packages, so library APIs (`mcp-handler`, `@modelcontextprotocol/sdk`, `@supabase/ssr`, zod version) may need small adjustments. Keep the architecture rules in `CLAUDE.md`.
 2. Walk me through creating the Supabase project and filling `.env.local` (stop and ask me for keys). Then run the app, help me sign in, and set `OWNER_USER_ID`.

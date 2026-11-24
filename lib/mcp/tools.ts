@@ -55,7 +55,7 @@ async function run(fn: (db: Db) => Promise<Result>): Promise<ToolOut> {
   }
 }
 
-export const SERVER_INSTRUCTIONS = `DailyBite (formerly Nutrigo) is the user's personal food journal, fridge, recipe and food-budget app.
+export const SERVER_INSTRUCTIONS = `DailyBite is the user's personal food journal, fridge, recipe and food-budget app.
 Rules:
 - "Today" is the user's local date (get_daily_summary returns it). Never assume UTC.
 - Meals have status planned | pending_confirm | eaten. Only eaten meals count toward calories.

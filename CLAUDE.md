@@ -1,4 +1,4 @@
-# DailyBite (formerly Nutrigo) — instructions for Claude Code
+# DailyBite — instructions for Claude Code
 
 DailyBite is a personal food journal + wellness app. One Next.js app gives you:
 1. **A live web app** (desktop sidebar + phone layout, installable as a PWA) at `APP_URL`.

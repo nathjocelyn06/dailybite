@@ -157,7 +157,7 @@ class Component extends DCLogic {
       receipt: { label: 'Receipt', w: 72, h: 124, bg: 'repeating-linear-gradient(180deg,#FFFFFF 0 9px,#E2E2DF 9px 10px)', r: '0', pad: '6px', fs: '8px', fw: '700', tape: true, fixed: 'RECEIPT' }
     };
     let saved = null;
-    try { saved = JSON.parse(window.localStorage.getItem('nutrigo-fridge') || 'null'); } catch (e) { saved = null; }
+    try { saved = JSON.parse(window.localStorage.getItem('dailybite-fridge') || 'null'); } catch (e) { saved = null; }
     this.drag = null;
     this.state = { tab: (typeof window !== 'undefined' && /list/.test(window.location.hash || '')) ? 'To buy' : 'Fridge', sel: 'v1', done: {}, qty: { f1: 2, f2: 1, f3: 1, d1: 6, d2: 1, d3: 2, p1: 1, p2: 1, p3: 1, v1: 1, v2: 4, v3: 3, v4: 1 },
       top: false, bot: false, color: (saved && saved.color) || '#CFE0EA', decos: (saved && saved.decos) || this.defaults(), selDeco: null };
@@ -175,7 +175,7 @@ class Component extends DCLogic {
       { id: 'a9', k: 'badge', x: 300, y: 330, rot: 10, text: 'I ♥\nrice', c: '#FCE4EF' }
     ];
   }
-  save(st) { try { window.localStorage.setItem('nutrigo-fridge', JSON.stringify({ color: st.color, decos: st.decos })); } catch (e) {} }
+  save(st) { try { window.localStorage.setItem('dailybite-fridge', JSON.stringify({ color: st.color, decos: st.decos })); } catch (e) {} }
   commit(patch) { const n = Object.assign({}, this.state, patch); this.setState(patch); this.save(n); }
   down(e, d) {
     if (e.button !== undefined && e.button !== 0) return;

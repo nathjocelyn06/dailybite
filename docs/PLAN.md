@@ -1,4 +1,4 @@
-# DailyBite build plan (formerly Nutrigo)
+# DailyBite build plan
 
 Goal: a live app you can use and edit anywhere (phone + laptop), with everything saved in Supabase, and an MCP server so Claude can log meals, read your fridge, plan recipes and check your budget from any Claude app.
 

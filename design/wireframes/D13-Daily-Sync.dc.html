@@ -122,8 +122,8 @@ class Component extends DCLogic {
       { id: 'ml_c1', date: tm, time: '12:30', type: 'Meal', status: 'planned', kcal: 540, detail: 'Lunch · [planned recipe]' }
     ];
   }
-  load() { try { const v = window.localStorage.getItem('nutrigo-demo-records'); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
-  persist(recs) { let ok = false; try { window.localStorage.setItem('nutrigo-demo-records', JSON.stringify(recs)); ok = true; } catch (e) { ok = false; } this.setState({ recs, saved: ok }); }
+  load() { try { const v = window.localStorage.getItem('dailybite-demo-records'); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  persist(recs) { let ok = false; try { window.localStorage.setItem('dailybite-demo-records', JSON.stringify(recs)); ok = true; } catch (e) { ok = false; } this.setState({ recs, saved: ok }); }
   componentDidMount() {
     this.timer = setInterval(() => {
       const k = this.key(new Date());
@@ -175,7 +175,7 @@ class Component extends DCLogic {
       prev: () => this.setState({ view: this.shift(v, -1) }), next: () => this.setState({ view: this.shift(v, 1) }),
       goToday: () => this.setState({ view: today }),
       midnight: () => { const o = s.offset + 1; this.setState({ offset: o, view: this.shift(s.real, o) }); },
-      reset: () => { try { window.localStorage.removeItem('nutrigo-demo-records'); } catch (e) {} this.setState({ offset: 0, view: s.real, recs: this.seed(), saved: false }); },
+      reset: () => { try { window.localStorage.removeItem('dailybite-demo-records'); } catch (e) {} this.setState({ offset: 0, view: s.real, recs: this.seed(), saved: false }); },
       logMeal: () => add({ id: this.uid('ml'), date: v, time: isToday ? nowT() : '13:00', type: 'Meal', status: 'eaten', kcal: 450, detail: 'Meal · [sample, logged in demo]' }),
       planMeal: () => add({ id: this.uid('ml'), date: v, time: '19:00', type: 'Meal', status: 'planned', kcal: 600, detail: 'Dinner · [planned in demo]' }),
       addExpense: () => add({ id: this.uid('ex'), date: v, time: isToday ? nowT() : '17:00', type: 'Expense', status: 'saved', amount: 6500, detail: 'Snacks & drinks · [sample]' })

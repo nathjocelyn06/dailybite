@@ -1,4 +1,4 @@
--- DailyBite (formerly Nutrigo) schema. Run once in Supabase > SQL Editor (or `supabase db push`).
+-- DailyBite schema. Run once in Supabase > SQL Editor (or `supabase db push`).
 -- Every table has user_id + row level security, so the web app (logged-in user)
 -- only sees its own rows. The MCP server uses the service role key and MUST
 -- filter by OWNER_USER_ID itself (see lib/services).
