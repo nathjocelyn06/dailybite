@@ -399,7 +399,7 @@ export function Scrapbook({
                 <textarea
                   className="scrap-input"
                   value={el.text ?? ""}
-                  placeholder="Write here\u2026"
+                  placeholder="Write here…"
                   onChange={(e) => patch(el.id, { text: e.target.value })}
                   onPointerDown={(e) => { if (isSel) e.stopPropagation(); }}
                   aria-label="Text box"

@@ -368,7 +368,7 @@ function ItemChip({ item, onPick }: { item: FridgeItemView; onPick: (i: FridgeIt
           start(async () => { await fridgeRemoveAction(item.id); });
         }}
       >
-        \u00d7
+        ×
       </button>
     </span>
   );

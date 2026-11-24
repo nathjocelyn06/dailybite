@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DailyBite — A3 Exhibition Poster</title>
+<link rel="icon" href="data:,">
+<style>
+@font-face { font-family:"Apercu"; src:url("/fonts/HeadspaceApercu-ExtraBold.otf") format("opentype"); font-weight:800; font-display:block; }
+@font-face { font-family:"Apercu"; src:url("/fonts/HeadspaceApercu-Medium.otf") format("opentype"); font-weight:500; font-display:block; }
+@font-face { font-family:"Apercu"; src:url("/fonts/HeadspaceApercu-Light.otf") format("opentype"); font-weight:300; font-display:block; }
+
+:root{
+  --ink:#141210;          /* body + headlines */
+  --ink-2:#3F3A35;        /* secondary copy */
+  --muted:#7C766F;        /* captions */
+  --rule:#E3E0DA;
+  --gold:#D99A10;         /* section labels */
+  --orange:#E2641A;       /* arrows */
+  --sun:#F7DE55;          /* tagline band */
+  --navy:#17466B;
+  --paper:#FFFFFF;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:#53535a; font-family:"Apercu", system-ui, "Segoe UI", sans-serif; -webkit-font-smoothing:antialiased; }
+
+/* ===== A3 portrait: 1240 x 1754 (297 x 420 mm) ===== */
+/* print margins: 80px sides (19mm), 72px top, 64px foot */
+.poster{
+  position:relative; width:1240px; height:1754px; overflow:hidden;
+  background:var(--paper); color:var(--ink);
+  padding:72px 80px 64px; display:flex; flex-direction:column;
+}
+
+/* ---------- running heads ---------- */
+.meta{ display:flex; align-items:baseline; justify-content:space-between;
+  font-size:13.5px; font-weight:800; letter-spacing:.01em; }
+
+/* ---------- masthead ---------- */
+.mast{ text-align:center; margin-top:36px; }
+.kicker{ font-size:17px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+.title{ margin-top:22px; font-size:176px; font-weight:800; line-height:.86; letter-spacing:-.045em; }
+.tagline{ display:inline-block; margin-top:14px; padding:12px 30px 14px;
+  background:var(--sun); font-size:27px; font-weight:800; letter-spacing:-.015em; color:#2A2409; }
+
+/* ---------- device band (full bleed) ---------- */
+.band{
+  position:relative; margin:26px -80px 0; height:500px; flex:none;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FDF6D6 20%,#FBEFB6 46%,#FEFAE8 78%,#FFFFFF 100%);
+}
+.band .shadow{
+  position:absolute; left:182px; bottom:12px; width:700px; height:48px;
+  border-radius:50%;
+  background:radial-gradient(ellipse at center, rgba(94,78,22,.24) 0%, rgba(94,78,22,0) 70%);
+}
+.band img{ position:absolute; display:block; }
+.band .laptop{ left:162px; top:15px; width:740px; }
+.band .phone{ left:882px; top:58px; width:196px; }
+
+/* ---------- two-column rows ---------- */
+.row2{ display:grid; grid-template-columns:1fr 1fr; column-gap:56px; }
+.label{ font-size:14px; font-weight:800; color:var(--gold); letter-spacing:.005em; }
+
+.says{ margin-top:38px; }
+.says ul{ list-style:none; margin-top:18px; display:flex; flex-direction:column; gap:11px; }
+.says .q{ display:flex; gap:14px; font-size:19.5px; font-weight:500; color:var(--ink); line-height:1.3; }
+.says .q i{ font-style:normal; color:var(--muted); flex:none; }
+.says .d{ display:flex; gap:15px; font-size:19.5px; font-weight:500; color:var(--ink); line-height:1.34; }
+.says .d i{ font-style:normal; color:var(--orange); font-weight:800; flex:none; }
+
+.hair{ height:1px; background:var(--rule); margin-top:32px; }
+
+.about{ margin-top:28px; align-items:start; }
+.about .name{ margin-top:14px; font-size:25px; font-weight:800; letter-spacing:-.02em; }
+.about .sub{ margin-top:6px; font-size:14px; font-weight:500; color:var(--ink-2); line-height:1.45; }
+.about p{ margin-top:14px; font-size:14.5px; font-weight:500; line-height:1.68; color:var(--ink-2); }
+
+/* ---------- how it works ---------- */
+.how{
+  flex:1; margin-top:32px; border:1px solid var(--rule); border-radius:22px;
+  padding:24px 30px 22px; display:flex; flex-direction:column;
+}
+.how-head{ display:flex; align-items:baseline; gap:16px; }
+.how-head .lbl{ font-size:12.5px; font-weight:500; color:var(--muted); }
+.how-head h3{ font-size:21px; font-weight:800; letter-spacing:-.02em; }
+.how-head .note{ margin-left:auto; font-size:12.5px; font-weight:500; color:var(--muted); }
+
+.flow{ display:flex; align-items:stretch; margin-top:24px; }
+.step{ flex:1; position:relative; }
+.step .chip{
+  position:absolute; top:-13px; left:26px; width:26px; height:26px; border-radius:50%;
+  display:grid; place-items:center; font-size:12.5px; font-weight:800; color:#fff; z-index:2;
+}
+.step .box{
+  border:1.4px solid; border-radius:14px; padding:20px 15px 15px; height:100%;
+  display:flex; flex-direction:column; gap:6px;
+}
+.step strong{ font-size:14.5px; font-weight:800; letter-spacing:-.01em; }
+.step span{ font-size:11.8px; font-weight:500; line-height:1.42; color:var(--ink-2); }
+.arrow{ width:34px; flex:none; display:grid; place-items:center; color:var(--orange); font-size:18px; }
+
+.s1 .box{ background:#FBF3C4; border-color:#E6D77A; } .s1 .chip{ background:#DFC016; }
+.s2 .box{ background:#FBE0EA; border-color:#F0B4C9; } .s2 .chip{ background:#EB86A6; }
+.s3 .box{ background:#DEEBF7; border-color:#A6C8E3; } .s3 .chip{ background:#6EA6D4; }
+.s4 .box{ background:#DEEFE0; border-color:#A3CDAA; } .s4 .chip{ background:#72B27D; }
+.s5 .box{ background:#E7E1F5; border-color:#B9ACDB; } .s5 .chip{ background:#9984CC; }
+
+.lanes{ margin-top:22px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.lane{ border:1.4px dashed var(--rule); border-radius:14px; padding:13px 16px;
+  display:flex; align-items:center; gap:14px; }
+.lane .tag{ font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase;
+  padding:6px 12px; border-radius:999px; flex:none; }
+.lane .tag.app{ background:var(--sun); color:#2A2409; }
+.lane .tag.mcp{ background:var(--navy); color:#fff; }
+.lane p{ font-size:12.3px; font-weight:500; line-height:1.45; color:var(--ink-2); }
+.lane p b{ font-weight:800; color:var(--ink); }
+
+/* ---------- footer ---------- */
+.foot{ display:flex; align-items:baseline; justify-content:space-between;
+  margin-top:26px; font-size:13.5px; font-weight:800; }
+</style>
+</head>
+<body>
+<div class="poster" id="poster">
+
+  <div class="meta">
+    <span>Tool Using AI Agents</span>
+    <span>End of Semester Exhibition 2026</span>
+  </div>
+
+  <div class="mast">
+    <div class="kicker">A food journal with its own MCP server</div>
+    <h1 class="title">DailyBite</h1>
+    <div class="tagline">One place for everything on your plate</div>
+  </div>
+
+  <div class="band">
+    <div class="shadow"></div>
+    <img class="laptop" src="/showcase/laptop.png" alt="DailyBite dashboard on a laptop">
+    <img class="phone"  src="/showcase/phone.png"  alt="DailyBite fridge on a phone">
+  </div>
+
+  <section class="row2 says">
+    <div>
+      <div class="label">You Say</div>
+      <ul>
+        <li class="q"><i>&ndash;</i><span>&ldquo;How many calories have I eaten today?&rdquo;</span></li>
+        <li class="q"><i>&ndash;</i><span>&ldquo;Where did my money go?&rdquo;</span></li>
+        <li class="q"><i>&ndash;</i><span>&ldquo;What can I cook tonight?&rdquo;</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="label">It Does</div>
+      <ul>
+        <li class="d"><i>&rarr;</i><span>Analyzes meals and tracks nutrition</span></li>
+        <li class="d"><i>&rarr;</i><span>Tracks food spending, receipts, and your grocery budget</span></li>
+        <li class="d"><i>&rarr;</i><span>Reads your fridge, ranks browse recipes, and updates your shopping list</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="hair"></div>
+
+  <section class="row2 about">
+    <div>
+      <div class="label" style="color:var(--muted); font-weight:500">Made By</div>
+      <div class="name">Nathania Jocelyn Lie</div>
+      <div class="sub">Yonsei University<br>Information &amp; Interaction Design</div>
+    </div>
+    <div>
+      <div class="label" style="color:var(--muted); font-weight:500">About The Work</div>
+      <p>DailyBite brings your meals, nutrition, fridge, recipes, groceries, and budget together in one place. Powered by its own MCP server, it connects your food data to AI, helping you track, plan, and make smarter everyday food decisions.</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="how-head">
+      <span class="lbl">How it works</span>
+      <h3>From a photo to a full day, in five steps</h3>
+      <span class="note">Nothing is saved until you confirm it</span>
+    </div>
+
+    <div class="flow">
+      <div class="step s1">
+        <span class="chip">1</span>
+        <div class="box">
+          <strong>Snap or ask</strong>
+          <span>A meal photo, a grocery receipt, or a question in plain language.</span>
+        </div>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="step s2">
+        <span class="chip">2</span>
+        <div class="box">
+          <strong>AI reads it</strong>
+          <span>Dish, portion and calories from the photo; items and prices from the receipt.</span>
+        </div>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="step s3">
+        <span class="chip">3</span>
+        <div class="box">
+          <strong>You confirm</strong>
+          <span>The estimate waits as pending. Correct the portion, then say yes.</span>
+        </div>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="step s4">
+        <span class="chip">4</span>
+        <div class="box">
+          <strong>One record updates</strong>
+          <span>Journal, calories, fridge stock and food budget all move together.</span>
+        </div>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="step s5">
+        <span class="chip">5</span>
+        <div class="box">
+          <strong>It gives back</strong>
+          <span>What to cook tonight, what expires first, what's left to spend this month.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lanes">
+      <div class="lane">
+        <span class="tag app">Web app</span>
+        <p><b>Home &middot; My Kitchen &middot; Journal &middot; Archive.</b> Four tabs, installable as a PWA, same layout on desktop and phone.</p>
+      </div>
+      <div class="lane">
+        <span class="tag mcp">MCP server</span>
+        <p><b>/api/mcp</b> exposes the same services to Claude, so a sentence does what a screen does.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>Yonsei University</span>
+    <span>Information &amp; Interaction Design</span>
+  </div>
+
+</div>
+</body>
+</html>
