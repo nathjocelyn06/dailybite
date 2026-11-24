@@ -82,9 +82,13 @@ export function Fridge({
    * other page that mounts a fridge) they fall back to sitting under the unit.
    */
   const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const [itemSlot, setItemSlot] = useState<HTMLElement | null>(null);
   const portal = (node: React.ReactNode) => (slot ? createPortal(node, slot) : node);
+  /** The tapped item opens beside the fridge, under Add item, rather than below the unit. */
+  const itemPortal = (node: React.ReactNode) => (itemSlot ? createPortal(node, itemSlot) : node);
   useEffect(() => {
     setSlot(document.getElementById("fridge-decor-slot"));
+    setItemSlot(document.getElementById("fridge-item-slot"));
   }, []);
   // Magnets are the only decoration now: uploaded stickers, post-its and tape are gone,
   // so leftover rows from the old tray are ignored and fall away on the next save.
@@ -325,7 +329,7 @@ export function Fridge({
         </section>
       )}
 
-      {selected && <SelectedItem item={selected} onClose={() => setSelected(null)} />}
+      {selected && itemPortal(<SelectedItem item={selected} onClose={() => setSelected(null)} />)}
     </div>
   );
 }
